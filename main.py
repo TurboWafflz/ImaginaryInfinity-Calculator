@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator v1.3
+##ImaginaryInfinity Calculator v2.0
 ##Copyright 2019 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
@@ -7,52 +7,22 @@ from random import *
 import time
 from math import *
 from cmath import *
+
+#Load plugins
+from plugins.main import *
+from plugins import *
+
+
 #from sympy.solvers import solve
 #from sympy import Symbol
 import os
+import pkgutil
+import sys
 os.system("clear")
 global cplx
 cplx=0
-
-#Help command
-def chelp():
-  print("Help:")
-  print("------")
-  print("complex <on/off> - Enable/disabe complex mode")
-  print("iprt('<library name>') - import a Python library")
-  print("sh('<command>') - Run a Linux/Windows command (depending on your host OS)")
-  print("quit() - Quit ImaginaryInfinity Calculator")
-
-#Shell command
-def shell():
-  c=True
-  while(c):
-    cmd=input("> ")
-    if(cmd == "exit"):
-      break
-    os.system(cmd)
-
-#Sh command
-def sh(cmd):
-  os.system(cmd)
-  
-#Import/install command
-def iprt(lib):
-  os.system("pip3 install " + lib)
-  import lib
-  
-#GCF command
-#Uses Euclidian Algorithm
-def gcf(n1,n2):
-    rem=1
-    while(rem!=0):
-        rem=n1%n2
-        n1=n2
-        n2=rem
-    return n1
-
 def main():
-  print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v1.3")
+  print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.0")
   print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
   print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
   print("Type 'chelp()' for help")
