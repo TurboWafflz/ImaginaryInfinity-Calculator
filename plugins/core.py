@@ -5,9 +5,9 @@ import os
 def chelp():
   print("Help:")
   print("------")
-  print("complex('<on/off>') - Enable/disabe complex mode")
-  print("factor('<number>') - Shows factor pairs for a number")
-  print("iprt('<library name>') - Installs and imports a Python moule")
+  print("complex('<on/off>') - Enable/disable complex mode")
+  print("factor(<number>) - Shows factor pairs for a number")
+  print("iprt('<library name>') - Installs and imports a Python moule from Pypi")
   print("sh('<command>') - Run a command directly on your computer")
   print("shell() - Starts a shell directly on your computer")
   print("quit() - Quit ImaginaryInfinity Calculator")
@@ -24,7 +24,7 @@ def shell():
 #Sh
 def sh(cmd):
   os.system(cmd)
-  
+
 #Import/install
 def iprt(lib):
   os.system("pip3 install " + lib)
