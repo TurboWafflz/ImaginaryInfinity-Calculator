@@ -15,13 +15,20 @@ from plugins.core import *
 import pkgutil
 import sys
 os.system("clear")
-#global cplx
+global cplx
+global onlineMode
 cplx=0
 def main():
 	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.0")
 	print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
 	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
 	print("Type 'chelp()' for help")
+	if(len(sys.argv)>1):
+		if(sys.argv[1]=="online"):
+			onlineMode=True
+			print(Fore.RED + Back.BLACK + "Online Mode, some commands may not work properly")
+		else:
+			onlineMode=False
 	global cplx
 	ans=0
 	print('')
@@ -52,7 +59,7 @@ def main():
 			try:
 				exec(str(calc))
 				pr=0
-			except: 
+			except:
 				if pr==1:
 					print(Fore.RED + "Error: " + str(e))
 					pr=0
