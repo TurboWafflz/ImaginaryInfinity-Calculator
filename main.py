@@ -26,9 +26,10 @@ def main():
 	if(len(sys.argv)>1):
 		if(sys.argv[1]=="online"):
 			onlineMode=True
-			print(Fore.RED + Back.BLACK + "Online Mode, some commands may not work properly")
-		else:
-			onlineMode=False
+			print(Fore.RED + "Online mode, some commands may not work and plugins cannot be added")
+	else:
+		print(Fore.GREEN + "Local mode, all commands should work")
+		onlineMode=False
 	global cplx
 	ans=0
 	print('')
