@@ -34,7 +34,7 @@ def main():
 	print('')
 	calc=''
 	while True:
-		pr=1
+		pr=True
 		print('')
 		calc=input(Fore.BLACK + Back.GREEN + "[>]" + Fore.CYAN + Back.RESET + " ")
 		print('')
@@ -51,7 +51,7 @@ def main():
 			eqn=calc
 			if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 				eqn=str(ans)+str(calc)
-			if pr==1:
+			if pr:
 				print(Fore.GREEN + eqn + ':')
 			oldcalc=calc
 			ans=eval(str(eqn))
@@ -60,11 +60,11 @@ def main():
 				exec(str(calc))
 				pr=0
 			except:
-				if pr==1:
+				if pr:
 					print(Fore.RED + "Error: " + str(e))
 					pr=0
 		#Print answer
-		if pr==1 and ans!=None:
+		if pr and ans!=None:
 			#Just print answer if in complex mode
 			if cplx==1:
 				print(Fore.GREEN + str(ans))
