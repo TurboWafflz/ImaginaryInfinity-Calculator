@@ -16,23 +16,17 @@ def chelp():
   print("shell() - Starts a shell directly on your computer")
   print("quit() - Quit ImaginaryInfinity Calculator")
 
-#Shell
-def shell():
-  c=True
-  while(c):
-    cmd=input("> ")
-    if(cmd == "exit"):
-      break
-    print(os.system(cmd))
 
-#Sh
-def sh(cmd):
-  os.system(cmd)
-
-#Import/install
-def iprt(lib):
-  os.system("pip3 install " + lib)
-  import lib
+#Complex toggle
+def complex(onOff):
+    if onOff=="on":
+        print(Fore.CYAN + "Complex mode")
+        pr=0
+        cplx=1
+    if onOff=="off":
+        print(Fore.CYAN + "Real mode")
+        pr=0
+        cplx=0
 
 #Factor
 def factor(num):
@@ -106,6 +100,11 @@ def fancyFactor(num):
                 print("")
             i=i-1
 
+#Import/install
+def iprt(lib):
+  os.system("pip3 install " + lib)
+  import lib
+
 #Check if number is prime
 #By Tabulate
 def isPrime(n):
@@ -127,20 +126,22 @@ def isPrime(n):
     print("True")
     return True
 
-#Complex toggle
-def complex(onOff):
-    if onOff=="on":
-        print(Fore.CYAN + "Complex mode")
-        pr=0
-        cplx=1
-    if onOff=="off":
-        print(Fore.CYAN + "Real mode")
-        pr=0
-        cplx=0
-
 #README (Linux only)
 def readme():
     if(platform.system()=="Linux"):
         sh("cat README-online | less")
     else:
         return("Sorry, this command only works on Linux")
+
+#Sh
+def sh(cmd):
+  os.system(cmd)
+
+#Shell
+def shell():
+  c=True
+  while(c):
+    cmd=input("> ")
+    if(cmd == "exit"):
+      break
+    print(os.system(cmd))
