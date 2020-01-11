@@ -1,3 +1,7 @@
+Press [up] and [down] to scroll, press [q] to quit.
+
+
+
 ImaginaryInfinity Calculator v2.0
 Copyright 2020 Finian Wright
 
@@ -28,8 +32,6 @@ fancyFactor(<number>) - Shows factor pairs and their sums and differences for
 a number
 
 iprt('<module>') - Installs and imports a python module from PyPi
-
-isPrime(<number>) - Checks whether or not a number is prime
 
 sh('<command>') - Runs a command directly on your computer
 

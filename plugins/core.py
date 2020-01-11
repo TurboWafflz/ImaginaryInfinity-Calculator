@@ -1,13 +1,17 @@
 #ImaginaryInfinity Calculator Core Plugin
 #Copyright 2020 Finian Wright
 import os
+import platform
 #Help
 def chelp():
-  print("Help:")
+  print("Commands:")
   print("------")
   print("complex('<on/off>') - Enable/disable complex mode")
   print("factor(<number>) - Shows factor pairs for a number")
   print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
+  print("isPrime(<number>) - Checks whether or not a number is prime")
+  if(platform.system()=="Linux"):
+      print("readme() - Shows the README file (online/Linux only)")
   print("sh('<command>') - Run a command directly on your computer")
   print("shell() - Starts a shell directly on your computer")
   print("quit() - Quit ImaginaryInfinity Calculator")
@@ -101,3 +105,10 @@ def complex(onOff):
         print(Fore.CYAN + "Real mode")
         pr=0
         cplx=0
+
+#README (Linux only)
+def readme():
+    if(platform.system()=="Linux"):
+        sh("cat README-online | less")
+    else:
+        return("Sorry, this command only works on Linux")
