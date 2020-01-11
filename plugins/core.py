@@ -7,7 +7,7 @@ def chelp():
   print("------")
   print("complex('<on/off>') - Enable/disable complex mode")
   print("factor(<number>) - Shows factor pairs for a number")
-  print("iprt('<library name>') - Installs and imports a Python moule from Pypi")
+  print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
   print("sh('<command>') - Run a command directly on your computer")
   print("shell() - Starts a shell directly on your computer")
   print("quit() - Quit ImaginaryInfinity Calculator")
@@ -69,7 +69,27 @@ def fancyFactor(num):
                 print(i, "-", int(num/i),"=",i-num/i)
                 print("")
             i=i-1
-    i=1
+
+#Check if number is prime
+#By Tabulate
+def isPrime(n):
+    if (n <= 1):
+        print("False")
+        return False
+    if (n <= 3):
+        print("False")
+        return True
+    if (n % 2 == 0 or n % 3 == 0):
+        print("False")
+        return False
+    i = 5
+    while(i * i <= n):
+        if (n % i == 0 or n % (i + 2) == 0):
+            print("False")
+            return False
+        i = i + 6
+    print("True")
+    return True
 
 #Complex toggle
 def complex(onOff):
