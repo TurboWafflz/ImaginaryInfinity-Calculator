@@ -15,19 +15,27 @@ from plugins.core import *
 import pkgutil
 import sys
 os.system("clear")
-#global cplx
+global cplx
+global onlineMode
 cplx=0
 def main():
 	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.0")
 	print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
 	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
 	print("Type 'chelp()' for help")
+	if(len(sys.argv)>1):
+		if(sys.argv[1]=="online"):
+			onlineMode=True
+			print(Fore.RED + "Online mode, some commands may not work and plugins cannot be added")
+	else:
+		print(Fore.GREEN + "Local mode, all commands should work")
+		onlineMode=False
 	global cplx
 	ans=0
 	print('')
 	calc=''
 	while True:
-		pr=1
+		pr=True
 		print('')
 		calc=input(Fore.BLACK + Back.GREEN + "[>]" + Fore.CYAN + Back.RESET + " ")
 		print('')
@@ -44,7 +52,7 @@ def main():
 			eqn=calc
 			if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 				eqn=str(ans)+str(calc)
-			if pr==1:
+			if pr:
 				print(Fore.GREEN + eqn + ':')
 			oldcalc=calc
 			ans=eval(str(eqn))
@@ -52,12 +60,12 @@ def main():
 			try:
 				exec(str(calc))
 				pr=0
-			except: 
-				if pr==1:
+			except:
+				if pr:
 					print(Fore.RED + "Error: " + str(e))
 					pr=0
 		#Print answer
-		if pr==1 and ans!=None:
+		if pr and ans!=None:
 			#Just print answer if in complex mode
 			if cplx==1:
 				print(Fore.GREEN + str(ans))
