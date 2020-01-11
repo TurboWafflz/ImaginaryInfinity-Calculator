@@ -70,7 +70,6 @@ def factorList(num):
             if(isFactor==0):
                 factors.append(i)
             i=i-1
-    print(factors)
     return(factors)
 
 #FancyFactor
@@ -105,6 +104,16 @@ def iprt(lib):
   os.system("pip3 install " + lib)
   import lib
 
+#isPerfect
+def isPerfect(num):
+    factorsSum=sum(factorList(num))
+    if(factorsSum==num*2):
+        print("True")
+        return(True)
+    else:
+        print("False")
+        return("False")
+
 #Check if number is prime
 #By Tabulate
 #def isPrime(n):
@@ -127,8 +136,10 @@ def iprt(lib):
 
 #isPrime
 def isPrime(num):
+    #Get number of factors
     factors=len(factorList(num))
     print(factors)
+    #If only 2 factors then number is prime else false
     if(factors==2):
         print("True")
         return(True)
