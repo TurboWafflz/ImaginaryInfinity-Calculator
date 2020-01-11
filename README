@@ -21,8 +21,16 @@ The following commands are built in to the calculator or added by the "core"
 plugin.
 
 complex('<on/off>') - Enables/disables complex mode
+
 factor(<number>) - Shows factor pairs for a number
+
+fancyFactor(<number>) - Shows factor pairs and their sums and differences for
+a number
+
 iprt('<module>') - Installs and imports a python module from PyPi
+
 sh('<command>') - Runs a command directly on your computer
+
 shell() - Starts a shell directly on your computer
+
 quit() - Quit ImaginaryInfinity Calculator

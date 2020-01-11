@@ -32,12 +32,44 @@ def iprt(lib):
 
 #Factor
 def factor(num):
+    if(num>0):
+        i=1
+        while(i<=num):
+            isFactor=num%i
+            if(isFactor==0):
+                print(i, "*", int(num/i))
+            i=i+1
+    if(num<0):
+        i=-1
+        while(i>=num):
+            isFactor=num%i
+            if(isFactor==0):
+                print(i, "*", int(num/i))
+            i=i-1
+
+#FancyFactor
+def fancyFactor(num):
+    if(num>0):
+        i=1
+        while(i<=num):
+            isFactor=num%i
+            if(isFactor==0):
+                print(i, "*", int(num/i))
+                print(i, "+", int(num/i),"=",i+num/i)
+                print(i, "-", int(num/i),"=",i-num/i)
+                print("")
+            i=i+1
+    if(num<0):
+        i=-1
+        while(i>=num):
+            isFactor=num%i
+            if(isFactor==0):
+                print(i, "*", int(num/i))
+                print(i, "+", int(num/i),"=",i+num/i)
+                print(i, "-", int(num/i),"=",i-num/i)
+                print("")
+            i=i-1
     i=1
-    while(i<num):
-        isFactor=num%i
-        if(isFactor==0):
-            print(i, "*", int(num/i))
-        i=i+1
 
 #Complex toggle
 def complex(onOff):
