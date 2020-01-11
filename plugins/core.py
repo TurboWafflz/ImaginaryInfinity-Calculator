@@ -36,37 +36,69 @@ def iprt(lib):
 
 #Factor
 def factor(num):
+    #Positive number
     if(num>0):
         i=1
         while(i<=num):
             isFactor=num%i
+            #Print factor pair if remainder is 0
             if(isFactor==0):
                 print(i, "*", int(num/i))
             i=i+1
+    #Negative number
     if(num<0):
         i=-1
         while(i>=num):
             isFactor=num%i
+            #Print factor pair if remainder is 0
             if(isFactor==0):
                 print(i, "*", int(num/i))
             i=i-1
 
-#FancyFactor
-def fancyFactor(num):
+#Factor List
+def factorList(num):
+    factors=[]
+    #Positive number
     if(num>0):
         i=1
         while(i<=num):
             isFactor=num%i
+            #Print factor pair if remainder is 0
+            if(isFactor==0):
+                factors.append(i)
+            i=i+1
+    #Negative number
+    if(num<0):
+        i=-1
+        while(i>=num):
+            isFactor=num%i
+            #Print factor pair if remainder is 0
+            if(isFactor==0):
+                factors.append(i)
+            i=i-1
+    print(factors)
+    return(factors)
+
+#FancyFactor
+def fancyFactor(num):
+    #Positive number
+    if(num>0):
+        i=1
+        while(i<=num):
+            isFactor=num%i
+            #Print factor pair, sums, and differences if remainder is 0
             if(isFactor==0):
                 print(i, "*", int(num/i))
                 print(i, "+", int(num/i),"=",i+num/i)
                 print(i, "-", int(num/i),"=",i-num/i)
                 print("")
             i=i+1
+    #Negative number
     if(num<0):
         i=-1
         while(i>=num):
             isFactor=num%i
+            #Print factor pair, sums, and differences if remainder is 0
             if(isFactor==0):
                 print(i, "*", int(num/i))
                 print(i, "+", int(num/i),"=",i+num/i)
