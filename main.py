@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator v2.0
+##ImaginaryInfinity Calculator v2.1
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
@@ -20,7 +20,7 @@ global cplx
 global onlineMode
 cplx=0
 def main():
-	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.0")
+	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 	print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
 	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
 	print("Type 'chelp()' for a list of commands")
