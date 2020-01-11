@@ -38,6 +38,8 @@ def factor(num):
         if(isFactor==0):
             print(i, "*", int(num/i))
         i=i+1
+
+#Complex toggle
 def complex(onOff):
     if onOff=="on":
         print(Fore.CYAN + "Complex mode")
