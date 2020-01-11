@@ -1,4 +1,4 @@
-ImaginaryInfinity Calculator v2.0
+ImaginaryInfinity Calculator v2.1
 Copyright 2020 Finian Wright
 
 ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
@@ -52,4 +52,4 @@ factorList(<number>, [printResult])
 isPrime(<number>, [printResult])
 isPerfect(<number>, [printResult])
 
-printResult can be set to True or False, and defaults to True
+printResult can be set to True or False, and defaults to True if not specified
