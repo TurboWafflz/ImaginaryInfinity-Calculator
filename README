@@ -45,7 +45,7 @@ quit() - Quit ImaginaryInfinity Calculator
 
 
 The following commands accept a second argument to prevent the result from being
-printed. This is useful when they are used in another functions so they don't
+printed. This is useful when they are used in another function so they don't
 all get shown to the user:
 
 factorList(<number>, [printResult])
