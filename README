@@ -24,9 +24,7 @@ complex('<on/off>') - Enables/disables complex mode
 
 factor(<number>) - Shows factor pairs for a number
 
-factorList(<number>) - Returns a list of the factors of a number (Note: this
-command will not display anything unless used in conjunction with print and is
-intended for use within functions)
+factorList(<number>) - Returns a list of the factors of a number
 
 fancyFactor(<number>) - Shows factor pairs and their sums and differences for
 a number
@@ -43,3 +41,15 @@ sh('<command>') - Runs a command directly on your computer
 shell() - Starts a shell directly on your computer
 
 quit() - Quit ImaginaryInfinity Calculator
+
+
+
+The following commands accept a second argument to prevent the result from being
+printed. This is useful when they are used in another functions so they don't
+all get shown to the user:
+
+factorList(<number>, [printResult])
+isPrime(<number>, [printResult])
+isPerfect(<number>, [printResult])
+
+printResult can be set to True or False, and defaults to True

@@ -50,14 +50,14 @@ def factor(num):
             i=i-1
 
 #Factor List
-def factorList(num):
+def factorList(num,printResult=True):
     factors=[]
     #Positive number
     if(num>0):
         i=1
         while(i<=num):
             isFactor=num%i
-            #Print factor pair if remainder is 0
+            #Append factor pair if remainder is 0
             if(isFactor==0):
                 factors.append(i)
             i=i+1
@@ -66,10 +66,12 @@ def factorList(num):
         i=-1
         while(i>=num):
             isFactor=num%i
-            #Print factor pair if remainder is 0
+            #Append factor pair if remainder is 0
             if(isFactor==0):
                 factors.append(i)
             i=i-1
+    if(printResult):
+        print(factors)
     return(factors)
 
 #FancyFactor
@@ -105,13 +107,15 @@ def iprt(lib):
   import lib
 
 #isPerfect
-def isPerfect(num):
-    factorsSum=sum(factorList(num))
+def isPerfect(num,printResult=True):
+    factorsSum=sum(factorList(num,False))
     if(factorsSum==num*2):
-        print("True")
+        if(printResult):
+            print("True")
         return(True)
     else:
-        print("False")
+        if(printResult):
+            print("False")
         return("False")
 
 #Check if number is prime
@@ -135,16 +139,17 @@ def isPerfect(num):
 #    return True
 
 #isPrime
-def isPrime(num):
+def isPrime(num, printResult=True):
     #Get number of factors
     factors=len(factorList(num))
-    print(factors)
     #If only 2 factors then number is prime else false
     if(factors==2):
-        print("True")
+        if(printResult):
+            print("True")
         return(True)
     else:
-        print("False")
+        if(printResult):
+            print("False")
         return(False)
 
 
