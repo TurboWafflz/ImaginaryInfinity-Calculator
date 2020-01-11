@@ -37,7 +37,7 @@ def main():
 	while True:
 		pr=True
 		print('')
-		calc=input(Fore.BLACK + Back.GREEN + "[>]" + Fore.CYAN + Back.RESET + " ")
+		calc=input(Fore.GREEN + Back.RESET + ">" + Fore.CYAN + Back.RESET + " ")
 		print('')
 		try:
 			cl=list(calc)
