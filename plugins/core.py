@@ -107,24 +107,35 @@ def iprt(lib):
 
 #Check if number is prime
 #By Tabulate
-def isPrime(n):
-    if (n <= 1):
+#def isPrime(n):
+#    if (n <= 1):
+#        print("False")
+#        return False
+#    if (n <= 3):
+#        print("False")
+#        return True
+#    if (n % 2 == 0 or n % 3 == 0):
+#        print("False")
+#        return False
+#    i = 5
+#    while(i * i <= n):
+#            print("False")
+#            return False
+#        i = i + 6
+#    print("True")
+#    return True
+
+#isPrime
+def isPrime(num):
+    factors=len(factorList(num))
+    print(factors)
+    if(factors==2):
+        print("True")
+        return(True)
+    else:
         print("False")
-        return False
-    if (n <= 3):
-        print("False")
-        return True
-    if (n % 2 == 0 or n % 3 == 0):
-        print("False")
-        return False
-    i = 5
-    while(i * i <= n):
-        if (n % i == 0 or n % (i + 2) == 0):
-            print("False")
-            return False
-        i = i + 6
-    print("True")
-    return True
+        return(False)
+
 
 #README (Linux only)
 def readme():
