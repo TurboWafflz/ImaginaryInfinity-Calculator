@@ -11,7 +11,7 @@ def chelp():
   print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
   print("isPrime(<number>) - Checks whether or not a number is prime")
   if(platform.system()=="Linux"):
-      print("readme() - Shows the README file (online/Linux only)")
+      print("readme() - Shows the README file (Online/Linux only)")
   print("sh('<command>') - Run a command directly on your computer")
   print("shell() - Starts a shell directly on your computer")
   print("quit() - Quit ImaginaryInfinity Calculator")
@@ -131,7 +131,7 @@ def readme():
     if(platform.system()=="Linux"):
         sh("cat README-online | less")
     else:
-        return("Sorry, this command only works on Linux")
+        return("Sorry, this command only works on Linux and the online version")
 
 #Sh
 def sh(cmd):
