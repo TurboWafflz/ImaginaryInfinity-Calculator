@@ -52,9 +52,12 @@ def main():
 			print("Type 'chelp()' for a list of commands")
 			print("Read README")
 		onlineMode=False
-	messagesFile=open('messages.txt')
-	messages=messagesFile.readlines()
-	print(Fore.YELLOW + messages[randint(0,len(messages)-1)] + Fore.RESET)
+	try:
+		messagesFile=open('messages.txt')
+		messages=messagesFile.readlines()
+		print(Fore.YELLOW + messages[randint(0,len(messages)-1)] + Fore.RESET)
+	except:
+		print("Could not find messages.txt")
 	global cplx
 	ans=0
 	print('')
