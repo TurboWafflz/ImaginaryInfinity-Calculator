@@ -12,7 +12,6 @@ from cmath import *
 import pkgutil
 import sys
 import platform
-import readline
 
 #Load plugins
 from plugins import *
@@ -25,6 +24,7 @@ cplx=0
 def main():
 	if(len(sys.argv)>1):
 		if(sys.argv[1]=="online"):
+			import readline
 			os.system("clear")
 			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 			print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
@@ -38,6 +38,7 @@ def main():
 				print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
 	else:
 		if(platform.system()=="Linux"):
+			import readline
 			os.system("clear")
 			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 			print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
@@ -51,6 +52,9 @@ def main():
 			print("Type 'chelp()' for a list of commands")
 			print("Read README")
 		onlineMode=False
+	messagesFile=open('messages.txt')
+	messages=messagesFile.readlines()
+	print(Fore.YELLOW + messages[randint(0,len(messages)-1)] + Fore.RESET)
 	global cplx
 	ans=0
 	print('')
