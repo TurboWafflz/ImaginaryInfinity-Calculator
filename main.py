@@ -28,12 +28,12 @@ def main():
 	if(len(sys.argv)>1):
 		if(sys.argv[1]=="online"):
 			onlineMode=True
-			print(Fore.RED + "Online mode, plugins cannot be added")
+			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.RESET)
 	else:
 		if(platform.system()=="Linux"):
-			print(Fore.GREEN + "Linux mode, all features should be fully supported")
+			print(Fore.GREEN + Style.BRIGHT + "Linux mode, all features should be fully supported")
 		else:
-			print(Fore.YELLOW + "Local mode, most features should be supported")
+			print(Fore.YELLOW + Style.BRIGHT + "Local mode, most features should be supported")
 		onlineMode=False
 	global cplx
 	ans=0
@@ -42,7 +42,7 @@ def main():
 	while True:
 		pr=True
 		print('')
-		calc=input(Fore.GREEN + Back.RESET + ">" + Fore.CYAN + Back.RESET + " ")
+		calc=input(Fore.GREEN + Back.RESET + Style.BRIGHT +  ">" + Fore.CYAN + Style.NORMAL + " ")
 		print('')
 		try:
 			cl=list(calc)
