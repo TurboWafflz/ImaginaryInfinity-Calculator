@@ -7,6 +7,7 @@ from random import *
 import time
 from math import *
 from cmath import *
+import readline
 
 #Load plugins
 from plugins import *
