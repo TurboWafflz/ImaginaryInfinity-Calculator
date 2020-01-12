@@ -1,1 +1,3 @@
 Now with 25% less sodium!
+Report bugs at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues
+Partly made while procrastinating math homework!
