@@ -1,3 +1,7 @@
 __pycache__
 plugins/__pycache__
 .update.log
+.replit
+plugins.egg-info
+poetry.lock
+pyproject.toml
