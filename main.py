@@ -21,7 +21,7 @@ global onlineMode
 cplx=0
 def main():
 	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-	print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
+	print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
 	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
 	print("Type 'chelp()' for a list of commands")
 	print("Read README")
