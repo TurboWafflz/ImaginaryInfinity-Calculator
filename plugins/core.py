@@ -102,6 +102,13 @@ def fancyFactor(num):
                 print("")
             i=i-1
 
+#Install plugins
+def install(url):
+    print("Installing...")
+    os.system("cd plugins")
+    os.system("wget " + url)
+    os.system("cd ..")
+
 #Import/install
 def iprt(lib):
   os.system("pip3 install " + lib)

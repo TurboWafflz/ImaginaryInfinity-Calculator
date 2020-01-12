@@ -50,3 +50,5 @@ quit() - Quit ImaginaryInfinity Calculator
 The following extra commands are available in online mode:
 
 readme() - Displays this documentation
+
+install('<url>') - Downloads and installs a plugin from the specified URL
