@@ -7,7 +7,6 @@ from random import *
 import time
 from math import *
 from cmath import *
-import readline
 
 #Load plugins
 from plugins import *
@@ -30,8 +29,10 @@ def main():
 		if(sys.argv[1]=="online"):
 			onlineMode=True
 			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
+			import readline
 	else:
 		if(platform.system()=="Linux"):
+			import readline
 			print(Fore.GREEN + Style.BRIGHT + "Linux mode, all features should be fully supported" + Fore.RESET + Style.NORMAL)
 		else:
 			print(Fore.YELLOW + Style.BRIGHT + "Local mode, most features should be supported" + Fore.RESET + Style.NORMAL)
