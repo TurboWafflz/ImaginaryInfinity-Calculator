@@ -29,6 +29,7 @@ def main():
 		if(sys.argv[1]=="online"):
 			onlineMode=True
 			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
+			print("You are currently on the development branch")
 	else:
 		if(platform.system()=="Linux"):
 			print(Fore.GREEN + Style.BRIGHT + "Linux mode, all features should be fully supported" + Fore.RESET + Style.NORMAL)
