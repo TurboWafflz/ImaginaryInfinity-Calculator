@@ -7,32 +7,47 @@ from random import *
 import time
 from math import *
 from cmath import *
+import pkgutil
+import sys
+import platform
+import readline
 
 #Load plugins
 from plugins import *
 from plugins.core import *
 
-import pkgutil
-import sys
-import platform
-os.system("clear")
+
 global cplx
 global onlineMode
 cplx=0
 def main():
-	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-	print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
-	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
-	print("Type 'chelp()' for a list of commands")
-	print("Read README")
 	if(len(sys.argv)>1):
 		if(sys.argv[1]=="online"):
+			os.system("clear")
+			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+			print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
+			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+			print("Type 'chelp()' for a list of commands")
+			print("Read README")
 			onlineMode=True
 			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
 			branch=os.popen("git rev-parse --abbrev-ref HEAD").read()
 			if(not "master" in branch):
 				print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
 	else:
+		if(platform.system()=="Linux"):
+			os.system("clear")
+			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+			print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
+			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+			print("Type 'chelp()' for a list of commands")
+			print("Read README")
+		else:
+			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+			print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
+			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+			print("Type 'chelp()' for a list of commands")
+			print("Read README")
 		onlineMode=False
 	global cplx
 	ans=0
