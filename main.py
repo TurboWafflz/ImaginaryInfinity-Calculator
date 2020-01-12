@@ -29,12 +29,10 @@ def main():
 		if(sys.argv[1]=="online"):
 			onlineMode=True
 			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
-			print("You are currently on the development branch")
+			branch=os.popen("git rev-parse --abbrev-ref HEAD").read()
+			if(not "master" in branch):
+				print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
 	else:
-		if(platform.system()=="Linux"):
-			print(Fore.GREEN + Style.BRIGHT + "Linux mode, all features should be fully supported" + Fore.RESET + Style.NORMAL)
-		else:
-			print(Fore.YELLOW + Style.BRIGHT + "Local mode, most features should be supported" + Fore.RESET + Style.NORMAL)
 		onlineMode=False
 	global cplx
 	ans=0
