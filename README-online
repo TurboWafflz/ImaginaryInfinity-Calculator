@@ -1,24 +1,7 @@
-ImaginaryInfinity Calculator v2.1
-Copyright 2020 Finian Wright
+Press [up] and [down] to scroll, press [q] to quit.
 
-ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
-command line interface is designed to resemble that of some graphing
-calculators.
 
-Plugins:
-New functionality can easily be added by placing Python files with additional
-functions in the plugins directory. To access a function added by a plugin,
-type "[plungin].[function]()". For example, if you wanted to run the function
-"egg" from the plugin "food", you would type "egg.food()". Arguments placed
-in the parentheses will be passed to the function.
 
-Note:
-Functions in the "core" plugin can be accessed without specifying "core".
-ex. "factor(7)" instead of "core.factor(7)"
-
-Built in commands:
-The following commands are built in to the calculator or added by the "core"
-plugin.
 
 complex('<on/off>') - Enables/disables complex mode
 
