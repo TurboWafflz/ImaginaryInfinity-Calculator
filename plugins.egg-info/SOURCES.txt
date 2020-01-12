@@ -1,0 +1,9 @@
+README
+setup.py
+plugins/__init__.py
+plugins/core.py
+plugins.egg-info/PKG-INFO
+plugins.egg-info/SOURCES.txt
+plugins.egg-info/dependency_links.txt
+plugins.egg-info/requires.txt
+plugins.egg-info/top_level.txt
