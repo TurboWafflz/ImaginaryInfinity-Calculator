@@ -2,7 +2,9 @@
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
-from colorama import *
+from colorama import Fore
+from colorama import Back
+from colorama import Style
 from random import *
 import time
 from math import *
@@ -30,7 +32,7 @@ def main():
 			print("Type 'chelp()' for a list of commands")
 			print("Read README")
 			onlineMode=True
-			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
+			print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
 			branch=os.popen("git rev-parse --abbrev-ref HEAD").read()
 			if(not "master" in branch):
 				print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
