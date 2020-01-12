@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator v2.0
+##ImaginaryInfinity Calculator v2.1
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
@@ -14,21 +14,26 @@ from plugins.core import *
 
 import pkgutil
 import sys
+import platform
 os.system("clear")
 global cplx
 global onlineMode
 cplx=0
 def main():
-	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.0")
+	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 	print(Fore.RESET + Back.RESET + "Copyright 2019 Finian Wright")
 	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
-	print("Type 'chelp()' for help")
+	print("Type 'chelp()' for a list of commands")
+	print("Read README")
 	if(len(sys.argv)>1):
 		if(sys.argv[1]=="online"):
 			onlineMode=True
-			print(Fore.RED + "Online mode, some commands may not work and plugins cannot be added")
+			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
 	else:
-		print(Fore.GREEN + "Local mode, all commands should work")
+		if(platform.system()=="Linux"):
+			print(Fore.GREEN + Style.BRIGHT + "Linux mode, all features should be fully supported" + Fore.RESET + Style.NORMAL)
+		else:
+			print(Fore.YELLOW + Style.BRIGHT + "Local mode, most features should be supported" + Fore.RESET + Style.NORMAL)
 		onlineMode=False
 	global cplx
 	ans=0
@@ -37,7 +42,7 @@ def main():
 	while True:
 		pr=True
 		print('')
-		calc=input(Fore.BLACK + Back.GREEN + "[>]" + Fore.CYAN + Back.RESET + " ")
+		calc=input(Fore.GREEN + Back.RESET + Style.BRIGHT +  ">" + Fore.CYAN + Style.NORMAL + " ")
 		print('')
 		try:
 			cl=list(calc)
