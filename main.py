@@ -106,6 +106,6 @@ def main():
 				except:
 		  			print()
 		if ans==None and pr==1:
-			print(Fore.YELLOW + "Done" + Fore.RESET)
+			#print(Fore.YELLOW + "Done" + Fore.RESET)
 
 main()
