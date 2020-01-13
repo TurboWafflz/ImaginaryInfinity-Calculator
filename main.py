@@ -80,8 +80,8 @@ def main():
 			eqn=calc
 			if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 				eqn=str(ans)+str(calc)
-			if pr:
-				print(Fore.GREEN + eqn + ':')
+			# if pr:
+				#print(Fore.GREEN + eqn + ':')
 			oldcalc=calc
 			ans=eval(str(eqn))
 		except Exception as e:
