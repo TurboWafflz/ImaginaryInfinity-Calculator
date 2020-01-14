@@ -2,6 +2,9 @@
 #Copyright 2020 Finian Wright
 import os
 import platform
+from colorama import Fore
+from colorama import Back
+from colorama import Style
 #Help
 def chelp():
   print("Commands:")
