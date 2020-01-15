@@ -33,9 +33,9 @@ def main():
 			print("Read README")
 			onlineMode=True
 			print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
-			branch=os.popen("git rev-parse --abbrev-ref HEAD").read()
-			if(not "master" in branch):
-				print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
+			#branch=os.popen("git rev-parse --abbrev-ref HEAD").read()
+			#if(not "master" in branch):
+			#	print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
 	else:
 		if(platform.system()=="Linux"):
 			import readline
