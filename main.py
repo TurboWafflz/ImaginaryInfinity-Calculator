@@ -47,17 +47,6 @@ def main():
 			print("Read README")
 			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
 			import readline
-	else:
-		if(platform.system()=="Linux"):
-			import readline
-			print(Fore.GREEN + Style.BRIGHT + "Linux mode, all features should be fully supported" + Fore.RESET + Style.NORMAL)
-		else:
-			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-			print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
-			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
-			print("Type 'chelp()' for a list of commands")
-			print("Read README")
-		onlineMode=False
 	try:
 		messagesFile=open('messages.txt')
 		messages=messagesFile.readlines()
