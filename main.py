@@ -105,7 +105,7 @@ def main():
 						print(Fore.RED + "Domain error")
 				except:
 		  			print()
-		if ans==None and pr==1:
+		#if ans==None and pr==1:
 			#print(Fore.YELLOW + "Done" + Fore.RESET)
 
 main()
