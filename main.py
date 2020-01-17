@@ -18,6 +18,7 @@ from cmath import *
 import pkgutil
 import sys
 import platform
+import os
 
 #Load plugins
 from plugins import *
@@ -39,9 +40,8 @@ def main():
 			print("Read README")
 			onlineMode=True
 			print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
-			#branch=os.popen("git rev-parse --abbrev-ref HEAD").read()
-			#if(not "master" in branch):
-			#	print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
+			if os.path.isfile('.development'):
+				print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
 	else:
 		if(platform.system()=="Linux"):
 			import readline
