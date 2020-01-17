@@ -51,7 +51,6 @@ def main():
 			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
 			print("Type 'chelp()' for a list of commands")
 			print("Read README")
-			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
 			import readline
 	try:
 		messagesFile=open('messages.txt')
