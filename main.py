@@ -39,9 +39,9 @@ def main():
 			print("Read README")
 			onlineMode=True
 			print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
-			branch=os.popen("git rev-parse --abbrev-ref HEAD").read()
-			if(not "master" in branch):
-				print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
+			#branch=os.popen("git rev-parse --abbrev-ref HEAD").read()
+			#if(not "master" in branch):
+			#	print("You are currently on the " + branch[:-1] + " branch. You can switch back to the master branch with " + Fore.CYAN + "dev.switchBranch('master')" + Fore.RESET)
 	else:
 		if(platform.system()=="Linux"):
 			import readline
@@ -51,13 +51,8 @@ def main():
 			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
 			print("Type 'chelp()' for a list of commands")
 			print("Read README")
-		else:
-			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-			print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
-			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
-			print("Type 'chelp()' for a list of commands")
-			print("Read README")
-		onlineMode=False
+			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
+			import readline
 	try:
 		messagesFile=open('messages.txt')
 		messages=messagesFile.readlines()
