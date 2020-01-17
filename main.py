@@ -2,6 +2,12 @@
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
+global cplx
+global onlineMode
+global debugMode
+debugMode=False
+
+
 from colorama import Fore
 from colorama import Back
 from colorama import Style
@@ -18,10 +24,10 @@ from plugins import *
 from plugins.core import *
 
 
-global cplx
-global onlineMode
+
 cplx=0
 def main():
+	global debugMode
 	if(len(sys.argv)>1):
 		if(sys.argv[1]=="online"):
 			import readline
@@ -90,19 +96,19 @@ def main():
 				pr=0
 			except:
 				if pr:
-					print(Fore.RED + "Error: " + str(e))
+					print(Fore.RED + Style.BRIGHT + "Error: " + str(e) + Fore.RESET + Style.NORMAL)
 					pr=0
 		#Print answer
-		if pr and ans!=None:
+		if(pr==1 and ans!=None):
 			#Just print answer if in complex mode
-			if cplx==1:
+			if(cplx==1):
 				print(Fore.GREEN + str(ans))
 			else:
 				try:
-					if ans.imag==0:
+					if(ans.imag == 0):
 						print(Fore.GREEN + str(ans.real))
 					else:
-						print(Fore.RED + "Domain error")
+						print(Fore.RED + Style.BRIGHT + "Domain error" + Fore.RESET + Style.NORMAL)
 				except:
 		  			print()
 		#if ans==None and pr==1:
