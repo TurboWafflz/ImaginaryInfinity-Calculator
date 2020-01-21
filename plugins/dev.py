@@ -5,7 +5,7 @@ def switchBranch(branch):
     if branch != master:
         print("Warning, branches other than " + Fore.CYAN + "master " + Fore.RESET + "may be unstable and buggy. Are you sure you want to continue switching to " + Fore.CYAN + branch + Fore.RESET + "?(y/n)")
         yn=input()
-        if yn="n":
+        if yn=="n":
             return
     os.system("git checkout " + branch)
     if branch != "master":
