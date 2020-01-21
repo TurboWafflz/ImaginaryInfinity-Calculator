@@ -2,7 +2,7 @@
 import os
 from colorama import Fore, Back
 def switchBranch(branch):
-    if branch != master:
+    if branch != "master":
         print("Warning, branches other than " + Fore.CYAN + "master " + Fore.RESET + "may be unstable and buggy. Are you sure you want to continue switching to " + Fore.CYAN + branch + Fore.RESET + "?(y/n)")
         yn=input()
         if yn=="n":
