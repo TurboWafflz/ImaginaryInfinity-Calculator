@@ -52,6 +52,13 @@ def main():
 			print("Type 'chelp()' for a list of commands")
 			print("Read README")
 			import readline
+		elif(platform.system()=="Windows"):
+    		os.system("cls")
+    		init(convert=True)
+		elif(platform.system()=="Darwin"):
+    		os.system("clear")
+		else:
+    		print("Unknown OS; Can't Clear Screen")
 	try:
 		messagesFile=open('messages.txt')
 		messages=messagesFile.readlines()
