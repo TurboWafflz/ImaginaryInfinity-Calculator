@@ -52,12 +52,12 @@ def main():
 			print("Read README")
 			import readline
 		elif(platform.system()=="Windows"):
-    		os.system("cls")
-    		colorama.init(convert=True)
+			os.system("cls")
+			colorama.init(convert=True)
 		elif(platform.system()=="Darwin"):
-    		os.system("clear")
+			os.system("clear")
 		else:
-    		print("Unknown OS; Can't Clear Screen")
+			print("Unknown OS; Can't Clear Screen")
 	try:
 		messagesFile=open('messages.txt')
 		messages=messagesFile.readlines()
