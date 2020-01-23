@@ -8,9 +8,8 @@ global debugMode
 debugMode=False
 
 
-from colorama import Fore
-from colorama import Back
-from colorama import Style
+from colorama import Fore, Back, Style
+import colorama
 from random import *
 import time
 from math import *
@@ -54,7 +53,7 @@ def main():
 			import readline
 		elif(platform.system()=="Windows"):
     		os.system("cls")
-    		init(convert=True)
+    		colorama.init(convert=True)
 		elif(platform.system()=="Darwin"):
     		os.system("clear")
 		else:
