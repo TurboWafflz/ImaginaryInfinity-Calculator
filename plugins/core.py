@@ -5,6 +5,7 @@ import platform
 from colorama import Fore
 from colorama import Back
 from colorama import Style
+import math
 #Help
 def chelp():
   print("Commands:")
@@ -30,7 +31,22 @@ def complex(onOff):
         print(Fore.CYAN + "Real mode")
         pr=0
         cplx=0
+# #Decimal to fraction
+# def dec2frac(dec):
+# 	bottom = 10
+# 	dec = dec*10
+# 	div = math.gcd(int(dec), bottom)
+# 	dec = dec//div
+# 	bottom = bottom/div
+# 	print(str(int(dec)) + "/" + str(int(bottom)))
 
+#Eqn2Table
+def eqn2table(eqn, lowerBound, upperBound):
+    x=lowerBound
+    print(" x | y")
+    while x <= upperBound:
+        print("{0:0=2d}".format(x), "|", "{0:0=2d}".format(eval(eqn)))
+        x=x+1
 #Factor
 def factor(num):
 
