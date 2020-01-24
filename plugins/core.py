@@ -31,7 +31,7 @@ def complex(onOff):
         print(Fore.CYAN + "Real mode")
         pr=0
         cplx=0
-# #Decimal to fraction
+# #Decimal to fraction (By TabulateJarl8)
 # def dec2frac(dec):
 # 	bottom = 10
 # 	dec = dec*10
@@ -146,7 +146,7 @@ def isPerfect(num,printResult=True):
         return("False")
 
 #Check if number is prime
-#By Tabulate
+#By TabulateJarl8
 #def isPrime(n):
 #    if (n <= 1):
 #        print("False")
