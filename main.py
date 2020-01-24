@@ -2,41 +2,68 @@
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
-from colorama import *
+global cplx
+global onlineMode
+global debugMode
+debugMode=False
+
+
+from colorama import Fore, Back, Style
+import colorama
 from random import *
 import time
 from math import *
 from cmath import *
+import pkgutil
+import sys
+import platform
+import os
 
 #Load plugins
 from plugins import *
 from plugins.core import *
 
-import pkgutil
-import sys
-import platform
-os.system("clear")
-global cplx
-global onlineMode
+
+
 cplx=0
 def main():
-	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-	print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
-	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
-	print("Type 'chelp()' for a list of commands")
-	print("Read README")
+	global debugMode
 	if(len(sys.argv)>1):
 		if(sys.argv[1]=="online"):
-			onlineMode=True
-			print(Fore.RED + Style.BRIGHT + "Online mode, plugins cannot be added" + Fore.RESET + Style.NORMAL)
 			import readline
+			os.system("clear")
+			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+			print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
+			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+			print("Type 'chelp()' for a list of commands")
+			print("Read README")
+			onlineMode=True
+			print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
+			if os.path.isfile('.development'):
+				print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
 	else:
 		if(platform.system()=="Linux"):
 			import readline
-			print(Fore.GREEN + Style.BRIGHT + "Linux mode, all features should be fully supported" + Fore.RESET + Style.NORMAL)
+			os.system("clear")
+			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+			print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
+			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+			print("Type 'chelp()' for a list of commands")
+			print("Read README")
+			import readline
+		elif(platform.system()=="Windows"):
+			os.system("cls")
+			colorama.init(convert=True)
+		elif(platform.system()=="Darwin"):
+			os.system("clear")
 		else:
-			print(Fore.YELLOW + Style.BRIGHT + "Local mode, most features should be supported" + Fore.RESET + Style.NORMAL)
-		onlineMode=False
+			print("Unknown OS; Can't Clear Screen")
+	try:
+		messagesFile=open('messages.txt')
+		messages=messagesFile.readlines()
+		print(Fore.YELLOW + messages[randint(0,len(messages)-1)] + Fore.RESET)
+	except:
+		print("Could not find messages.txt")
 	global cplx
 	ans=0
 	print('')
@@ -59,8 +86,8 @@ def main():
 			eqn=calc
 			if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 				eqn=str(ans)+str(calc)
-			if pr:
-				print(Fore.GREEN + eqn + ':')
+			# if pr:
+				#print(Fore.GREEN + eqn + ':')
 			oldcalc=calc
 			ans=eval(str(eqn))
 		except Exception as e:
@@ -69,22 +96,22 @@ def main():
 				pr=0
 			except:
 				if pr:
-					print(Fore.RED + "Error: " + str(e))
+					print(Fore.RED + Style.BRIGHT + "Error: " + str(e) + Fore.RESET + Style.NORMAL)
 					pr=0
 		#Print answer
-		if pr and ans!=None:
+		if(pr==1 and ans!=None):
 			#Just print answer if in complex mode
-			if cplx==1:
+			if(cplx==1):
 				print(Fore.GREEN + str(ans))
 			else:
 				try:
-					if ans.imag==0:
+					if(ans.imag == 0):
 						print(Fore.GREEN + str(ans.real))
 					else:
-						print(Fore.RED + "Domain error")
+						print(Fore.RED + Style.BRIGHT + "Domain error" + Fore.RESET + Style.NORMAL)
 				except:
 		  			print()
-		if ans==None and pr==1:
-			print(Fore.YELLOW + "Done" + Fore.RESET)
+		#if ans==None and pr==1:
+			#print(Fore.YELLOW + "Done" + Fore.RESET)
 
 main()
