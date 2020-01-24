@@ -199,3 +199,17 @@ def shell():
     if(cmd == "exit"):
       break
     print(os.system(cmd))
+    
+#List Plugins
+def plugins():
+	plugins = os.listdir('plugins/')
+	plugins.remove("dev.py")
+	plugins.remove("core.py")
+	plugins.remove("__init__.py")
+	plugins.remove("beta.py")
+	plugins.remove("__pycache__")
+	plugins.remove("debug.py")
+	i = 0
+	while i < len(plugins):
+		print(Fore.GREEN + plugins[i])
+		i += 1
