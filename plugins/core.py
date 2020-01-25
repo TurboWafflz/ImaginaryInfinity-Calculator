@@ -31,14 +31,44 @@ def complex(onOff):
         print(Fore.CYAN + "Real mode")
         pr=0
         cplx=0
-# #Decimal to fraction (By TabulateJarl8)
-# def dec2frac(dec):
-# 	bottom = 10
-# 	dec = dec*10
-# 	div = math.gcd(int(dec), bottom)
-# 	dec = dec//div
-# 	bottom = bottom/div
-# 	print(str(int(dec)) + "/" + str(int(bottom)))
+#Decimal to fraction (By TabulateJarl8)
+cmplxMode = False
+def toFraction(dec):
+	if cmplxMode == False:
+		bottom = 10
+		dec = dec*10
+		div = math.gcd(int(dec), bottom)
+		dec = dec//div
+		bottom = bottom/div
+		print(str(dec) + "/" + str(bottom))
+	else:
+		bottom = "1"
+		i = 0
+		while i < (len(str(dec)) - 2):
+			bottom = bottom + "0"
+			i += 1
+		bottom = int(bottom)
+		dec = dec*bottom
+		div = math.gcd(int(dec), bottom)
+		dec = dec//div
+		bottom = bottom/div
+		dec = str(dec)
+		bottom = str(bottom)
+		dec = dec[:-1]
+		dec = dec[:-1]
+		bottom = bottom[:-1]
+		bottom = bottom[:-1]
+		print(Fore.RESET + dec + Fore.GREEN + "/" + Fore.RESET + bottom)
+def exactFractions(cmplxFrac = "off"):
+	if cmplxFrac == "off":
+		cmplxMode = False
+		print("Exact Mode Turned Off")
+	elif cmplxFrac == "on":
+		cmplxMode = True
+		print("Exact Mode Turned On")
+	else:
+		print(Fore.RED + "Invalid Syntax: Expected \'on\' or \'off\'")
+
 
 #Eqn2Table
 def eqn2table(eqn, lowerBound, upperBound):
