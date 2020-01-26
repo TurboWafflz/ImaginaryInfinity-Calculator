@@ -57,7 +57,14 @@ def main():
 		elif(platform.system()=="Darwin"):
 			os.system("clear")
 		else:
-			print("Unknown OS; Can't Clear Screen")
+			print("Unknown OS. Attempting to clear screen...")
+			try:
+				os.system("clear")
+			except:
+				try:
+					os.system("cls")
+				except:
+					print("Failed to clear screen. Start an issue on the Github repository, and we'll try to add support for your OS.")
 	try:
 		messagesFile=open('messages.txt')
 		messages=messagesFile.readlines()
