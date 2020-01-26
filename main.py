@@ -27,94 +27,99 @@ from plugins.core import *
 
 cplx=0
 def main():
-	global debugMode
-	if(len(sys.argv)>1):
-		if(sys.argv[1]=="online"):
-			import readline
-			os.system("clear")
-			onlineMode=True
-			print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
-			if os.path.isfile('.development'):
-				print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
-	else:
-		if(platform.system()=="Linux"):
-			os.system("clear")
-			import readline
-		elif(platform.system()=="Windows"):
-			os.system("cls")
-			print("Windows mode, command history and line navigation not available.")
-			colorama.init(convert=True)
-		elif(platform.system()=="Darwin"):
-			os.system("clear")
-			print("MacOS mode, command history and line navigation not available.")
-		else:
-			try:
-				os.system("clear")
-			except:
-				try:
-					os.system("cls")
-				except:
-					print("Failed to clear screen. Start an issue on the Github repository, and we'll try to add support for your OS.")
-			print("Unknown OS, command history and line navigation not available.")
-	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-	print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
-	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
-	print("Type 'chelp()' for a list of commands")
-	print("Read README")
 	try:
-		messagesFile=open('messages.txt')
-		messages=messagesFile.readlines()
-		print(Fore.YELLOW + messages[randint(0,len(messages)-1)] + Fore.RESET)
-	except:
-		print("Could not find messages.txt")
-	global cplx
-	ans=0
-	print('')
-	calc=''
-	while True:
-		pr=True
-		print('')
-		calc=input(Fore.GREEN + Back.RESET + Style.BRIGHT +  ">" + Fore.CYAN + Style.NORMAL + " ")
-		print('')
-		try:
-			cl=list(calc)
-			if calc=='AllWillPerish':
-				pr=0
-				print(Fore.MAGENTA + Style.BRIGHT + "Cheat mode active")
-			if calc=='exit' or calc=='quit' or calc=='Exit' or calc=='Quit':
-				break
-			if calc == '':
-				calc=oldcalc
-				cl=list(calc)
-			eqn=calc
-			if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
-				eqn=str(ans)+str(calc)
-			# if pr:
-				#print(Fore.GREEN + eqn + ':')
-			oldcalc=calc
-			ans=eval(str(eqn))
-		except Exception as e:
-			try:
-				exec(str(calc))
-				pr=0
-			except:
-				if pr:
-					print(Fore.RED + Style.BRIGHT + "Error: " + str(e) + Fore.RESET + Style.NORMAL)
-					pr=0
-		#Print answer
-		if(pr==1 and ans!=None):
-			#Just print answer if in complex mode
-			if(cplx==1):
-				print(Fore.GREEN + str(ans))
+		global debugMode
+		if(len(sys.argv)>1):
+			if(sys.argv[1]=="online"):
+				import readline
+				os.system("clear")
+				onlineMode=True
+				print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
+				if os.path.isfile('.development'):
+					print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
+		else:
+			if(platform.system()=="Linux"):
+				os.system("clear")
+				import readline
+			elif(platform.system()=="Windows"):
+				os.system("cls")
+				print("Windows mode, command history and line navigation not available.")
+				colorama.init(convert=True)
+			elif(platform.system()=="Darwin"):
+				os.system("clear")
+				print("MacOS mode, command history and line navigation not available.")
 			else:
 				try:
-					if(ans.imag == 0):
-						print(Fore.GREEN + str(ans.real))
-					else:
-						print(Fore.RED + Style.BRIGHT + "Domain error" + Fore.RESET + Style.NORMAL)
+					os.system("clear")
 				except:
-		  			print()
-		#if ans==None and pr==1:
-			#print(Fore.YELLOW + "Done" + Fore.RESET)
+					try:
+						os.system("cls")
+					except:
+						print("Failed to clear screen. Start an issue on the Github repository, and we'll try to add support for your OS.")
+				print("Unknown OS, command history and line navigation not available.")
+		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+		print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
+		print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+		print("Type 'chelp()' for a list of commands")
+		print("Read README")
+		try:
+			messagesFile=open('messages.txt')
+			messages=messagesFile.readlines()
+			print(Fore.YELLOW + messages[randint(0,len(messages)-1)] + Fore.RESET)
+		except:
+			print("Could not find messages.txt")
+		global cplx
+		ans=0
+		print('')
+		calc=''
+		while True:
+			pr=True
+			print('')
+			calc=input(Fore.GREEN + Back.RESET + Style.BRIGHT +  ">" + Fore.CYAN + Style.NORMAL + " ")
+			print('')
+			try:
+				cl=list(calc)
+				if calc=='AllWillPerish':
+					pr=0
+					print(Fore.MAGENTA + Style.BRIGHT + "Cheat mode active")
+				if calc=='exit' or calc=='quit' or calc=='Exit' or calc=='Quit':
+					break
+				if calc == '':
+					calc=oldcalc
+					cl=list(calc)
+				eqn=calc
+				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
+					eqn=str(ans)+str(calc)
+				# if pr:
+					#print(Fore.GREEN + eqn + ':')
+				oldcalc=calc
+				ans=eval(str(eqn))
+			except Exception as e:
+				try:
+					exec(str(calc))
+					pr=0
+				except:
+					if pr:
+						print(Fore.RED + Style.BRIGHT + "Error: " + str(e) + Fore.RESET + Style.NORMAL)
+						pr=0
+			#Print answer
+			if(pr==1 and ans!=None):
+				#Just print answer if in complex mode
+				if(cplx==1):
+					print(Fore.GREEN + str(ans))
+				else:
+					try:
+						if(ans.imag == 0):
+							print(Fore.GREEN + str(ans.real))
+						else:
+							print(Fore.RED + Style.BRIGHT + "Domain error" + Fore.RESET + Style.NORMAL)
+					except:
+			  			print()
+			#if ans==None and pr==1:
+				#print(Fore.YELLOW + "Done" + Fore.RESET)
+	except KeyboardInterrupt:
+		print("\nKeyboard Interrupt, exiting...")
+		print(Fore.RESET + Back.RESET + Style.NORMAL)
+		exit()
 
 main()
