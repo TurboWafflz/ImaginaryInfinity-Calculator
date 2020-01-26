@@ -38,16 +38,16 @@ def main():
 				print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
 	else:
 		if(platform.system()=="Linux"):
-			import readline
 			os.system("clear")
 			import readline
 		elif(platform.system()=="Windows"):
 			os.system("cls")
+			print("Windows mode, command history and line navigation not available.")
 			colorama.init(convert=True)
 		elif(platform.system()=="Darwin"):
 			os.system("clear")
+			print("MacOS mode, command history and line navigation not available.")
 		else:
-			print("Unknown OS. Attempting to clear screen...")
 			try:
 				os.system("clear")
 			except:
@@ -55,6 +55,7 @@ def main():
 					os.system("cls")
 				except:
 					print("Failed to clear screen. Start an issue on the Github repository, and we'll try to add support for your OS.")
+			print("Unknown OS, command history and line navigation not available.")
 	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 	print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
 	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
