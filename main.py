@@ -32,11 +32,6 @@ def main():
 		if(sys.argv[1]=="online"):
 			import readline
 			os.system("clear")
-			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-			print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
-			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
-			print("Type 'chelp()' for a list of commands")
-			print("Read README")
 			onlineMode=True
 			print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
 			if os.path.isfile('.development'):
@@ -45,11 +40,6 @@ def main():
 		if(platform.system()=="Linux"):
 			import readline
 			os.system("clear")
-			print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-			print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
-			print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
-			print("Type 'chelp()' for a list of commands")
-			print("Read README")
 			import readline
 		elif(platform.system()=="Windows"):
 			os.system("cls")
@@ -65,6 +55,11 @@ def main():
 					os.system("cls")
 				except:
 					print("Failed to clear screen. Start an issue on the Github repository, and we'll try to add support for your OS.")
+	print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+	print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
+	print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+	print("Type 'chelp()' for a list of commands")
+	print("Read README")
 	try:
 		messagesFile=open('messages.txt')
 		messages=messagesFile.readlines()
