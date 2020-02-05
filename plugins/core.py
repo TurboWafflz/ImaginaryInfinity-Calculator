@@ -23,44 +23,50 @@ def chelp():
 
 
 
-#Decimal to fraction (By TabulateJarl8)
-cmplxMode = False
-def toFraction(dec):
-	if cmplxMode == False:
-		bottom = 10
-		dec = dec*10
-		div = math.gcd(int(dec), bottom)
-		dec = dec//div
-		bottom = bottom/div
-		print(str(dec) + "/" + str(bottom))
-	else:
-		bottom = "1"
-		i = 0
-		while i < (len(str(dec)) - 2):
-			bottom = bottom + "0"
-			i += 1
-		bottom = int(bottom)
-		dec = dec*bottom
-		div = math.gcd(int(dec), bottom)
-		dec = dec//div
-		bottom = bottom/div
-		dec = str(dec)
-		bottom = str(bottom)
-		dec = dec[:-1]
-		dec = dec[:-1]
-		bottom = bottom[:-1]
-		bottom = bottom[:-1]
-		print(Fore.RESET + dec + Fore.GREEN + "/" + Fore.RESET + bottom)
-def exactFractions(cmplxFrac = "off"):
-	if cmplxFrac == "off":
-		cmplxMode = False
-		print("Exact Mode Turned Off")
-	elif cmplxFrac == "on":
-		cmplxMode = True
-		print("Exact Mode Turned On")
-	else:
-		print(Fore.RED + "Invalid Syntax: Expected \'on\' or \'off\'")
+# #Decimal to fraction (By TabulateJarl8)
+# cmplxMode = False
+# def toFraction(dec):
+# 	if cmplxMode == False:
+# 		bottom = 10
+# 		dec = dec*10
+# 		div = math.gcd(int(dec), bottom)
+# 		dec = dec//div
+# 		bottom = bottom/div
+# 		print(str(dec) + "/" + str(bottom))
+# 	else:
+# 		bottom = "1"
+# 		i = 0
+# 		while i < (len(str(dec)) - 2):
+# 			bottom = bottom + "0"
+# 			i += 1
+# 		bottom = int(bottom)
+# 		dec = dec*bottom
+# 		div = math.gcd(int(dec), bottom)
+# 		dec = dec//div
+# 		bottom = bottom/div
+# 		dec = str(dec)
+# 		bottom = str(bottom)
+# 		dec = dec[:-1]
+# 		dec = dec[:-1]
+# 		bottom = bottom[:-1]
+# 		bottom = bottom[:-1]
+# 		print(Fore.RESET + dec + Fore.GREEN + "/" + Fore.RESET + bottom)
 
+# def exactFractions(cmplxFrac = "off"):
+# 	if cmplxFrac == "off":
+# 		cmplxMode = False
+# 		print("Exact Mode Turned Off")
+# 	elif cmplxFrac == "on":
+# 		cmplxMode = True
+# 		print("Exact Mode Turned On")
+# 	else:
+# 		print(Fore.RED + "Invalid Syntax: Expected \'on\' or \'off\'")
+
+#Dec2Frac
+def dec2frac(dec):
+    dec=float(dec)
+    frac=dec.as_integer_ratio()
+    print(str(frac[0]) + "/" + str(frac[1]))
 
 #Eqn2Table
 def eqn2table(eqn, lowerBound, upperBound):
