@@ -23,8 +23,11 @@ def chelp():
 
 #Dec2Frac
 def dec2frac(dec):
+    #Convert int to float
     dec=float(dec)
+    #Convert float to integer ratio
     frac=dec.as_integer_ratio()
+    #Display integer ratio as fraction
     print(str(frac[0]) + "/" + str(frac[1]))
 
 #Eqn2Table
