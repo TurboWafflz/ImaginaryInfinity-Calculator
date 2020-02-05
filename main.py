@@ -23,9 +23,20 @@ import os
 from plugins import *
 from plugins.core import *
 
+#Complex toggle
+def complex(onOff):
+    global cplx
+    if onOff:
+        print(Fore.CYAN + "Complex mode")
+        pr=0
+        cplx=True
+    else:
+        print(Fore.CYAN + "Real mode")
+        pr=0
+        cplx=False
 
 
-cplx=0
+cplx=False
 def main():
 	try:
 		global debugMode
@@ -105,7 +116,7 @@ def main():
 			#Print answer
 			if(pr==1 and ans!=None):
 				#Just print answer if in complex mode
-				if(cplx==1):
+				if(cplx):
 					print(Fore.GREEN + str(ans))
 				else:
 					try:

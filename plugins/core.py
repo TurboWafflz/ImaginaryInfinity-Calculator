@@ -22,16 +22,7 @@ def chelp():
   print("quit() - Quit ImaginaryInfinity Calculator")
 
 
-#Complex toggle
-def complex(onOff):
-    if onOff=="on":
-        print(Fore.CYAN + "Complex mode")
-        pr=0
-        cplx=1
-    if onOff=="off":
-        print(Fore.CYAN + "Real mode")
-        pr=0
-        cplx=0
+
 #Decimal to fraction (By TabulateJarl8)
 cmplxMode = False
 def toFraction(dec):
@@ -230,7 +221,7 @@ def shell():
     if(cmd == "exit"):
       break
     print(os.system(cmd))
-    
+
 #List Plugins
 def plugins():
 	plugins = os.listdir('plugins/')
