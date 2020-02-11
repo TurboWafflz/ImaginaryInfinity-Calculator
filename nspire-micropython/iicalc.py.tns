@@ -12,10 +12,9 @@ plugins=pluginIndex.readlines()
 pluginIndex.close()
 #Import core
 for plugin in plugins:
-    print("Loading " + plugin)
     with open(plugin,"r") as file:
         exec(file.read())
-
+print("Loaded " + len(plugins) + " plugins")
 from math import *
 from cmath import *
 
