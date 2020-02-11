@@ -7,8 +7,9 @@
 #global onlineMode
 #global debugMode
 debugMode=False
-
-plugins=["/documents/iicalc/core.py.tns"]
+pluginIndex = open("/documents/iicalc/plugins.iindex.tns")
+plugins=pluginIndex.readlines()
+pluginIndex.close()
 #Import core
 for plugin in plugins:
     with open(plugin,"r") as file:
