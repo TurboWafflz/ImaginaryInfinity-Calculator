@@ -12,6 +12,7 @@ plugins=pluginIndex.readlines()
 pluginIndex.close()
 #Import core
 for plugin in plugins:
+    print("Loading " + plugin)
     with open(plugin,"r") as file:
         exec(file.read())
 
