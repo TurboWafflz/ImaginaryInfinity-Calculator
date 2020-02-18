@@ -15,7 +15,7 @@ def chelp():
   print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
   print("isPrime(<number>) - Checks whether or not a number is prime")
   if(platform.system()=="Linux"):
-      print("readme() - Shows the README file (Online/Linux only)")
+	  print("readme() - Shows the README file (Online/Linux only)")
   print("sh('<command>') - Run a command directly on your computer")
   print("shell() - Starts a shell directly on your computer")
   print("plugins() - Lists all plugins")
@@ -23,100 +23,100 @@ def chelp():
 
 #Dec2Frac
 def dec2frac(dec):
-    #Convert int to float
-    dec=float(dec)
-    #Convert float to integer ratio
-    frac=dec.as_integer_ratio()
-    #Display integer ratio as fraction
-    print(str(frac[0]) + "/" + str(frac[1]))
+	#Convert int to float
+	dec=float(dec)
+	#Convert float to integer ratio
+	frac=dec.as_integer_ratio()
+	#Display integer ratio as fraction
+	print(str(frac[0]) + "/" + str(frac[1]))
 
 #Eqn2Table
 def eqn2table(eqn, lowerBound, upperBound):
-    x=lowerBound
-    print(" x | y")
-    while x <= upperBound:
-        print("{0:0=2d}".format(x), "|", "{0:0=2d}".format(eval(eqn)))
-        x=x+1
+	x=lowerBound
+	print(" x | y")
+	while x <= upperBound:
+		print("{0:0=2d}".format(x), "|", "{0:0=2d}".format(eval(eqn)))
+		x=x+1
 #Factor
 def factor(num):
 
-    #Positive number
-    if(num>0):
-        i=1
-        while(i<=num):
-            isFactor=num%i
-            #Print factor pair if remainder is 0
-            if(isFactor==0):
-                print(i, "*", int(num/i))
-            i=i+1
-    #Negative number
-    if(num<0):
-        i=-1
-        while(i>=num):
-            isFactor=num%i
-            #Print factor pair if remainder is 0
-            if(isFactor==0):
-                print(i, "*", int(num/i))
-            i=i-1
+	#Positive number
+	if(num>0):
+		i=1
+		while(i<=num):
+			isFactor=num%i
+			#Print factor pair if remainder is 0
+			if(isFactor==0):
+				print(i, "*", int(num/i))
+			i=i+1
+	#Negative number
+	if(num<0):
+		i=-1
+		while(i>=num):
+			isFactor=num%i
+			#Print factor pair if remainder is 0
+			if(isFactor==0):
+				print(i, "*", int(num/i))
+			i=i-1
 
 #Factor List
 def factorList(num,printResult=True):
-    factors=[]
-    #Positive number
-    if(num>0):
-        i=1
-        while(i<=num):
-            isFactor=num%i
-            #Append factor pair if remainder is 0
-            if(isFactor==0):
-                factors.append(i)
-            i=i+1
-    #Negative number
-    if(num<0):
-        i=-1
-        while(i>=num):
-            isFactor=num%i
-            #Append factor pair if remainder is 0
-            if(isFactor==0):
-                factors.append(i)
-            i=i-1
-    if(printResult):
-        print(factors)
-    return(factors)
+	factors=[]
+	#Positive number
+	if(num>0):
+		i=1
+		while(i<=num):
+			isFactor=num%i
+			#Append factor pair if remainder is 0
+			if(isFactor==0):
+				factors.append(i)
+			i=i+1
+	#Negative number
+	if(num<0):
+		i=-1
+		while(i>=num):
+			isFactor=num%i
+			#Append factor pair if remainder is 0
+			if(isFactor==0):
+				factors.append(i)
+			i=i-1
+	if(printResult):
+		print(factors)
+	return(factors)
 
 #FancyFactor
 def fancyFactor(num):
-    #Positive number
-    if(num>0):
-        i=1
-        while(i<=num):
-            isFactor=num%i
-            #Print factor pair, sums, and differences if remainder is 0
-            if(isFactor==0):
-                print(i, "*", int(num/i))
-                print(i, "+", int(num/i),"=",i+num/i)
-                print(i, "-", int(num/i),"=",i-num/i)
-                print("")
-            i=i+1
-    #Negative number
-    if(num<0):
-        i=-1
-        while(i>=num):
-            isFactor=num%i
-            #Print factor pair, sums, and differences if remainder is 0
-            if(isFactor==0):
-                print(i, "*", int(num/i))
-                print(i, "+", int(num/i),"=",i+num/i)
-                print(i, "-", int(num/i),"=",i-num/i)
-                print("")
-            i=i-1
+	#Positive number
+	if(num>0):
+		i=1
+		while(i<=num):
+			isFactor=num%i
+			#Print factor pair, sums, and differences if remainder is 0
+			if(isFactor==0):
+				print(i, "*", int(num/i))
+				print(i, "+", int(num/i),"=",i+num/i)
+				print(i, "-", int(num/i),"=",i-num/i)
+				print("")
+			i=i+1
+	#Negative number
+	if(num<0):
+		i=-1
+		while(i>=num):
+			isFactor=num%i
+			#Print factor pair, sums, and differences if remainder is 0
+			if(isFactor==0):
+				print(i, "*", int(num/i))
+				print(i, "+", int(num/i),"=",i+num/i)
+				print(i, "-", int(num/i),"=",i-num/i)
+				print("")
+			i=i-1
 
 #Install plugins
 def install(url):
-    print("Installing...")
-    os.system("cd plugins")
-    os.system("wget " + url)
-    os.system("cd ..")
+	print("Installing...")
+	os.system("cd plugins")
+	os.system("wget " + url)
+	os.system("cd ..")
 
 #Import/install
 def iprt(lib):
@@ -125,15 +125,15 @@ def iprt(lib):
 
 #isPerfect
 def isPerfect(num,printResult=True):
-    factorsSum=sum(factorList(num,False))
-    if(factorsSum==num*2):
-        if(printResult):
-            print("True")
-        return(True)
-    else:
-        if(printResult):
-            print("False")
-        return("False")
+	factorsSum=sum(factorList(num,False))
+	if(factorsSum==num*2):
+		if(printResult):
+			print("True")
+		return(True)
+	else:
+		if(printResult):
+			print("False")
+		return("False")
 
 #Check if number is prime
 #By TabulateJarl8
@@ -157,41 +157,41 @@ def isPerfect(num,printResult=True):
 
 #isPrime
 def isPrime(num, printResult=True):
-    #Get number of factors
-    factors=len(factorList(num))
-    #If only 2 factors then number is prime else false
-    if(factors==2):
-        if(printResult):
-            print("True")
-        return(True)
-    else:
-        if(printResult):
-            print("False")
-        return(False)
+	#Get number of factors
+	factors=len(factorList(num))
+	#If only 2 factors then number is prime else false
+	if(factors==2):
+		if(printResult):
+			print("True")
+		return(True)
+	else:
+		if(printResult):
+			print("False")
+		return(False)
 
 
 #README (Linux only)
 def readme():
-    if(platform.system()=="Linux"):
-        sh("cat README-online | less")
-    else:
-        return("Sorry, this command only works on Linux and the online version")
+	if(platform.system()=="Linux"):
+		sh("cat README-online | less")
+	else:
+		return("Sorry, this command only works on Linux and the online version")
 #Root
 def root(n,num):
-    return(num**(1/n))
+	return(num**(1/n))
 
 #Sh
 def sh(cmd):
-  os.system(cmd)
+	os.system(cmd)
 
 #Shell
 def shell():
-  c=True
-  while(c):
-    cmd=input("> ")
-    if(cmd == "exit"):
-      break
-    print(os.system(cmd))
+	c=True
+	while(c):
+		cmd=input("> ")
+		if(cmd == "exit"):
+			break
+		print(os.system(cmd))
 
 #List Plugins
 def plugins():
