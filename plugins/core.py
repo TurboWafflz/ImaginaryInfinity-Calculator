@@ -176,6 +176,9 @@ def readme():
         sh("cat README-online | less")
     else:
         return("Sorry, this command only works on Linux and the online version")
+#Root
+def root(n,num):
+    return(num**(1/n))
 
 #Sh
 def sh(cmd):
