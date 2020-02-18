@@ -107,7 +107,7 @@ def main():
 				ans=eval(str(eqn))
 			except Exception as e:
 				try:
-					exec(str(calc))
+					print(exec(str(calc)))
 					pr=0
 				except:
 					if pr:
