@@ -6,20 +6,26 @@ from colorama import Fore
 from colorama import Back
 from colorama import Style
 import math
+import sys
+
 #Help
 def chelp():
-  print("Commands:")
-  print("------")
-  print("complex('<on/off>') - Enable/disable complex mode")
-  print("factor(<number>) - Shows factor pairs for a number")
-  print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
-  print("isPrime(<number>) - Checks whether or not a number is prime")
-  if(platform.system()=="Linux"):
-	  print("readme() - Shows the README file (Online/Linux only)")
-  print("sh('<command>') - Run a command directly on your computer")
-  print("shell() - Starts a shell directly on your computer")
-  print("plugins() - Lists all plugins")
-  print("quit() - Quit ImaginaryInfinity Calculator")
+	print("Commands:")
+	print("------")
+	print("complex('<on/off>') - Enable/disable complex mode")
+	print("factor(<number>) - Shows factor pairs for a number")
+	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
+	print("isPrime(<number>) - Checks whether or not a number is prime")
+	if(platform.system()=="Linux"):
+		print("readme() - Shows the README file (Online/Linux only)")
+	print("sh('<command>') - Run a command directly on your computer")
+	print("shell() - Starts a shell directly on your computer")
+	print("plugins() - Lists all plugins")
+	print("quit() - Quit ImaginaryInfinity Calculator")
+
+#AllWillPerish
+def AllWillPerish():
+	return("Cheat mode active")
 
 #Dec2Frac
 def dec2frac(dec):
@@ -113,15 +119,15 @@ def fancyFactor(num):
 
 #Install plugins
 def install(url):
-	print("Installing...")
+	print("Installing	.")
 	os.system("cd plugins")
 	os.system("wget " + url)
-	os.system("cd ..")
+	os.system("cd 	")
 
 #Import/install
 def iprt(lib):
-  os.system("pip3 install " + lib)
-  import lib
+	os.system("pip3 install " + lib)
+	import lib
 
 #isPerfect
 def isPerfect(num,printResult=True):
@@ -133,27 +139,27 @@ def isPerfect(num,printResult=True):
 	else:
 		if(printResult):
 			print("False")
-		return("False")
+		return(False)
 
 #Check if number is prime
 #By TabulateJarl8
 #def isPrime(n):
-#    if (n <= 1):
-#        print("False")
-#        return False
-#    if (n <= 3):
-#        print("False")
-#        return True
-#    if (n % 2 == 0 or n % 3 == 0):
-#        print("False")
-#        return False
-#    i = 5
-#    while(i * i <= n):
-#            print("False")
-#            return False
-#        i = i + 6
-#    print("True")
-#    return True
+#		if (n <= 1):
+#				print("False")
+#				return False
+#		if (n <= 3):
+#				print("False")
+#				return True
+#		if (n % 2 == 0 or n % 3 == 0):
+#				print("False")
+#				return False
+#		i = 5
+#		while(i * i <= n):
+#						print("False")
+#						return False
+#				i = i + 6
+#		print("True")
+#		return True
 
 #isPrime
 def isPrime(num, printResult=True):
@@ -169,6 +175,23 @@ def isPrime(num, printResult=True):
 			print("False")
 		return(False)
 
+#List Plugins
+def plugins():
+	plugins = os.listdir('plugins/')
+	plugins.remove("dev.py")
+	plugins.remove("core.py")
+	plugins.remove("__init__.py")
+	plugins.remove("beta.py")
+	plugins.remove("__pycache__")
+	plugins.remove("debug.py")
+	i = 0
+	while i < len(plugins):
+		print(Fore.GREEN + plugins[i])
+		i += 1
+#Quit
+def quit():
+	print("Goodbye")
+	sys.exit()
 
 #README (Linux only)
 def readme():
@@ -192,17 +215,3 @@ def shell():
 		if(cmd == "exit"):
 			break
 		print(os.system(cmd))
-
-#List Plugins
-def plugins():
-	plugins = os.listdir('plugins/')
-	plugins.remove("dev.py")
-	plugins.remove("core.py")
-	plugins.remove("__init__.py")
-	plugins.remove("beta.py")
-	plugins.remove("__pycache__")
-	plugins.remove("debug.py")
-	i = 0
-	while i < len(plugins):
-		print(Fore.GREEN + plugins[i])
-		i += 1
