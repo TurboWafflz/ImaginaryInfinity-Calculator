@@ -3,130 +3,130 @@
 import math
 #Help
 def chelp():
-  print("Commands:")
-  print("------")
-  print("complex('<on/off>') - Enable/disable complex mode")
-  print("factor(<number>) - Shows factor pairs for a number")
-  print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
-  print("isPrime(<number>) - Checks whether or not a number is prime")
-  print("sh('<command>') - Run a command directly on your computer")
-  print("shell() - Starts a shell directly on your computer")
-  print("plugins() - Lists all plugins")
-  print("quit() - Quit ImaginaryInfinity Calculator")
+	print("Commands:")
+	print("------")
+	print("complex('<on/off>') - Enable/disable complex mode")
+	print("factor(<number>) - Shows factor pairs for a number")
+	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
+	print("isPrime(<number>) - Checks whether or not a number is prime")
+	print("sh('<command>') - Run a command directly on your computer")
+	print("shell() - Starts a shell directly on your computer")
+	print("plugins() - Lists all plugins")
+	print("quit() - Quit ImaginaryInfinity Calculator")
 
 #Dec2Frac
 def dec2frac(dec):
-    #Convert int to float
-    dec=float(dec)
-    #Convert float to integer ratio
-    frac=dec.as_integer_ratio()
-    #Display integer ratio as fraction
-    print(str(frac[0]) + "/" + str(frac[1]))
+	#Convert int to float
+	dec=float(dec)
+	#Convert float to integer ratio
+	frac=dec.as_integer_ratio()
+	#Display integer ratio as fraction
+	print(str(frac[0]) + "/" + str(frac[1]))
 
 #Eqn2Table
 def eqn2table(eqn, lowerBound, upperBound):
-    x=lowerBound
-    print(" x | y")
-    while x <= upperBound:
-        print("{0:0=2d}".format(x), "|", "{0:0=2d}".format(eval(eqn)))
-        x=x+1
+	x=lowerBound
+	print(" x | y")
+	while x <= upperBound:
+		print("{0:0=2d}".format(x), "|", "{0:0=2d}".format(eval(eqn)))
+		x=x+1
 #Factor
 def factor(num):
 
-    #Positive number
-    if(num>0):
-        i=1
-        while(i<=num):
-            isFactor=num%i
-            #Print factor pair if remainder is 0
-            if(isFactor==0):
-                print(i, "*", int(num/i))
-            i=i+1
-    #Negative number
-    if(num<0):
-        i=-1
-        while(i>=num):
-            isFactor=num%i
-            #Print factor pair if remainder is 0
-            if(isFactor==0):
-                print(i, "*", int(num/i))
-            i=i-1
+	#Positive number
+	if(num>0):
+		i=1
+		while(i<=num):
+			isFactor=num%i
+			#Print factor pair if remainder is 0
+			if(isFactor==0):
+				print(i, "*", int(num/i))
+			i=i+1
+	#Negative number
+	if(num<0):
+		i=-1
+		while(i>=num):
+			isFactor=num%i
+			#Print factor pair if remainder is 0
+			if(isFactor==0):
+				print(i, "*", int(num/i))
+			i=i-1
 
 #Factor List
 def factorList(num,printResult=True):
-    factors=[]
-    #Positive number
-    if(num>0):
-        i=1
-        while(i<=num):
-            isFactor=num%i
-            #Append factor pair if remainder is 0
-            if(isFactor==0):
-                factors.append(i)
-            i=i+1
-    #Negative number
-    if(num<0):
-        i=-1
-        while(i>=num):
-            isFactor=num%i
-            #Append factor pair if remainder is 0
-            if(isFactor==0):
-                factors.append(i)
-            i=i-1
-    if(printResult):
-        print(factors)
-    return(factors)
+	factors=[]
+	#Positive number
+	if(num>0):
+		i=1
+		while(i<=num):
+			isFactor=num%i
+			#Append factor pair if remainder is 0
+			if(isFactor==0):
+				factors.append(i)
+			i=i+1
+	#Negative number
+	if(num<0):
+		i=-1
+		while(i>=num):
+			isFactor=num%i
+			#Append factor pair if remainder is 0
+			if(isFactor==0):
+				factors.append(i)
+			i=i-1
+	if(printResult):
+		print(factors)
+	return(factors)
 
 #FancyFactor
 def fancyFactor(num):
-    #Positive number
-    if(num>0):
-        i=1
-        while(i<=num):
-            isFactor=num%i
-            #Print factor pair, sums, and differences if remainder is 0
-            if(isFactor==0):
-                print(i, "*", int(num/i))
-                print(i, "+", int(num/i),"=",i+num/i)
-                print(i, "-", int(num/i),"=",i-num/i)
-                print("")
-            i=i+1
-    #Negative number
-    if(num<0):
-        i=-1
-        while(i>=num):
-            isFactor=num%i
-            #Print factor pair, sums, and differences if remainder is 0
-            if(isFactor==0):
-                print(i, "*", int(num/i))
-                print(i, "+", int(num/i),"=",i+num/i)
-                print(i, "-", int(num/i),"=",i-num/i)
-                print("")
-            i=i-1
+	#Positive number
+	if(num>0):
+		i=1
+		while(i<=num):
+			isFactor=num%i
+			#Print factor pair, sums, and differences if remainder is 0
+			if(isFactor==0):
+				print(i, "*", int(num/i))
+				print(i, "+", int(num/i),"=",i+num/i)
+				print(i, "-", int(num/i),"=",i-num/i)
+				print("")
+			i=i+1
+	#Negative number
+	if(num<0):
+		i=-1
+		while(i>=num):
+			isFactor=num%i
+			#Print factor pair, sums, and differences if remainder is 0
+			if(isFactor==0):
+				print(i, "*", int(num/i))
+				print(i, "+", int(num/i),"=",i+num/i)
+				print(i, "-", int(num/i),"=",i-num/i)
+				print("")
+			i=i-1
 
 
 #isPerfect
 def isPerfect(num,printResult=True):
-    factorsSum=sum(factorList(num,False))
-    if(factorsSum==num*2):
-        if(printResult):
-            print("True")
-        return(True)
-    else:
-        if(printResult):
-            print("False")
-        return("False")
+	factorsSum=sum(factorList(num,False))
+	if(factorsSum==num*2):
+		if(printResult):
+			print("True")
+		return(True)
+	else:
+		if(printResult):
+			print("False")
+		return("False")
 
 #isPrime
 def isPrime(num, printResult=True):
-    #Get number of factors
-    factors=len(factorList(num))
-    #If only 2 factors then number is prime else false
-    if(factors==2):
-        if(printResult):
-            print("True")
-        return(True)
-    else:
-        if(printResult):
-            print("False")
-        return(False)
+	#Get number of factors
+	factors=len(factorList(num))
+	#If only 2 factors then number is prime else false
+	if(factors==2):
+		if(printResult):
+			print("True")
+		return(True)
+	else:
+		if(printResult):
+			print("False")
+		return(False)

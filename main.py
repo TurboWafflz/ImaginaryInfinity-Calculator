@@ -25,15 +25,15 @@ from plugins.core import *
 
 #Complex toggle
 def complex(onOff):
-    global cplx
-    if onOff:
-        print(Fore.CYAN + "Complex mode")
-        pr=0
-        cplx=True
-    else:
-        print(Fore.CYAN + "Real mode")
-        pr=0
-        cplx=False
+	global cplx
+	if onOff:
+		print(Fore.CYAN + "Complex mode")
+		pr=0
+		cplx=True
+	else:
+		print(Fore.CYAN + "Real mode")
+		pr=0
+		cplx=False
 
 
 cplx=False
@@ -125,7 +125,7 @@ def main():
 						else:
 							print(Fore.RED + Style.BRIGHT + "Domain error" + Fore.RESET + Style.NORMAL)
 					except:
-			  			print()
+						print()
 			#if ans==None and pr==1:
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
 	except KeyboardInterrupt:
