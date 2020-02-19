@@ -36,7 +36,7 @@ from plugins.core import *
 # 		cplx=False
 
 
-cplx=False
+cplx=True
 def main():
 	try:
 		global debugMode
