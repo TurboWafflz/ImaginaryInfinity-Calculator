@@ -23,7 +23,6 @@ class style:
 def chelp():
 	print("Commands:")
 	print("------")
-	print("complex('<on/off>') - Enable/disable complex mode")
 	print("factor(<number>) - Shows factor pairs for a number")
 	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
 	print("isPrime(<number>) - Checks whether or not a number is prime")

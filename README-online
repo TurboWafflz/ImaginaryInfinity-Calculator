@@ -24,8 +24,6 @@ Built in commands:
 The following commands are built in to the calculator or added by the "core"
 plugin.
 
-complex(<True/False>) - Enables/disables complex mode
-
 factor(<number>) - Shows factor pairs for a number
 
 factorList(<number>) - Returns a list of the factors of a number
