@@ -16,6 +16,8 @@ class style:
 	prompt=colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.BRIGHT
 	link=colorama.Fore.BLUE + colorama.Back.RESET + colorama.Style.NORMAL
 	answer=colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.NORMAL
+	input=colorama.Fore.CYAN + colorama.Back.RESET + colorama.Style.NORMAL
+	output=colorama.Fore.WHITE + colorama.Back.RESET + colorama.Style.NORMAL
 
 #Help
 def chelp():

@@ -69,7 +69,7 @@ def main():
 						print("Failed to clear screen. Start an issue on the Github repository, and we'll try to add support for your OS.")
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-		print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
+		print(style.normal + "Copyright 2020 Finian Wright")
 		print(style.link + "https://turbowafflz.github.io/iicalc.html" + style.normal)
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
@@ -86,7 +86,7 @@ def main():
 		while True:
 			pr=True
 			print('')
-			calc=input(style.prompt + ">" + Fore.CYAN + Style.NORMAL + " ")
+			calc=input(style.prompt + ">" + style.input + " ")
 			print('')
 			try:
 				cl=list(calc)
@@ -107,7 +107,7 @@ def main():
 				ans=eval(str(eqn))
 			except Exception as e:
 				try:
-					print(exec(str(calc)))
+					print(style.output + exec(str(calc)))
 					pr=0
 				except:
 					if pr:
@@ -121,7 +121,7 @@ def main():
 				else:
 					try:
 						if(ans.imag == 0):
-							print(Fore.GREEN + str(ans.real))
+							print(style.answer + str(ans.real))
 						else:
 							print(style.error + "Domain error" + style.normal)
 					except:
