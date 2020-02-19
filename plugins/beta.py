@@ -1,7 +1,12 @@
 import re
 from functools import reduce
 from fractions import gcd
+import colorama
 import math
+class style:
+	normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
+	error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
+	important=colorama.Fore.MAGENTA + colorama.Back.RESET + colorama.Style.BRIGHT
 def expFactor(exp):
 	#Find monomials
 	monomials=re.split('\+|-', exp)
@@ -34,3 +39,9 @@ def expFactor(exp):
 		print("Numerical GCF is: " + str(gcf))
 	else:
 		print("No numerical GCF")
+
+def help():
+	print("Beta Plugin")
+	print("-----------")
+	print("This plugin contains beta functions that are not yet ready for use.")
+	print(style.important + "Data from functions in this plugin should not be used except for testing purposes" + style.normal)

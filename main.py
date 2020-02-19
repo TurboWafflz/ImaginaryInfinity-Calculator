@@ -70,13 +70,13 @@ def main():
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 		print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
-		print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+		print(style.link + "https://turbowafflz.github.io/iicalc.html" + style.normal)
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
 		try:
 			messagesFile=open('messages.txt')
 			messages=messagesFile.readlines()
-			print(Fore.YELLOW + messages[randint(0,len(messages)-1)] + Fore.RESET)
+			print(style.startupmessage + messages[randint(0,len(messages)-1)] + style.normal)
 		except:
 			print("Could not find messages.txt")
 		global cplx
@@ -86,13 +86,13 @@ def main():
 		while True:
 			pr=True
 			print('')
-			calc=input(Fore.GREEN + Back.RESET + Style.BRIGHT +  ">" + Fore.CYAN + Style.NORMAL + " ")
+			calc=input(style.prompt + ">" + Fore.CYAN + Style.NORMAL + " ")
 			print('')
 			try:
 				cl=list(calc)
 				if calc=='AllWillPerish':
 					pr=0
-					print(Fore.MAGENTA + Style.BRIGHT + "Cheat mode active")
+					print(style.important + "Cheat mode active" + style.normal)
 				if calc=='exit' or calc=='quit' or calc=='Exit' or calc=='Quit':
 					break
 				if calc == '':
@@ -111,25 +111,25 @@ def main():
 					pr=0
 				except:
 					if pr:
-						print(Fore.RED + Style.BRIGHT + "Error: " + str(e) + Fore.RESET + Style.NORMAL)
+						print(style.error + "Error: " + str(e) + style.normal)
 						pr=0
 			#Print answer
 			if(pr==1 and ans!=None):
 				#Just print answer if in complex mode
 				if(cplx):
-					print(Fore.GREEN + str(ans))
+					print(style.answer + str(ans) + style.normal)
 				else:
 					try:
 						if(ans.imag == 0):
 							print(Fore.GREEN + str(ans.real))
 						else:
-							print(Fore.RED + Style.BRIGHT + "Domain error" + Fore.RESET + Style.NORMAL)
+							print(style.error + "Domain error" + style.normal)
 					except:
 						print()
 			#if ans==None and pr==1:
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
 	except KeyboardInterrupt:
-		print("\nKeyboard Interrupt, exiting...")
+		print(style.important + "\nKeyboard Interrupt, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
 
