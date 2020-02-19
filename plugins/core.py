@@ -200,7 +200,7 @@ def plugins():
 		i += 1
 #Quit
 def quit():
-	print("Goodbye")
+	print(style.important + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
 	sys.exit()
 
 #README (Linux only)
@@ -208,7 +208,7 @@ def readme():
 	if(platform.system()=="Linux"):
 		sh("cat README-online | less")
 	else:
-		return("Sorry, this command only works on Linux and the online version")
+		return("Sorry, this command only works on Linux")
 #Root
 def root(n,num):
 	return(num**(1/n))
