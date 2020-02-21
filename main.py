@@ -134,6 +134,11 @@ def main():
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
 	except Exception as e:
-		print(style.error + "Fatal error: " + str(e) + style.normal)
+		print(style.error)
+		print("==============")
+		print("= Fatal error=")
+		print("==============")
+		print(Style.NORMAL + "The calculator has encountered an error and cannot continue.")
+		print(Style.BRIGHT + "Error: " + Style.NORMAL + str(e) + style.normal)
 
 main()
