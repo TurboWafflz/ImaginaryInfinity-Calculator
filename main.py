@@ -139,6 +139,6 @@ def main():
 		print("= Fatal error=")
 		print("==============")
 		print(Style.NORMAL + "The calculator has encountered an error and cannot continue.")
-		print(Style.BRIGHT + "Error: " + Style.NORMAL + str(e) + style.normal)
+		print(Style.BRIGHT + "Error: " + str(e) + style.normal)
 
 main()
