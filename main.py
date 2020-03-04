@@ -66,7 +66,7 @@ def main():
 					try:
 						os.system("cls")
 					except:
-						print("Unknown OS, couldn't clear screen. Start an issue on the Github repository, and we'll try to add support for your OS.")
+						print("Unknown OS, couldn't clear screen. Start an issue on the Github repository at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues, and we'll try to add support for your OS.")
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 		print(style.normal + "Copyright 2020 Finian Wright")
@@ -140,5 +140,6 @@ def main():
 		print("==============")
 		print(Style.NORMAL + "The calculator has encountered an error and cannot continue.")
 		print(Style.BRIGHT + "Error: " + str(e) + style.normal)
+		print("Please start an issue on the GitHub repository at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues")
 
 main()
