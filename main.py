@@ -25,15 +25,15 @@ from plugins.core import *
 
 #Complex toggle
 def complex(onOff):
-    global cplx
-    if onOff:
-        print(Fore.CYAN + "Complex mode")
-        pr=0
-        cplx=True
-    else:
-        print(Fore.CYAN + "Real mode")
-        pr=0
-        cplx=False
+	global cplx
+	if onOff:
+		print(Fore.CYAN + "Complex mode")
+		pr=0
+		cplx=True
+	else:
+		print(Fore.CYAN + "Real mode")
+		pr=0
+		cplx=False
 
 
 cplx=False
@@ -52,6 +52,9 @@ def main():
 			if(platform.system()=="Linux"):
 				os.system("clear")
 				import readline
+			elif(platform.system()=="Haiku"):
+				os.system("clear")
+				import readline
 			elif(platform.system()=="Windows"):
 				os.system("cls")
 				print("Windows mode, command history and line navigation not available.")
@@ -66,7 +69,7 @@ def main():
 					try:
 						os.system("cls")
 					except:
-						print("Failed to clear screen. Start an issue on the Github repository, and we'll try to add support for your OS.")
+						print("Unknown OS, command history and line navigation not available.")
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 		print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
@@ -125,7 +128,7 @@ def main():
 						else:
 							print(Fore.RED + Style.BRIGHT + "Domain error" + Fore.RESET + Style.NORMAL)
 					except:
-			  			print()
+						print()
 			#if ans==None and pr==1:
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
 	except KeyboardInterrupt:
