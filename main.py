@@ -23,6 +23,7 @@ import os
 from plugins import *
 from plugins.core import *
 
+<<<<<<< HEAD
 #Complex toggle
 def complex(onOff):
 	global cplx
@@ -34,9 +35,22 @@ def complex(onOff):
 		print(Fore.CYAN + "Real mode")
 		pr=0
 		cplx=False
+=======
+# #Complex toggle
+# def complex(onOff):
+# 	global cplx
+# 	if onOff:
+# 		print(Fore.CYAN + "Complex mode")
+# 		pr=0
+# 		cplx=True
+# 	else:
+# 		print(Fore.CYAN + "Real mode")
+# 		pr=0
+# 		cplx=False
+>>>>>>> 7cd69be4c529c23fbf0120f3e7d918cd4a3e0389
 
 
-cplx=False
+cplx=True
 def main():
 	try:
 		global debugMode
@@ -69,17 +83,21 @@ def main():
 					try:
 						os.system("cls")
 					except:
+<<<<<<< HEAD
 						print("Unknown OS, command history and line navigation not available.")
+=======
+						print("Unknown OS, couldn't clear screen. Start an issue on the Github repository at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues, and we'll try to add support for your OS.")
+>>>>>>> 7cd69be4c529c23fbf0120f3e7d918cd4a3e0389
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
-		print(Fore.RESET + Back.RESET + "Copyright 2020 Finian Wright")
-		print(Fore.BLUE + "https://turbowafflz.github.io/iicalc.html" + Fore.RESET)
+		print(style.normal + "Copyright 2020 Finian Wright")
+		print(style.link + "https://turbowafflz.github.io/iicalc.html" + style.normal)
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
 		try:
 			messagesFile=open('messages.txt')
 			messages=messagesFile.readlines()
-			print(Fore.YELLOW + messages[randint(0,len(messages)-1)] + Fore.RESET)
+			print(style.startupmessage + messages[randint(0,len(messages)-1)] + style.normal)
 		except:
 			print("Could not find messages.txt")
 		global cplx
@@ -89,14 +107,15 @@ def main():
 		while True:
 			pr=True
 			print('')
-			calc=input(Fore.GREEN + Back.RESET + Style.BRIGHT +  ">" + Fore.CYAN + Style.NORMAL + " ")
+			calc=input(style.prompt + ">" + style.input + " ")
 			print('')
 			try:
 				cl=list(calc)
 				if calc=='AllWillPerish':
 					pr=0
-					print(Fore.MAGENTA + Style.BRIGHT + "Cheat mode active")
+					print(style.important + "Cheat mode active" + style.normal)
 				if calc=='exit' or calc=='quit' or calc=='Exit' or calc=='Quit':
+					print(style.important + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
 					break
 				if calc == '':
 					calc=oldcalc
@@ -110,30 +129,38 @@ def main():
 				ans=eval(str(eqn))
 			except Exception as e:
 				try:
-					exec(str(calc))
+					print(style.output + exec(str(calc)))
 					pr=0
 				except:
 					if pr:
-						print(Fore.RED + Style.BRIGHT + "Error: " + str(e) + Fore.RESET + Style.NORMAL)
+						print(style.error + "Error: " + str(e) + style.normal)
 						pr=0
 			#Print answer
 			if(pr==1 and ans!=None):
 				#Just print answer if in complex mode
 				if(cplx):
-					print(Fore.GREEN + str(ans))
+					print(style.answer + str(ans) + style.normal)
 				else:
 					try:
 						if(ans.imag == 0):
-							print(Fore.GREEN + str(ans.real))
+							print(style.answer + str(ans.real))
 						else:
-							print(Fore.RED + Style.BRIGHT + "Domain error" + Fore.RESET + Style.NORMAL)
+							print(style.error + "Domain error" + style.normal)
 					except:
 						print()
 			#if ans==None and pr==1:
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
 	except KeyboardInterrupt:
-		print("\nKeyboard Interrupt, exiting...")
+		print(style.important + "\nKeyboard Interrupt, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
+	except Exception as e:
+		print(style.error)
+		print("==============")
+		print("= Fatal error=")
+		print("==============")
+		print(Style.NORMAL + "The calculator has encountered an error and cannot continue.")
+		print(Style.BRIGHT + "Error: " + str(e) + style.normal)
+		print("Please start an issue on the GitHub repository at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues")
 
 main()
