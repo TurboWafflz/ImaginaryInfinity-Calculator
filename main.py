@@ -23,19 +23,6 @@ import os
 from plugins import *
 from plugins.core import *
 
-<<<<<<< HEAD
-#Complex toggle
-def complex(onOff):
-	global cplx
-	if onOff:
-		print(Fore.CYAN + "Complex mode")
-		pr=0
-		cplx=True
-	else:
-		print(Fore.CYAN + "Real mode")
-		pr=0
-		cplx=False
-=======
 # #Complex toggle
 # def complex(onOff):
 # 	global cplx
@@ -47,7 +34,6 @@ def complex(onOff):
 # 		print(Fore.CYAN + "Real mode")
 # 		pr=0
 # 		cplx=False
->>>>>>> 7cd69be4c529c23fbf0120f3e7d918cd4a3e0389
 
 
 cplx=True
@@ -83,11 +69,7 @@ def main():
 					try:
 						os.system("cls")
 					except:
-<<<<<<< HEAD
 						print("Unknown OS, command history and line navigation not available.")
-=======
-						print("Unknown OS, couldn't clear screen. Start an issue on the Github repository at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues, and we'll try to add support for your OS.")
->>>>>>> 7cd69be4c529c23fbf0120f3e7d918cd4a3e0389
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 		print(style.normal + "Copyright 2020 Finian Wright")
