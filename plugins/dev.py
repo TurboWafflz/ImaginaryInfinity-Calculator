@@ -1,5 +1,6 @@
 #The dev plugin contains advanced functions not intended for most users
 import os
+from core import *
 from colorama import Fore, Back
 def switchBranch(branch):
 	if branch != "master":
@@ -26,3 +27,13 @@ def switchBranch(branch):
 #         exit()
 #     else:
 #         print("Sorry, this command is only available in online mode")
+def showPallate():
+	print(style.normal + "Normal")
+	print(style.error + "Error")
+	print(style.important + "Important")
+	print(style.startupmessage + "Startup Message")
+	print(style.prompt + "Prompt")
+	print(style.link + "Link")
+	print(style.answer + "Answer")
+	print(style.input + "Input")
+	print(style.output + "Output")
