@@ -14,8 +14,8 @@ calculators.
 **ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **MacOS X**
 	- No command history or line navigation
+	- I currently have no way of testing the software on MacOS
 - **Windows**
-	- No command history or line navigation
 - **Any other OS that can run Python 3**
 	- Start an issue on GitHub and we may improve support for your OS
 
@@ -56,4 +56,4 @@ all get shown to the user:**
 - `isPrime(<number>, [printResult])`
 - `isPerfect(<number>, [printResult])`
 
-printResult can be set to True or False, and defaults to True if not specified
+printResult can be set to `True` or `False`, and defaults to `True` if not specified
