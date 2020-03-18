@@ -40,8 +40,6 @@ starting number
 
 sh('<command>') - Runs a command directly on your computer
 
-shell() - Starts a shell directly on your computer
-
 quit() - Quit ImaginaryInfinity Calculator
 
 
