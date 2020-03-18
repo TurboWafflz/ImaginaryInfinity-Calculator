@@ -57,7 +57,6 @@ def main():
 				import readline
 			elif(platform.system()=="Windows"):
 				os.system("cls")
-				print("Windows mode, command history and line navigation not available.")
 				colorama.init(convert=True)
 			elif(platform.system()=="Darwin"):
 				os.system("clear")
