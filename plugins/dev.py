@@ -1,6 +1,6 @@
 #The dev plugin contains advanced functions not intended for most users
 import os
-from core import *
+from plugins.core import *
 from colorama import Fore, Back
 def switchBranch(branch):
 	if branch != "master":
