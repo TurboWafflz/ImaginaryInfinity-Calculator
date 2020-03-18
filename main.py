@@ -66,6 +66,8 @@ def main():
 				except:
 					try:
 						os.system("cls")
+					except:
+						pass;
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 		print(style.normal + "Copyright 2020 Finian Wright")
