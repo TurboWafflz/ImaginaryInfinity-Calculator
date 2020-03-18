@@ -13,7 +13,6 @@ calculators.
 
 **ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **MacOS X**
-	- No command history or line navigation
 	- I currently have no way of testing the software on MacOS
 - **Windows**
 - **Any other OS that can run Python 3**
