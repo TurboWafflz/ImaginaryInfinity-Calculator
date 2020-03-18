@@ -60,7 +60,6 @@ def main():
 				colorama.init(convert=True)
 			elif(platform.system()=="Darwin"):
 				os.system("clear")
-				print("MacOS mode, command history and line navigation not available.")
 			else:
 				try:
 					os.system("clear")
@@ -68,7 +67,7 @@ def main():
 					try:
 						os.system("cls")
 					except:
-						print("Unknown OS, command history and line navigation not available.")
+						print("Unknown OS, command history and line navigation may not be available.")
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 		print(style.normal + "Copyright 2020 Finian Wright")
