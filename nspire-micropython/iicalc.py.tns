@@ -1,0 +1,78 @@
+##ImaginaryInfinity Calculator v2.1 (TI-nspire MicroPython Edition)
+##Copyright 2020 Finian Wright
+##https://turbowafflz.github.io/iicalc.html
+#print("Imaginary Infinity Calculator")
+#print("loaded. Start it with iicalc()")
+#global cplx
+#global onlineMode
+#global debugMode
+debugMode=False
+pluginIndex = open("/documents/iicalc/plugins.iindex.tns")
+plugins=pluginIndex.readlines()
+pluginIndex.close()
+#Import core
+for plugin in plugins:
+		with open(plugin,"r") as file:
+				exec(file.read())
+print("Loaded " + len(plugins) + " plugins")
+from math import *
+from cmath import *
+
+def clear():
+	for x in range(30):
+		print()
+
+
+cplx=False
+def iicalc():
+	#clear()
+	try:
+		global debugMode
+		print("ImaginaryInfinity Calculator v2.1 (TI-nspire micropython port)")
+		print("Copyright 2020 Finian Wright")
+		print("https://turbowafflz.github.io/iicalc.html")
+		print("Type 'chelp()' for a list of commands")
+		print("Read README")
+		global cplx
+		ans=0
+		print('')
+		calc=''
+		while True:
+			pr=True
+			print('')
+			calc=input(">" + " ")
+			print('')
+			try:
+				cl=list(calc)
+				if calc=='AllWillPerish':
+					pr=0
+					print("Cheat mode active")
+				if calc=='exit' or calc=='quit' or calc=='Exit' or calc=='Quit':
+					break
+				if calc == '':
+					calc=oldcalc
+					cl=list(calc)
+				eqn=calc
+				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
+					eqn=str(ans)+str(calc)
+				# if pr:
+					#print(Fore.GREEN + eqn + ':')
+				oldcalc=calc
+				ans=eval(str(eqn))
+			except Exception as e:
+				try:
+					exec(str(calc))
+					pr=0
+				except:
+					if pr:
+						print("Error: " + str(e))
+						pr=0
+			#Print answer
+			if(pr==1 and ans!=None):
+				#Just print answer if in complex mode
+				print(ans)
+			#if ans==None and pr==1:
+				#print(Fore.YELLOW + "Done" + Fore.RESET)
+	except:
+		print("Unknown Error")
+iicalc()
