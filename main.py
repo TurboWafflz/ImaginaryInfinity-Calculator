@@ -93,7 +93,7 @@ def main():
 				if calc=='AllWillPerish':
 					pr=0
 					print(style.important + "Cheat mode active" + style.normal)
-				if calc=='exit' or calc=='quit' or calc=='Exit' or calc=='Quit':
+				if calc.lower()=='exit' or calc.lower()=='quit':
 					print(style.important + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
 					break
 				if calc == '':
