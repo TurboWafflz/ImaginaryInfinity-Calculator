@@ -1,3 +1,3 @@
 def out(msg,tf):
-    if(tf):
-        print(msg)
+	if(tf):
+		print(msg)
