@@ -13,8 +13,9 @@ calculators.
 
 **ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **MacOS X**
-	- I currently have no way of testing the software on MacOS
+	- MacOS support is untested as I do not currently have access to a Mac
 - **Windows**
+	- Windows support receives much less testing than other platforms
 - **Any other OS that can run Python 3**
 	- Start an issue on GitHub and we may improve support for your OS
 
@@ -36,12 +37,16 @@ plugin.
 - `fancyFactor(<number>)` - Shows factor pairs and their sums and differences for
 a number
 
+- `install('<url>')` - Installs a plugin from the web (Linux only)
+
 - `iprt('<module>')` - Installs and imports a python module from PyPi
 
 - `isPrime(<number>)` - Checks whether or not a number is is prime
 
 - `isPerfect(<number>)` - Checks whether or not a number's factors add up to twice the
 starting number
+
+- `restart()` - Restarts iiCalc (Linux only)
 
 - `sh('<command>')` - Runs a command directly on your computer
 

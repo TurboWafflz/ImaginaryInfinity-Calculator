@@ -38,6 +38,8 @@ isPrime(<number>) - Checks whether or not a number is is prime
 isPerfect(<number>) - Checks whether or not a number's factors add up to twice the
 starting number
 
+restart() - Restarts the calculator
+
 sh('<command>') - Runs a command directly on your computer
 
 quit() - Quit ImaginaryInfinity Calculator
