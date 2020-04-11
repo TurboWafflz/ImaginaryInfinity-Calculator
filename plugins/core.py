@@ -140,10 +140,15 @@ def fancyFactor(num):
 
 #Install plugins
 def install(url):
-	print("Installing	.")
-	os.system("cd plugins")
-	os.system("wget " + url)
-	os.system("cd 	")
+	if not platform.system() == "Linux":
+		print("Sorry, this function is only available on Linux.")
+	else:
+		print("Installing	.")
+		os.system("cd plugins; wget " + url)
+		yesNo = input("Plugin installed, would you like to restart? (y/N)")
+		if yesNo.lower() == "y":
+			os.system("touch .start")
+			exit()
 
 #Import/install
 def iprt(lib):
@@ -220,6 +225,15 @@ def readme():
 		sh("cat README-online | less")
 	else:
 		return("Sorry, this command only works on Linux")
+#Restart
+def restart():
+	if(platform.system()=="Linux"):
+		yesNo = input("Are you sure you want to restart iiCalc? (y/N)")
+		if yesNo == "y":
+			os.system("touch .start")
+			exit()
+	else:
+		print("Sorry, this function only works on Linux.")
 #Root
 def root(n,num):
 	return(num**(1/n))
