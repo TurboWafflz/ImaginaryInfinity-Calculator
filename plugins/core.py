@@ -8,6 +8,7 @@ from colorama import Style
 import colorama
 import math
 import sys
+import urllib.request
 class darkStyle:
 	normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 	error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
@@ -140,15 +141,21 @@ def fancyFactor(num):
 
 #Install plugins
 def install(url):
-	if not platform.system() == "Linux":
-		print("Sorry, this function is only available on Linux.")
-	else:
-		print("Installing	.")
-		os.system("cd plugins; wget " + url)
+	print("Installing...")
+	os.system("cd plugins")
+	urllib.request.urlretrieve(url, os.getcwd())
+	if platform.system() == "Linux":
 		yesNo = input("Plugin installed, would you like to restart? (y/N)")
 		if yesNo.lower() == "y":
 			os.system("touch .start")
 			exit()
+		else:
+			#Dont know if this is nessecary
+			os.system("cd ..")
+	else:
+		print("Plugin installed. Please restart the calculator.")
+		#Dont know if this is nessecary
+		os.system("cd ..")
 
 #Import/install
 def iprt(lib):
