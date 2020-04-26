@@ -36,6 +36,11 @@ from plugins.core import *
 # 		cplx=False
 style=darkStyle
 cplx=True
+
+#Restart
+def restart():
+	os.execl(sys.executable, sys.executable, * sys.argv)
+	
 def main():
 	try:
 		global debugMode
