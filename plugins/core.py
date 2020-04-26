@@ -9,6 +9,7 @@ import colorama
 import math
 import sys
 import urllib.request
+from main import restart
 class darkStyle:
 	normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 	error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
@@ -144,16 +145,10 @@ def install(url):
 	print("Installing...")
 	os.system("cd plugins")
 	urllib.request.urlretrieve(url, os.getcwd())
-	if platform.system() == "Linux":
-		yesNo = input("Plugin installed, would you like to restart? (y/N)")
-		if yesNo.lower() == "y":
-			os.system("touch .start")
-			exit()
-		else:
-			#Dont know if this is nessecary
-			os.system("cd ..")
+	yesNo = input("Plugin installed, would you like to restart? (y/N)")
+	if yesNo.lower() == "y":
+		restart()
 	else:
-		print("Plugin installed. Please restart the calculator.")
 		#Dont know if this is nessecary
 		os.system("cd ..")
 
@@ -232,15 +227,7 @@ def readme():
 		sh("cat README-online | less")
 	else:
 		return("Sorry, this command only works on Linux")
-#Restart
-def restart():
-	if(platform.system()=="Linux"):
-		yesNo = input("Are you sure you want to restart iiCalc? (y/N)")
-		if yesNo == "y":
-			os.system("touch .start")
-			exit()
-	else:
-		print("Sorry, this function only works on Linux.")
+
 #Root
 def root(n,num):
 	return(num**(1/n))
