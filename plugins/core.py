@@ -15,6 +15,7 @@ import urllib.request
 import shutil
 from pathlib import Path
 import time
+from main import restart
 class darkStyle:
 	normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 	error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
@@ -36,7 +37,7 @@ class lightStyle:
 	answer=colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.NORMAL
 	input=colorama.Fore.CYAN + colorama.Back.RESET + colorama.Style.NORMAL
 	output=colorama.Fore.WHITE + colorama.Back.RESET + colorama.Style.NORMAL
-
+	
 nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
 
 #Help
@@ -150,15 +151,15 @@ def fancyFactor(num):
 
 #Install plugins
 def install(url):
-	if not platform.system() == "Linux":
-		print("Sorry, this function is only available on Linux.")
+	print("Installing...")
+	os.system("cd plugins")
+	urllib.request.urlretrieve(url, os.getcwd())
+	yesNo = input("Plugin installed, would you like to restart? (y/N)")
+	if yesNo.lower() == "y":
+		restart()
 	else:
-		print("Installing	.")
-		os.system("cd plugins; wget " + url)
-		yesNo = input("Plugin installed, would you like to restart? (y/N)")
-		if yesNo.lower() == "y":
-			os.system("touch .start")
-			exit()
+		#Dont know if this is nessecary
+		os.system("cd ..")
 
 #Import/install
 def iprt(lib):
@@ -235,15 +236,7 @@ def readme():
 		sh("cat README-online | less")
 	else:
 		return("Sorry, this command only works on Linux")
-#Restart
-def restart():
-	if(platform.system()=="Linux"):
-		yesNo = input("Are you sure you want to restart iiCalc? (y/N)")
-		if yesNo == "y":
-			os.system("touch .start")
-			exit()
-	else:
-		print("Sorry, this function only works on Linux.")
+
 #Root
 def root(n,num):
 	return(num**(1/n))
@@ -260,7 +253,7 @@ def shell():
 		if(cmd == "exit"):
 			break
 		print(os.system(cmd))
-
+		
 #Update wizard by tabulate
 def doUpdate(branch=0, style=darkStyle):
 	#Establish directories
@@ -371,5 +364,3 @@ def update(style=darkStyle):
 		with open(root + "config.json", "w") as cfg:
 			json.dump(dict, cfg)
 		doUpdate(branch)
-	
-	
