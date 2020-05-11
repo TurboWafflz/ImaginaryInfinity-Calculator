@@ -330,7 +330,7 @@ def update(style=darkStyle):
 	root = str(Path(plugins).parent) + "/"
 	branch = 0
 	try:
-		with open(root + "config.json") as cfg:
+		with open(root + "updateconfig.json") as cfg:
 			data = json.load(cfg)
 			branch = data["update"]["branch"]
 	except:
@@ -351,7 +351,7 @@ def update(style=darkStyle):
 				"branch" : branch
 			}
 		}
-		with open(root + "config.json", "w") as cfg:
+		with open(root + "updateconfig.json", "w") as cfg:
 			json.dump(dict, cfg)
 		doUpdate(branch)
 		
@@ -361,6 +361,6 @@ def update(style=darkStyle):
 				"branch" : branch
 			}
 		}
-		with open(root + "config.json", "w") as cfg:
+		with open(root + "updateconfig.json", "w") as cfg:
 			json.dump(dict, cfg)
 		doUpdate(branch)
