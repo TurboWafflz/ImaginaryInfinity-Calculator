@@ -46,9 +46,11 @@ a number
 - `isPerfect(<number>)` - Checks whether or not a number's factors add up to twice the
 starting number
 
-- `restart()` - Restarts iiCalc (Linux only)
+- `restart()` - Restarts iiCalc
 
 - `sh('<command>')` - Runs a command directly on your computer
+
+- `update()` - Updates the calculator
 
 - `quit()` - Quit ImaginaryInfinity Calculator
 
