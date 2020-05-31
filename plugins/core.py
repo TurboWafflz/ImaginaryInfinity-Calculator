@@ -15,7 +15,6 @@ import urllib.request
 import shutil
 from pathlib import Path
 import time
-from main import restart
 class darkStyle:
 	normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 	error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
@@ -39,6 +38,10 @@ class lightStyle:
 	output=colorama.Fore.WHITE + colorama.Back.RESET + colorama.Style.NORMAL
 	
 nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
+
+#Restart
+def restart():
+	os.execl(sys.executable, sys.executable, * sys.argv)
 
 #Help
 def chelp():
