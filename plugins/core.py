@@ -274,7 +274,7 @@ def doUpdate(branch=0, style=darkStyle):
 	except Exception as e:
 		print(e)
 		print("Unable to backup, aborting.")
-		return 0
+		return 1
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
@@ -340,8 +340,9 @@ def doUpdate(branch=0, style=darkStyle):
 	if os.path.isfile("main.py"):
 		print(style.important + "Update Complete. Please Restart.")
 	else:
-		print("Update failed. Restoring backup...")
+		print(style.error + "Update failed. Restoring backup...")
 		copytree("../.iicalc-backup/*", ".")
+		return 1
 
 
 
