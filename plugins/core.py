@@ -8,8 +8,20 @@ from colorama import Style
 import colorama
 import math
 import sys
-from style import *
+import json
+import secrets
+import zipfile
+import urllib.request
+import shutil
+from pathlib import Path
+import time
+	
+nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
 
+#Restart
+def restart():
+	os.execl(sys.executable, sys.executable, * sys.argv)
+from style import *
 #Help
 def chelp():
 	print("Commands:")
@@ -22,6 +34,7 @@ def chelp():
 	print("sh('<command>') - Run a command directly on your computer")
 	print("shell() - Starts a shell directly on your computer")
 	print("plugins() - Lists all plugins")
+	print("update() - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins")
 	print("quit() - Quit ImaginaryInfinity Calculator")
 
 #AllWillPerish
@@ -120,15 +133,15 @@ def fancyFactor(num):
 
 #Install plugins
 def install(url):
-	if not platform.system() == "Linux":
-		print("Sorry, this function is only available on Linux.")
+	print("Installing...")
+	os.system("cd plugins")
+	urllib.request.urlretrieve(url, os.getcwd())
+	yesNo = input("Plugin installed, would you like to restart? (y/N)")
+	if yesNo.lower() == "y":
+		restart()
 	else:
-		print("Installing	.")
-		os.system("cd plugins; wget " + url)
-		yesNo = input("Plugin installed, would you like to restart? (y/N)")
-		if yesNo.lower() == "y":
-			os.system("touch .start")
-			exit()
+		#Dont know if this is nessecary
+		os.system("cd ..")
 
 #Import/install
 def iprt(lib):
@@ -205,15 +218,7 @@ def readme():
 		sh("cat README-online | less")
 	else:
 		return("Sorry, this command only works on Linux")
-#Restart
-def restart():
-	if(platform.system()=="Linux"):
-		yesNo = input("Are you sure you want to restart iiCalc? (y/N)")
-		if yesNo == "y":
-			os.system("touch .start")
-			exit()
-	else:
-		print("Sorry, this function only works on Linux.")
+
 #Root
 def root(n,num):
 	return(num**(1/n))
@@ -230,3 +235,134 @@ def shell():
 		if(cmd == "exit"):
 			break
 		print(os.system(cmd))
+		
+def addConfig(file, dict):
+	try:
+		with open(file, "r+") as file:
+			data = json.load(file)
+			data.update(dict)
+			file.seek(0)
+			json.dump(data, file)
+		return True
+	except ValueError:
+		with open(file, "r+") as file:
+			json.dump(dict, file)
+		return True
+	except:
+		return False
+		
+def updateConfig(file, item, value):
+	with open(file) as f:
+		data = json.load(f)
+	try:
+		data[item] = value
+		with open(file, "r+") as f:
+			json.dump(data, f)
+		return True
+	except:
+		return False
+		
+def readConfig(file, key):
+	with open(file) as f:
+		data = json.load(f)
+	return data[key]
+		
+#Update wizard by tabulate
+def doUpdate(branch=0, style=darkStyle):
+	#Establish directories
+	plugins = str(Path(__file__).parent) + "/"
+	root = str(Path(plugins).parent) + "/"
+	parent = str(Path(root).parent) + "/"
+	
+	#Move Plugins out of Plugins
+	os.chdir(parent)
+	tempDir = secrets.token_hex(64)
+	os.mkdir(tempDir)
+	os.chdir(plugins)
+	files = os.listdir(".")
+	for file in files:
+		if file in nonplugins:
+			continue
+		else:
+			source = os.path.join(plugins, file)
+			dest = os.path.join(parent, tempDir)
+			shutil.move(source, dest)
+	
+	#Delete contents of calculator
+	os.chdir(parent)
+	shutil.rmtree(root)
+	
+	#remake dir
+	os.mkdir(root)
+	os.chdir(root)
+	
+	#Load branch
+	if branch == 1:
+		branch = "development"
+	else:
+		branch = "master"
+		
+	#download files
+	try:
+		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
+	except:
+		print(style.error + "No Connection, Aborting")
+		sys.exit()
+	
+	#Unzip File
+	with zipfile.ZipFile("newcalc.zip", 'r') as z:
+		z.extractall()
+	
+	os.chdir("ImaginaryInfinity-Calculator-" + branch)
+	
+	files = os.listdir(".")
+	source = root + "ImaginaryInfinity-Calculator-" + branch + "/"
+	for file in files:
+		shutil.move(source+file, root)
+	os.chdir("..")
+	os.rmdir("ImaginaryInfinity-Calculator-" + branch)
+	os.remove("newcalc.zip")
+	
+	#move plugins back into /plugins
+	os.chdir(parent)
+	os.chdir(tempDir)
+	files = os.listdir(".")
+	for file in files:
+		shutil.move(parent + tempDir + "/" + file, plugins)
+	os.chdir("..")
+	os.rmdir(tempDir)
+	
+	print(style.important + "Update Complete. Please Restart.")
+	
+
+
+def update(style=darkStyle):
+	plugins = str(Path(__file__).parent) + "/"
+	root = str(Path(plugins).parent) + "/"
+	branch = 0
+	try:
+		branch = readConfig(root + "config.json", "branch")
+	except:
+		print(style.important + "Config file not found")
+	
+	if branch == 1:
+		branch = "development"
+	else:
+		branch = "master"
+
+	if input(style.input + "Would you like to update from the " + branch + " branch? [Y/n] ").lower() == "n":
+		branch = ""
+		while branch != 1 and branch != 0:
+			branch = int(input(style.input + "Would you like to update from the Master (0) branch or the Development (1) Branch? "))
+		try:
+			updateConfig(root + "config.json", "branch", branch)
+		except:
+			print(style.important + "Config File Not Found")
+		doUpdate(branch)
+		
+	else:
+		try:
+			updateConfig(root + "config.json", "branch", branch)
+		except:
+			print(style.important + "Config File Not Found")
+		doUpdate(branch)
