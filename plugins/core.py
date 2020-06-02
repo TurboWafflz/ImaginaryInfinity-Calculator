@@ -15,7 +15,7 @@ import urllib.request
 import shutil
 from pathlib import Path
 import time
-from shutil import copytree
+from shutil import copytree, rmtree, copy
 nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
 
 #Restart
@@ -269,7 +269,9 @@ def readConfig(file, key):
 
 #Update wizard by tabulate
 def doUpdate(branch=0, style=darkStyle):
+	calcLocation = os.getcwd();
 	try:
+		rmtree("../.iicalc-backup")
 		copytree(".", "../.iicalc-backup")
 	except Exception as e:
 		print(e)
@@ -332,17 +334,21 @@ def doUpdate(branch=0, style=darkStyle):
 	#move plugins back into /plugins
 	os.chdir(parent)
 	os.chdir(tempDir)
+	os.system("cd " + calcLocation)
 	files = os.listdir(".")
 	for file in files:
 		shutil.move(parent + tempDir + "/" + file, plugins)
 	os.chdir("..")
 	os.rmdir(tempDir)
+	if(platform.system()=="Linux" or platform.system()=="Haiku" or platform.system()=="Darwin"):
+		os.system("chmod +x ./launcher.sh")
+	os.chdir(calcLocation)
 	if os.path.isfile("main.py"):
 		print(style.important + "Update Complete. Please Restart.")
 	else:
 		print(style.error + "Update failed. Restoring backup...")
-		copytree("../.iicalc-backup/*", ".")
-		return 1
+		copytree("../.iicalc-backup", ".")
+		return 0
 
 
 
