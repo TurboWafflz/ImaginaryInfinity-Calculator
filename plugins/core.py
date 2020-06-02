@@ -340,10 +340,10 @@ def doUpdate(branch=0, style=darkStyle):
 		shutil.move(parent + tempDir + "/" + file, plugins)
 	os.chdir("..")
 	os.rmdir(tempDir)
-	if(platform.system()=="Linux" or platform.system()=="Haiku" or platform.system()=="Darwin"):
-		os.system("chmod +x ./launcher.sh")
 	os.chdir(calcLocation)
 	if os.path.isfile("main.py"):
+		if(platform.system()=="Linux" or platform.system()=="Haiku" or platform.system()=="Darwin"):
+			os.system("chmod +x ./launcher.sh")
 		print(style.important + "Update Complete. Please Restart.")
 	else:
 		print(style.error + "Update failed. Restoring backup...")
