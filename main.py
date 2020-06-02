@@ -35,6 +35,11 @@ from plugins.core import *
 # 		pr=0
 # 		cplx=False
 cplx=True
+
+#Restart
+def restart():
+	os.execl(sys.executable, sys.executable, * sys.argv)
+	
 def main():
 	try:
 		global debugMode
@@ -73,9 +78,9 @@ def main():
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
 		try:
-			messagesFile=open('messages.txt')
-			messages=messagesFile.readlines()
-			print(style.startupmessage + messages[randint(0,len(messages)-1)] + style.normal)
+			with open('messages.txt') as messagesFile:
+				messages=messagesFile.readlines()
+				print(style.startupmessage + messages[randint(0,len(messages)-1)] + style.normal)
 		except:
 			print("Could not find messages.txt")
 		global cplx
