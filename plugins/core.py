@@ -298,7 +298,7 @@ def doUpdate(branch=0, style=darkStyle):
 
 	#Delete contents of calculator
 	os.chdir(parent)
-	shutil.rmtree(root)
+	shutil.rm(root+"/*")
 
 	#remake dir
 	os.mkdir(root)
