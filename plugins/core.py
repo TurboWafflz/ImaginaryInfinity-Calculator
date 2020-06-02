@@ -375,10 +375,15 @@ def update(style=darkStyle):
 		branch = ""
 		while branch != 1 and branch != 0:
 			branch = int(input(style.input + "Would you like to update from the Master (0) branch or the Development (1) Branch? "))
-		updateConfig(root + "config.json", "branch", branch)
+		try:
+			updateConfig(root + "config.json", "branch", branch)
+		except:
+			print(style.important + "Config File Not Found")
 		doUpdate(branch)
 		
 	else:
-		dict = {"branch" : branch}
-		updateConfig(root + "config.json", "branch", branch)
+		try:
+			updateConfig(root + "config.json", "branch", branch)
+		except:
+			print(style.important + "Config File Not Found")
 		doUpdate(branch)
