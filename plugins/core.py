@@ -32,7 +32,7 @@ def chelp():
 	if(platform.system()=="Linux"):
 		print("readme() - Shows the README file (Online/Linux only)")
 	print("sh('<command>') - Run a command directly on your computer")
-	print("shell() - Starts a shell directly on your computer")
+	#print("shell() - Starts a shell directly on your computer")
 	print("plugins() - Lists all plugins")
 	print("update() - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins")
 	print("quit() - Quit ImaginaryInfinity Calculator")
