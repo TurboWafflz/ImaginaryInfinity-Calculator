@@ -15,7 +15,7 @@ import urllib.request
 import shutil
 from pathlib import Path
 import time
-	
+from shutil import copytree
 nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
 
 #Restart
@@ -235,7 +235,7 @@ def shell():
 		if(cmd == "exit"):
 			break
 		print(os.system(cmd))
-		
+
 def addConfig(file, dict):
 	try:
 		with open(file, "r+") as file:
@@ -250,7 +250,7 @@ def addConfig(file, dict):
 		return True
 	except:
 		return False
-		
+
 def updateConfig(file, item, value):
 	with open(file) as f:
 		data = json.load(f)
@@ -261,19 +261,25 @@ def updateConfig(file, item, value):
 		return True
 	except:
 		return False
-		
+
 def readConfig(file, key):
 	with open(file) as f:
 		data = json.load(f)
 	return data[key]
-		
+
 #Update wizard by tabulate
 def doUpdate(branch=0, style=darkStyle):
+	try:
+		copytree(".", "../.iicalc-backup")
+	except Exception as e:
+		print(e)
+		print("Unable to backup, aborting.")
+		return 0
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
 	parent = str(Path(root).parent) + "/"
-	
+
 	#Move Plugins out of Plugins
 	os.chdir(parent)
 	tempDir = secrets.token_hex(64)
@@ -287,34 +293,34 @@ def doUpdate(branch=0, style=darkStyle):
 			source = os.path.join(plugins, file)
 			dest = os.path.join(parent, tempDir)
 			shutil.move(source, dest)
-	
+
 	#Delete contents of calculator
 	os.chdir(parent)
 	shutil.rmtree(root)
-	
+
 	#remake dir
 	os.mkdir(root)
 	os.chdir(root)
-	
+
 	#Load branch
 	if branch == 1:
 		branch = "development"
 	else:
 		branch = "master"
-		
+
 	#download files
 	try:
 		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
 	except:
 		print(style.error + "No Connection, Aborting")
 		sys.exit()
-	
+
 	#Unzip File
 	with zipfile.ZipFile("newcalc.zip", 'r') as z:
 		z.extractall()
-	
+
 	os.chdir("ImaginaryInfinity-Calculator-" + branch)
-	
+
 	files = os.listdir(".")
 	source = root + "ImaginaryInfinity-Calculator-" + branch + "/"
 	for file in files:
@@ -322,7 +328,7 @@ def doUpdate(branch=0, style=darkStyle):
 	os.chdir("..")
 	os.rmdir("ImaginaryInfinity-Calculator-" + branch)
 	os.remove("newcalc.zip")
-	
+
 	#move plugins back into /plugins
 	os.chdir(parent)
 	os.chdir(tempDir)
@@ -331,9 +337,12 @@ def doUpdate(branch=0, style=darkStyle):
 		shutil.move(parent + tempDir + "/" + file, plugins)
 	os.chdir("..")
 	os.rmdir(tempDir)
-	
-	print(style.important + "Update Complete. Please Restart.")
-	
+	if os.path.isfile("main.py"):
+		print(style.important + "Update Complete. Please Restart.")
+	else:
+		print("Update failed. Restoring backup...")
+		copytree("../.iicalc-backup/*", ".")
+
 
 
 def update(style=darkStyle):
@@ -344,7 +353,7 @@ def update(style=darkStyle):
 		branch = readConfig(root + "config.json", "branch")
 	except:
 		print(style.important + "Config file not found")
-	
+
 	if branch == 1:
 		branch = "development"
 	else:
@@ -359,7 +368,7 @@ def update(style=darkStyle):
 		except:
 			print(style.important + "Config File Not Found")
 		doUpdate(branch)
-		
+
 	else:
 		try:
 			updateConfig(root + "config.json", "branch", branch)
