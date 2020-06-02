@@ -34,7 +34,6 @@ from plugins.core import *
 # 		print(Fore.CYAN + "Real mode")
 # 		pr=0
 # 		cplx=False
-style=darkStyle
 cplx=True
 
 #Restart
