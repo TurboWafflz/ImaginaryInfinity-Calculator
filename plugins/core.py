@@ -341,7 +341,7 @@ def doUpdate(branch=0, style=darkStyle):
 	os.chdir("..")
 	os.rmdir(tempDir)
 	os.chdir(calcLocation)
-	if os.path.isfile("main.py"):
+	if os.path.isfile("launcher.sh"):
 		if(platform.system()=="Linux" or platform.system()=="Haiku" or platform.system()=="Darwin"):
 			os.system("chmod +x ./launcher.sh")
 		print(style.important + "Update Complete. Please Restart.")
