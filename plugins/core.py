@@ -257,6 +257,37 @@ def shell():
 			break
 		print(os.system(cmd))
 		
+def addConfig(file, dict):
+	try:
+		with open(file, "r+") as file:
+			data = json.load(file)
+			data.update(dict)
+			file.seek(0)
+			json.dump(data, file)
+		return True
+	except ValueError:
+		with open(file, "r+") as file:
+			json.dump(dict, file)
+		return True
+	except:
+		return False
+		
+def updateConfig(file, item, value):
+	with open(file) as f:
+		data = json.load(f)
+	try:
+		data[item] = value
+		with open(file, "r+") as f:
+			json.dump(data, f)
+		return True
+	except:
+		return False
+		
+def readConfig(file, key):
+	with open(file) as f:
+		data = json.load(f)
+	return data[key]
+		
 #Update wizard by tabulate
 def doUpdate(branch=0, style=darkStyle):
 	#Establish directories
@@ -322,9 +353,7 @@ def doUpdate(branch=0, style=darkStyle):
 	os.chdir("..")
 	os.rmdir(tempDir)
 	
-	print(style.important + "Update Complete.")
-	time.sleep(5)
-	restart()
+	print(style.important + "Update Complete. Please Restart.")
 	
 
 
@@ -333,9 +362,7 @@ def update(style=darkStyle):
 	root = str(Path(plugins).parent) + "/"
 	branch = 0
 	try:
-		with open(root + "updateconfig.json") as cfg:
-			data = json.load(cfg)
-			branch = data["update"]["branch"]
+		branch = readConfig(root + "config.json", "branch")
 	except:
 		print(style.important + "Config file not found")
 	
@@ -348,22 +375,10 @@ def update(style=darkStyle):
 		branch = ""
 		while branch != 1 and branch != 0:
 			branch = int(input(style.input + "Would you like to update from the Master (0) branch or the Development (1) Branch? "))
-	
-		dict = {
-			"update" : {
-				"branch" : branch
-			}
-		}
-		with open(root + "updateconfig.json", "w") as cfg:
-			json.dump(dict, cfg)
+		updateConfig(root + "config.json", "branch", branch)
 		doUpdate(branch)
 		
 	else:
-		dict = {
-			"update" : {
-				"branch" : branch
-			}
-		}
-		with open(root + "updateconfig.json", "w") as cfg:
-			json.dump(dict, cfg)
+		dict = {"branch" : branch}
+		updateConfig(root + "config.json", "branch", branch)
 		doUpdate(branch)
