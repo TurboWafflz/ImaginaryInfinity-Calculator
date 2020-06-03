@@ -393,14 +393,11 @@ def update(style=darkStyle):
 		while branch != 1 and branch != 0:
 			branch = int(input(style.input + "Would you like to update from the Master (0) branch or the Development (1) Branch? "))
 		try:
+			print(branch)
 			updateConfig(root + "config.json", "branch", branch)
 		except Exception as e:
 			print(style.important + "Config File Not Found\n" + e)
 		doUpdate(branch)
 		
 	else:
-		try:
-			updateConfig(root + "config.json", "branch", branch)
-		except Exception as e:
-			print(style.important + "Config File Not Found\n" + e)
 		doUpdate(branch)
