@@ -270,9 +270,9 @@ def readConfig(file, key):
 #Update wizard by tabulate
 def doUpdate(branch=0, style=darkStyle):
 	#Establish directories
-	plugins = "\"" + str(Path(__file__).parent) + "/\""
-	root = "\"" + str(Path(plugins).parent) + "/\""
-	parent = "\"" + str(Path(root).parent) + "/\""
+	plugins = str(Path(__file__).parent) + "/"
+	root = str(Path(plugins).parent) + "/"
+	parent = str(Path(root).parent) + "/"
 	
 	#Backup
 	if os.path.isdir(parent + ".iibackup"):
@@ -323,8 +323,8 @@ def doUpdate(branch=0, style=darkStyle):
 		sys.exit("No Connection")
 	
 	#Unzip File
-	ziploc = os.path.join(root, "newcalc.zip")
-	with zipfile.ZipFile(ziploc, 'r') as z:
+	os.chdir(root)
+	with zipfile.ZipFile("newcalc.zip", 'r') as z:
 		z.extractall()
 	
 	os.chdir("ImaginaryInfinity-Calculator-" + branch)
