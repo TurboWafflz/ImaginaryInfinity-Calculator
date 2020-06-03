@@ -263,16 +263,21 @@ def updateConfig(file, item, value):
 		return False
 		
 def readConfig(file, key):
-	with open(file) as f:
+	with open(file, "r+") as f:
 		data = json.load(f)
 	return data[key]
 		
 #Update wizard by tabulate
 def doUpdate(branch=0, style=darkStyle):
 	#Establish directories
-	plugins = str(Path(__file__).parent) + "/"
-	root = str(Path(plugins).parent) + "/"
-	parent = str(Path(root).parent) + "/"
+	plugins = "\"" + str(Path(__file__).parent) + "/\""
+	root = "\"" + str(Path(plugins).parent) + "/\""
+	parent = "\"" + str(Path(root).parent) + "/\""
+	
+	#Backup
+	if os.path.isdir(parent + ".iibackup"):
+		shutil.rmtree(parent + ".iibackup")
+	shutil.copytree(root, parent + ".iibackup/")
 	
 	#Move Plugins out of Plugins
 	os.chdir(parent)
@@ -289,12 +294,15 @@ def doUpdate(branch=0, style=darkStyle):
 			shutil.move(source, dest)
 	
 	#Delete contents of calculator
-	os.chdir(parent)
-	shutil.rmtree(root)
-	
-	#remake dir
-	os.mkdir(root)
-	os.chdir(root)
+	for filename in os.listdir(root):
+		file_path = os.path.join(root, filename)
+		try:
+			if os.path.isfile(file_path) or os.path.islink(file_path):
+				os.unlink(file_path)
+			elif os.path.isdir(file_path):
+				shutil.rmtree(file_path)
+		except Exception as e:
+			print('Failed to delete %s. Reason: %s' % (file_path, e))
 	
 	#Load branch
 	if branch == 1:
@@ -306,11 +314,17 @@ def doUpdate(branch=0, style=darkStyle):
 	try:
 		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
 	except:
-		print(style.error + "No Connection, Aborting")
-		sys.exit()
+		print(style.error + "Fatal Error. No Connection, Restoring Backup")
+		#Restore Backup
+		for f in os.listdir(parent + ".iibackup/"):
+			shutil.move(os.path.join(parent + ".iibackup", f), root)
+		os.rmdir(parent + ".iibackup")
+		shutil.rmtree(parent + tempDir)
+		sys.exit("No Connection")
 	
 	#Unzip File
-	with zipfile.ZipFile("newcalc.zip", 'r') as z:
+	ziploc = os.path.join(root, "newcalc.zip")
+	with zipfile.ZipFile(ziploc, 'r') as z:
 		z.extractall()
 	
 	os.chdir("ImaginaryInfinity-Calculator-" + branch)
@@ -331,7 +345,31 @@ def doUpdate(branch=0, style=darkStyle):
 		shutil.move(parent + tempDir + "/" + file, plugins)
 	os.chdir("..")
 	os.rmdir(tempDir)
-	
+	os.chdir(root)
+		
+	#check if all is fine
+	if os.path.isfile("main.py"):
+		pass
+	elif os.path.exists("plugins"):
+		pass
+	else:
+		#VERY BAD THINGS HAVE HAPPENED
+		print(style.error + "Fatal Error. Files not Found")
+		#Restore Backup
+		for f in os.listdir(parent + ".iibackup/"):
+			shutil.move(os.path.join(parent + ".iibackup", f), root)
+		os.rmdir(parent + ".iibackup")
+		sys.exit(1)
+			
+	#make launcher.sh executable
+	OS = platform.system()
+	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
+		os.system("chmod +x launcher.sh")
+		
+	#no more backup
+	shutil.rmtree(parent + ".iibackup")
+		
+	#yay, nothing terrible has happened
 	print(style.important + "Update Complete. Please Restart.")
 	
 
@@ -342,8 +380,8 @@ def update(style=darkStyle):
 	branch = 0
 	try:
 		branch = readConfig(root + "config.json", "branch")
-	except:
-		print(style.important + "Config file not found")
+	except Exception as e:
+		print(style.important + "Config file not found\n" + e)
 	
 	if branch == 1:
 		branch = "development"
@@ -356,13 +394,13 @@ def update(style=darkStyle):
 			branch = int(input(style.input + "Would you like to update from the Master (0) branch or the Development (1) Branch? "))
 		try:
 			updateConfig(root + "config.json", "branch", branch)
-		except:
-			print(style.important + "Config File Not Found")
+		except Exception as e:
+			print(style.important + "Config File Not Found\n" + e)
 		doUpdate(branch)
 		
 	else:
 		try:
 			updateConfig(root + "config.json", "branch", branch)
-		except:
-			print(style.important + "Config File Not Found")
+		except Exception as e:
+			print(style.important + "Config File Not Found\n" + e)
 		doUpdate(branch)
