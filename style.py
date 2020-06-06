@@ -1,4 +1,5 @@
 import colorama
+import json
 class darkStyle:
 	normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 	error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
@@ -20,4 +21,4 @@ class lightStyle:
 	answer=colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.NORMAL
 	input=colorama.Fore.CYAN + colorama.Back.RESET + colorama.Style.NORMAL
 	output=colorama.Fore.WHITE + colorama.Back.RESET + colorama.Style.NORMAL
-style = style=darkStyle
+style=darkStyle
