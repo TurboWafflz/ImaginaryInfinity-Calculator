@@ -1,5 +1,6 @@
-Press [up] and [down] to scroll, press [q] to quit.
-
+=====================================================
+=Press [up] and [down] to scroll, press [q] to quit.=
+=====================================================
 
 ImaginaryInfinity Calculator v2.1
 Copyright 2020 Finian Wright
@@ -23,8 +24,6 @@ Built in commands:
 The following commands are built in to the calculator or added by the "core"
 plugin.
 
-complex('<on/off>') - Enables/disables complex mode
-
 factor(<number>) - Shows factor pairs for a number
 
 factorList(<number>) - Returns a list of the factors of a number
@@ -39,9 +38,9 @@ isPrime(<number>) - Checks whether or not a number is is prime
 isPerfect(<number>) - Checks whether or not a number's factors add up to twice the
 starting number
 
-sh('<command>') - Runs a command directly on your computer
+restart() - Restarts the calculator
 
-shell() - Starts a shell directly on your computer
+sh('<command>') - Runs a command directly on your computer
 
 quit() - Quit ImaginaryInfinity Calculator
 
