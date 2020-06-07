@@ -16,12 +16,16 @@ import shutil
 from pathlib import Path
 import time
 from shutil import copytree, rmtree, copy
+import configparser
 nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
+import themes
+config = configparser.ConfigParser()
+config.read("config.ini")
+exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
 
 #Restart
 def restart():
 	os.execl(sys.executable, sys.executable, * sys.argv)
-from style import *
 #Help
 def chelp():
 	print("Commands:")
