@@ -39,7 +39,7 @@ cplx=True
 #Restart
 def restart():
 	os.execl(sys.executable, sys.executable, * sys.argv)
-	
+
 def main():
 	try:
 		global debugMode
@@ -90,7 +90,7 @@ def main():
 		while True:
 			pr=True
 			print('')
-			calc=input(style.prompt + ">" + style.input + " ")
+			calc=input(style.prompt + style.promptText + style.input + " ")
 			print('')
 			try:
 				cl=list(calc)
