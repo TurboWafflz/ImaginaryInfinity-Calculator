@@ -290,6 +290,142 @@ def updateConfig(file, item, value):
 		return False
 
 def readConfig(file, key):
-	with open(file) as f:
+	with open(file, "r+") as f:
 		data = json.load(f)
 	return data[key]
+
+		
+#Update wizard by tabulate
+def doUpdate(branch=0, style=darkStyle):
+	#Establish directories
+	plugins = str(Path(__file__).parent) + "/"
+	root = str(Path(plugins).parent) + "/"
+	parent = str(Path(root).parent) + "/"
+	
+	#Backup
+	if os.path.isdir(parent + ".iibackup"):
+		shutil.rmtree(parent + ".iibackup")
+	shutil.copytree(root, parent + ".iibackup/")
+	
+	#Move Plugins out of Plugins
+	os.chdir(parent)
+	tempDir = secrets.token_hex(64)
+	os.mkdir(tempDir)
+	os.chdir(plugins)
+	files = os.listdir(".")
+	for file in files:
+		if file in nonplugins:
+			continue
+		else:
+			source = os.path.join(plugins, file)
+			dest = os.path.join(parent, tempDir)
+			shutil.move(source, dest)
+	
+	#Delete contents of calculator
+	for filename in os.listdir(root):
+		file_path = os.path.join(root, filename)
+		try:
+			if os.path.isfile(file_path) or os.path.islink(file_path):
+				os.unlink(file_path)
+			elif os.path.isdir(file_path):
+				shutil.rmtree(file_path)
+		except Exception as e:
+			print('Failed to delete %s. Reason: %s' % (file_path, e))
+	
+	#Load branch
+	if branch == 1:
+		branch = "development"
+	else:
+		branch = "master"
+		
+	#download files
+	try:
+		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
+	except:
+		print(style.error + "Fatal Error. No Connection, Restoring Backup")
+		#Restore Backup
+		for f in os.listdir(parent + ".iibackup/"):
+			shutil.move(os.path.join(parent + ".iibackup", f), root)
+		os.rmdir(parent + ".iibackup")
+		shutil.rmtree(parent + tempDir)
+		sys.exit("No Connection")
+	
+	#Unzip File
+	os.chdir(root)
+	with zipfile.ZipFile("newcalc.zip", 'r') as z:
+		z.extractall()
+	
+	os.chdir("ImaginaryInfinity-Calculator-" + branch)
+	
+	files = os.listdir(".")
+	source = root + "ImaginaryInfinity-Calculator-" + branch + "/"
+	for file in files:
+		shutil.move(source+file, root)
+	os.chdir("..")
+	os.rmdir("ImaginaryInfinity-Calculator-" + branch)
+	os.remove("newcalc.zip")
+	
+	#move plugins back into /plugins
+	os.chdir(parent)
+	os.chdir(tempDir)
+	files = os.listdir(".")
+	for file in files:
+		shutil.move(parent + tempDir + "/" + file, plugins)
+	os.chdir("..")
+	os.rmdir(tempDir)
+	os.chdir(root)
+		
+	#check if all is fine
+	if os.path.isfile("main.py"):
+		pass
+	elif os.path.exists("plugins"):
+		pass
+	else:
+		#VERY BAD THINGS HAVE HAPPENED
+		print(style.error + "Fatal Error. Files not Found")
+		#Restore Backup
+		for f in os.listdir(parent + ".iibackup/"):
+			shutil.move(os.path.join(parent + ".iibackup", f), root)
+		os.rmdir(parent + ".iibackup")
+		sys.exit(1)
+			
+	#make launcher.sh executable
+	OS = platform.system()
+	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
+		os.system("chmod +x launcher.sh")
+		
+	#no more backup
+	shutil.rmtree(parent + ".iibackup")
+		
+	#yay, nothing terrible has happened
+	print(style.important + "Update Complete. Please Restart.")
+	
+
+
+def update(style=darkStyle):
+	plugins = str(Path(__file__).parent) + "/"
+	root = str(Path(plugins).parent) + "/"
+	branch = 0
+	try:
+		branch = readConfig(root + "config.json", "branch")
+	except Exception as e:
+		print(style.important + "Config file not found\n" + e)
+	
+	if branch == 1:
+		branch = "development"
+	else:
+		branch = "master"
+
+	if input(style.input + "Would you like to update from the " + branch + " branch? [Y/n] ").lower() == "n":
+		branch = ""
+		while branch != 1 and branch != 0:
+			branch = int(input(style.input + "Would you like to update from the Master (0) branch or the Development (1) Branch? "))
+		try:
+			print(branch)
+			updateConfig(root + "config.json", "branch", branch)
+		except Exception as e:
+			print(style.important + "Config File Not Found\n" + e)
+		doUpdate(branch)
+		
+	else:
+		doUpdate(branch)
