@@ -93,6 +93,7 @@ def main(config=config):
 			print('')
 			calc=input(style.prompt + style.promptText + style.input + " ")
 			print('')
+			print(style.output)
 			try:
 				cl=list(calc)
 				if calc=='AllWillPerish':
