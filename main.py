@@ -75,7 +75,7 @@ def main(config=config):
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
 		print(style.normal + "Copyright 2020 Finian Wright")
-		print(style.link + "https://turbowafflz.github.io/iicalc.html" + style.normal)
+		print(style.link + "https://turbowafflz.gitlab.io/iicalc.html" + style.normal)
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
 		try:
