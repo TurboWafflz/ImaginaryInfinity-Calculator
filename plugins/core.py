@@ -430,7 +430,8 @@ def update(style=style, config=config):
 		try:
 			print(branch)
 			config["updates"]["branch"] = branch
-			config.write("config.ini")
+			with open("config.ini") as configFile:
+				config.write("config.ini")
 		except Exception as e:
 			print(style.important + "Config File Not Found\n" + e)
 		doUpdate(branch)
