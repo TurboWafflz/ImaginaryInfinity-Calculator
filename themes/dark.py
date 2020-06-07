@@ -9,4 +9,3 @@ class dark:
 	answer=colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.NORMAL
 	input=colorama.Fore.CYAN + colorama.Back.RESET + colorama.Style.NORMAL
 	output=colorama.Fore.WHITE + colorama.Back.RESET + colorama.Style.NORMAL
-	promptText=">"

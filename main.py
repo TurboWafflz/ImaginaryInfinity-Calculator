@@ -91,7 +91,7 @@ def main(config=config):
 		while True:
 			pr=True
 			print('')
-			calc=input(style.prompt + style.promptText + style.input + " ")
+			calc=input(style.prompt + config["appearance"]["prompt"] + style.input + " ")
 			print('')
 			print(style.output)
 			try:
