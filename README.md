@@ -4,6 +4,8 @@ ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
 command line interface is designed to resemble that of some graphing
 calculators.
 
+![Screenshot](iicalc.png)
+
 ## Supported platforms
 **ImaginaryInfinity Calculator fully supports the following platforms:**
 - **Linux**
