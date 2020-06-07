@@ -40,7 +40,7 @@ cplx=True
 def restart():
 	os.execl(sys.executable, sys.executable, * sys.argv)
 
-def main():
+def main(config=config):
 	oldcalc=" "
 	try:
 		global debugMode
