@@ -104,6 +104,8 @@ def main():
 				if calc == '':
 					calc=oldcalc
 					cl=list(calc)
+				if calc == ' ':
+					pr=0
 				eqn=calc
 				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 					eqn=str(ans)+str(calc)
