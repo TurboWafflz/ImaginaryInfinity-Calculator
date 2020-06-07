@@ -137,6 +137,10 @@ def main():
 		print(style.important + "\nKeyboard Interrupt, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
+	except EOFError:
+		print(style.important + "\nEOF, exiting...")
+		print(Fore.RESET + Back.RESET + Style.NORMAL)
+		exit()
 	except Exception as e:
 		print(style.error)
 		print("==============")
