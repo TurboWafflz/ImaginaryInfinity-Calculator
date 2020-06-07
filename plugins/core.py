@@ -15,13 +15,17 @@ import urllib.request
 import shutil
 from pathlib import Path
 import time
-	
+from shutil import copytree, rmtree, copy
+import configparser
 nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
+import themes
+config = configparser.ConfigParser()
+config.read("config.ini")
+exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
 
 #Restart
 def restart():
 	os.execl(sys.executable, sys.executable, * sys.argv)
-from style import *
 #Help
 def chelp():
 	print("Commands:")
@@ -34,12 +38,34 @@ def chelp():
 	print("sh('<command>') - Run a command directly on your computer")
 	#print("shell() - Starts a shell directly on your computer")
 	print("plugins() - Lists all plugins")
-	print("update() - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins")
+	#print("update() - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins")
 	print("quit() - Quit ImaginaryInfinity Calculator")
 
 #AllWillPerish
 def AllWillPerish():
 	return("Cheat mode active")
+
+#Clear
+def clear():
+	if(platform.system()=="Linux"):
+		os.system("clear")
+		import readline
+	elif(platform.system()=="Haiku"):
+		os.system("clear")
+		import readline
+	elif(platform.system()=="Windows"):
+		os.system("cls")
+		colorama.init(convert=True)
+	elif(platform.system()=="Darwin"):
+		os.system("clear")
+	else:
+		try:
+			os.system("clear")
+		except:
+			try:
+				os.system("cls")
+			except:
+				print("This command is not currently supported on your OS, start an issue on the GitHub repository and support may be added.")
 
 #Dec2Frac
 def dec2frac(dec):
@@ -57,6 +83,7 @@ def eqn2table(eqn, lowerBound, upperBound):
 	while x <= upperBound:
 		print("{0:0=2d}".format(x), "|", "{0:0=2d}".format(eval(eqn)))
 		x=x+1
+
 #Factor
 def factor(num):
 
@@ -235,7 +262,7 @@ def shell():
 		if(cmd == "exit"):
 			break
 		print(os.system(cmd))
-		
+
 def addConfig(file, dict):
 	try:
 		with open(file, "r+") as file:
@@ -250,7 +277,7 @@ def addConfig(file, dict):
 		return True
 	except:
 		return False
-		
+
 def updateConfig(file, item, value):
 	with open(file) as f:
 		data = json.load(f)
@@ -261,11 +288,12 @@ def updateConfig(file, item, value):
 		return True
 	except:
 		return False
-		
+
 def readConfig(file, key):
 	with open(file, "r+") as f:
 		data = json.load(f)
 	return data[key]
+
 		
 #Update wizard by tabulate
 def doUpdate(branch=0, style=darkStyle):
