@@ -30,6 +30,8 @@ ex. "factor(7)" instead of "core.factor(7)"
 The following commands are built in to the calculator or added by the "core"
 plugin.
 
+- `configMod("<section>", "<key>", "<value>")` - Changes a value in the config file.
+
 - `factor(<number>)` - Shows factor pairs for a number
 
 - `factorList(<number>)` - Returns a list of the factors of a number
