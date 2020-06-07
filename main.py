@@ -39,8 +39,9 @@ cplx=True
 #Restart
 def restart():
 	os.execl(sys.executable, sys.executable, * sys.argv)
-	
+
 def main():
+	oldcalc=" "
 	try:
 		global debugMode
 		if(len(sys.argv)>1):
@@ -90,7 +91,7 @@ def main():
 		while True:
 			pr=True
 			print('')
-			calc=input(style.prompt + ">" + style.input + " ")
+			calc=input(style.prompt + style.promptText + style.input + " ")
 			print('')
 			try:
 				cl=list(calc)
@@ -103,6 +104,8 @@ def main():
 				if calc == '':
 					calc=oldcalc
 					cl=list(calc)
+				if calc == ' ':
+					pr=0
 				eqn=calc
 				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 					eqn=str(ans)+str(calc)
@@ -135,6 +138,10 @@ def main():
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
 	except KeyboardInterrupt:
 		print(style.important + "\nKeyboard Interrupt, exiting...")
+		print(Fore.RESET + Back.RESET + Style.NORMAL)
+		exit()
+	except EOFError:
+		print(style.important + "\nEOF, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
 	except Exception as e:
