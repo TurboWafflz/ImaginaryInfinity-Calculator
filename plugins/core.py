@@ -263,36 +263,36 @@ def shell():
 			break
 		print(os.system(cmd))
 
-def addConfig(file, dict):
-	try:
-		with open(file, "r+") as file:
-			data = json.load(file)
-			data.update(dict)
-			file.seek(0)
-			json.dump(data, file)
-		return True
-	except ValueError:
-		with open(file, "r+") as file:
-			json.dump(dict, file)
-		return True
-	except:
-		return False
-
-def updateConfig(file, item, value):
-	with open(file) as f:
-		data = json.load(f)
-	try:
-		data[item] = value
-		with open(file, "r+") as f:
-			json.dump(data, f)
-		return True
-	except:
-		return False
-
-def readConfig(file, key):
-	with open(file, "r+") as f:
-		data = json.load(f)
-	return data[key]
+# def addConfig(file, dict):
+# 	try:
+# 		with open(file, "r+") as file:
+# 			data = json.load(file)
+# 			data.update(dict)
+# 			file.seek(0)
+# 			json.dump(data, file)
+# 		return True
+# 	except ValueError:
+# 		with open(file, "r+") as file:
+# 			json.dump(dict, file)
+# 		return True
+# 	except:
+# 		return False
+#
+# def updateConfig(file, item, value):
+# 	with open(file) as f:
+# 		data = json.load(f)
+# 	try:
+# 		data[item] = value
+# 		with open(file, "r+") as f:
+# 			json.dump(data, f)
+# 		return True
+# 	except:
+# 		return False
+#
+# def readConfig(file, key):
+# 	with open(file, "r+") as f:
+# 		data = json.load(f)
+# 	return data[key]
 
 
 #Update wizard by tabulate
@@ -402,14 +402,15 @@ def doUpdate(branch=0, style=style):
 
 
 
-def update(style=style):
+def update(style=style, config=config):
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
 	branch = 0
 	try:
-		branch = readConfig(root + "config.json", "branch")
+		branch = config["updates"]["branch"]
+		branch = int(branch)
 	except Exception as e:
-		print(style.important + "Config file not found\n" + e)
+		print(style.important + "Could not read config file\n" + e)
 
 	if branch == 1:
 		branch = "development"
@@ -422,7 +423,8 @@ def update(style=style):
 			branch = int(input(style.input + "Would you like to update from the Master (0) branch or the Development (1) Branch? "))
 		try:
 			print(branch)
-			updateConfig(root + "config.json", "branch", branch)
+			config["updates"]["branch"] = branch
+			config.write("config.ini")
 		except Exception as e:
 			print(style.important + "Config File Not Found\n" + e)
 		doUpdate(branch)
