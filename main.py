@@ -79,11 +79,11 @@ def main(config=config):
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
 		try:
-			with open('messages.txt') as messagesFile:
+			with open(config["appearance"]["messageFile"]) as messagesFile:
 				messages=messagesFile.readlines()
 				print(style.startupmessage + messages[randint(0,len(messages)-1)] + style.normal)
 		except:
-			print("Could not find messages.txt")
+			print("Could not find messages file")
 		global cplx
 		ans=0
 		print('')
