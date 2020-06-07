@@ -45,6 +45,28 @@ def chelp():
 def AllWillPerish():
 	return("Cheat mode active")
 
+#Clear
+def clear():
+	if(platform.system()=="Linux"):
+		os.system("clear")
+		import readline
+	elif(platform.system()=="Haiku"):
+		os.system("clear")
+		import readline
+	elif(platform.system()=="Windows"):
+		os.system("cls")
+		colorama.init(convert=True)
+	elif(platform.system()=="Darwin"):
+		os.system("clear")
+	else:
+		try:
+			os.system("clear")
+		except:
+			try:
+				os.system("cls")
+			except:
+				print("This command is not currently supported on your OS, start an issue on the GitHub repository and support may be added.")
+
 #Dec2Frac
 def dec2frac(dec):
 	#Convert int to float
@@ -61,6 +83,7 @@ def eqn2table(eqn, lowerBound, upperBound):
 	while x <= upperBound:
 		print("{0:0=2d}".format(x), "|", "{0:0=2d}".format(eval(eqn)))
 		x=x+1
+
 #Factor
 def factor(num):
 
