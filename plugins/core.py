@@ -438,3 +438,4 @@ def update(style=style, config=config):
 
 	else:
 		doUpdate(branch)
+
