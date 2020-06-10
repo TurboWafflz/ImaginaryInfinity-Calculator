@@ -332,12 +332,6 @@ def doUpdate(branch=0, style=style):
 		except Exception as e:
 			print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-	#Load branch
-	if branch == 1:
-		branch = "development"
-	else:
-		branch = "master"
-
 	#download files
 	try:
 		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
@@ -405,10 +399,9 @@ def doUpdate(branch=0, style=style):
 def update(style=style, config=config):
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
-	branch = 0
+	branch = "master"
 	try:
 		branch = config["updates"]["branch"]
-		branch = int(branch)
 	except Exception as e:
 		print(style.important + "Could not read config file\n" + e)
 
