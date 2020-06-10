@@ -19,7 +19,8 @@ def editor():
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
 								choices=[("Theme", "The colors the calculator will use"),
 										("Prompt", "The prompt that will be displayed"),
-										("Discord rich presence", "Display Imaginary Infinity Calculator as your status in Discord"),
+										("Discord rich presence", "Display ImaginaryInfinity Calculator as your status in Discord"),
+										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Save and exit", "Exit the settings editor")], width=100, height=50)
 			if code == d.OK:
 				clear()
@@ -57,6 +58,9 @@ def editor():
 							configFile.close()
 					else:
 						clear()
+				if tag=="Update":
+					update()
+					break
 				if tag == "Save and exit":
 					break
 			else:
