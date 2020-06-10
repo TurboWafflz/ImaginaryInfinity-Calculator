@@ -57,7 +57,7 @@ def hasInternet():
 		conn.close()
 		return False
 
-#Get National Debt	
+#Get National Debt
 def getDebt():
 	soup = requests.get("https://www.treasurydirect.gov/NP_WS/debt/current?format=json").text
 	data = json.loads(soup)
@@ -120,10 +120,12 @@ def main(config=config):
 						msg = getDebt()
 					else:
 						while msg == "[debt]":
-							msg = messages[randint(0,len(messages)-1)]	
+							msg = messages[randint(0,len(messages)-1)]
 				print(style.startupmessage + msg + style.normal)
 		except:
 			print("Could not find messages file")
+		if(platform.system()=="Windows"):
+			print(style.important + "Eww, Windows")
 		global cplx
 		ans=0
 		print('')
