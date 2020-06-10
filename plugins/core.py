@@ -30,6 +30,7 @@ def restart():
 def chelp():
 	print("Commands:")
 	print("------")
+	print("configMod('<section>', '<key>', '<value>'') - Changes a value in the config file.")
 	print("factor(<number>) - Shows factor pairs for a number")
 	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
 	print("isPrime(<number>) - Checks whether or not a number is prime")
@@ -397,9 +398,9 @@ def doUpdate(branch=0, style=style):
 	shutil.rmtree(parent + ".iibackup")
 
 	#yay, nothing terrible has happened
-	print(style.important + "Update Complete. Please Restart.")
-
-
+	x = input(style.important + "Update Complete. Would you like to restart? [Y/n] ")
+	if x != "n":
+		restart()
 
 def update(style=style, config=config):
 	plugins = str(Path(__file__).parent) + "/"
@@ -411,23 +412,4 @@ def update(style=style, config=config):
 	except Exception as e:
 		print(style.important + "Could not read config file\n" + e)
 
-	if branch == 1:
-		branch = "development"
-	else:
-		branch = "master"
-
-	if input(style.input + "Would you like to update from the " + branch + " branch? [Y/n] ").lower() == "n":
-		branch = ""
-		while branch != 1 and branch != 0:
-			branch = int(input(style.input + "Would you like to update from the Master (0) branch or the Development (1) Branch? "))
-		try:
-			print(branch)
-			config["updates"]["branch"] = branch
-			with open("config.ini") as configFile:
-				config.write("config.ini")
-		except Exception as e:
-			print(style.important + "Config File Not Found\n" + e)
-		doUpdate(branch)
-
-	else:
-		doUpdate(branch)
+	doUpdate(branch)
