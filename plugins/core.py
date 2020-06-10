@@ -295,13 +295,6 @@ def shell():
 # 		data = json.load(f)
 # 	return data[key]
 
-#Modify Configuration file
-def configMod(section, key, value, config=config):
-	config[section][key] = value
-	with open("config.ini", "w") as configFile:
-		config.write(configFile)
-		configFile.close()
-	print("Config file updated. Some changes may require a restart to take effect.")
 #Update wizard by tabulate
 def doUpdate(branch=0, style=style):
 	#Establish directories
