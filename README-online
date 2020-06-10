@@ -17,7 +17,7 @@ type "[plugin].[function]()". For example, if you wanted to run the function
 in the parentheses will be passed to the function.
 
 Themes
-The colors used by the calculator can be modified by themes. Themes are python scripts that define a class and are stored in the "themes" folder. To change the theme used by the calculator, run 'configMod("appearance", "theme", "<theme name>")'. Two themes are included by default, "dark" for use on terminals with a dark background, and "light" for use on terminals with a light background.
+The colors used by the calculator can be modified by themes. Themes are python scripts that define a class and are stored in the "themes" folder. To change the theme used by the calculator, run 'settings.configMod("appearance", "theme", "<theme name>")'. Two themes are included by default, "dark" for use on terminals with a dark background, and "light" for use on terminals with a light background.
 
 Note:
 Functions in the "core" plugin can be accessed without specifying "core".
