@@ -18,6 +18,8 @@ import pkgutil
 import sys
 import platform
 import os
+import requests
+import json
 
 #Load plugins
 from plugins import *
@@ -39,6 +41,37 @@ cplx=True
 #Restart
 def restart():
 	os.execl(sys.executable, sys.executable, * sys.argv)
+
+#Check for Internet Connection
+def hasInternet():
+	try:
+		import httplib
+	except:
+		import http.client as httplib
+	conn = httplib.HTTPConnection("www.google.com", timeout=5)
+	try:
+		conn.request("HEAD", "/")
+		conn.close()
+		return True
+	except:
+		conn.close()
+		return False
+
+#Get National Debt	
+def getDebt():
+	soup = requests.get("https://www.treasurydirect.gov/NP_WS/debt/current?format=json").text
+	data = json.loads(soup)
+	index = str(data["totalDebt"]).find(".") - 1
+	data = str(data["totalDebt"])
+	j = 0
+	for i in range(index, -1, -1):
+		if j == 2:
+			data = data[:i] + "," + data[i:]
+			j = 0
+		else:
+			j += 1
+	data = data[:0] + "$" + data[0:]
+	return data
 
 def main(config=config):
 	oldcalc=" "
@@ -81,7 +114,14 @@ def main(config=config):
 		try:
 			with open(config["appearance"]["messageFile"]) as messagesFile:
 				messages=messagesFile.readlines()
-				print(style.startupmessage + messages[randint(0,len(messages)-1)] + style.normal)
+				msg = messages[randint(0,len(messages)-1)]
+				if msg == "[debt]":
+					if hasInternet():
+						msg = getDebt()
+					else:
+						while msg == "[debt]":
+							msg = messages[randint(0,len(messages)-1)]	
+				print(style.startupmessage + msg + style.normal)
 		except:
 			print("Could not find messages file")
 		global cplx
