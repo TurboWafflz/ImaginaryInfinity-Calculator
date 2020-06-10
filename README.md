@@ -35,7 +35,9 @@ The colors used by the calculator can be modified by themes. Themes are python s
 The following commands are built in to the calculator or added by the "core"
 plugin.
 
-- `configMod("<section>", "<key>", "<value>")` - Changes a value in the config file.
+- `settings.configMod("<section>", "<key>", "<value>")` - Changes a value in the config file.
+
+- `settings.editor()` - Settings editor, not supported on all platforms
 
 - `factor(<number>)` - Shows factor pairs for a number
 
