@@ -30,7 +30,8 @@ def restart():
 def chelp():
 	print("Commands:")
 	print("------")
-	print("configMod('<section>', '<key>', '<value>'') - Changes a value in the config file.")
+	print("settings.configMod('<section>', '<key>', '<value>'') - Changes a value in the config file.")
+	print("settings.editor() - Settings editor (Not supported on all platforms)")
 	print("factor(<number>) - Shows factor pairs for a number")
 	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
 	print("isPrime(<number>) - Checks whether or not a number is prime")
