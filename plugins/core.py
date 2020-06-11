@@ -18,7 +18,7 @@ import time
 from shutil import copytree, rmtree, copy
 from dialog import Dialog
 import configparser
-nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
+nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py", "settings.py", "discordrpc.py"]
 import themes
 config = configparser.ConfigParser()
 config.read("config.ini")
