@@ -1,4 +1,4 @@
-#ImaginaryInfinity Calculator Core Plugin v2.1
+#ImaginaryInfinity Calculator Core Plugin v2.2
 #Copyright 2020 Finian Wright
 import os
 import platform
@@ -408,8 +408,8 @@ def update(style=style, config=config):
 			print(style.important + "Could not read config file\n" + e)
 
 		doUpdate(branch)
-	
-	
+
+
 #Update wizard by tabulate
 def doGuiUpdate(branch=0, style=style):
 	d = Dialog(dialog="dialog")
@@ -423,7 +423,7 @@ def doGuiUpdate(branch=0, style=style):
 	except:
 		pass
 	d.gauge_update(13, "Updating...\nBacking Up...", update_text=True)
-	
+
 	#Backup
 	if os.path.isdir(parent + ".iibackup"):
 		shutil.rmtree(parent + ".iibackup")
@@ -469,7 +469,7 @@ def doGuiUpdate(branch=0, style=style):
 		shutil.rmtree(parent + tempDir)
 		sys.exit("No Connection")
 	d.gauge_update(64, "Updating...\nUnzipping...", update_text=True)
-	
+
 	#Unzip File
 	os.chdir(root)
 	with zipfile.ZipFile("newcalc.zip", 'r') as z:

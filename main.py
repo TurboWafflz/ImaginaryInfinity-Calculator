@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator v2.1
+##ImaginaryInfinity Calculator v2.2
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
@@ -106,7 +106,7 @@ def main(config=config):
 					except:
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
-		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.2")
 		print(style.normal + "Copyright 2020 Finian Wright")
 		print(style.link + "https://turbowafflz.gitlab.io/iicalc.html" + style.normal)
 		print("Type 'chelp()' for a list of commands")
