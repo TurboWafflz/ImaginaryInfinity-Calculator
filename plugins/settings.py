@@ -16,7 +16,7 @@ def configMod(section, key, value, config=config):
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		while True:
-			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
+			code, ta = d.menu("ImaginaryInfinity Calculator Settings",
 								choices=[("Theme", "The colors the calculator will use"),
 										("Prompt", "The prompt that will be displayed"),
 										("Discord rich presence", "Display ImaginaryInfinity Calculator as your status in Discord"),
