@@ -297,11 +297,19 @@ def shell():
 # 	return data[key]
 
 #Update wizard by tabulate
+def loadConfig():
+	items = []
+	for each_section in config.sections():
+		for (each_key, each_val) in config.items(each_section):
+			items.append((each_section, each_key, each_val))
+	return items
+
 def doCmdUpdate(branch=0, style=style):
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
 	parent = str(Path(root).parent) + "/"
+	confVals = loadConfig()
 	try:
 		shutil.rmtree(parent + ".iibackup")
 	except:
@@ -392,6 +400,18 @@ def doCmdUpdate(branch=0, style=style):
 	OS = platform.system()
 	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
 		os.system("chmod +x launcher.sh")
+		
+	#Load old conf vals
+	for i in range(len(confVals)):
+		try:
+			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
+		except:
+			pass
+	try:
+		with open("config.ini", "r+") as cf:
+			config.write(cf)
+	except:
+		pass
 
 	#yay, nothing terrible has happened
 	x = input(style.important + "Update Complete. Would you like to restart? [Y/n] ")
@@ -417,6 +437,7 @@ def doGuiUpdate(branch=0, style=style):
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
 	parent = str(Path(root).parent) + "/"
+	confVals = loadConfig()
 	try:
 		shutil.rmtree(parent + ".iibackup")
 	except:
@@ -515,6 +536,20 @@ def doGuiUpdate(branch=0, style=style):
 	OS = platform.system()
 	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
 		os.system("chmod +x launcher.sh")
+		
+	#Load old conf vals
+	for i in range(len(confVals)):
+		try:	
+			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
+			
+		except Exception as e:
+			pass
+	try:
+		with open("config.ini", "r+") as cf:
+			config.write(cf)
+	except:
+		pass
+
 	d.gauge_stop()
 
 	#yay, nothing terrible has happened
