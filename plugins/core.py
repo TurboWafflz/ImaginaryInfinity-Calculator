@@ -16,6 +16,7 @@ import shutil
 from pathlib import Path
 import time
 from shutil import copytree, rmtree, copy
+from dialog import Dialog
 import configparser
 nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
 import themes
@@ -302,6 +303,10 @@ def doUpdate(branch=0, style=style):
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
 	parent = str(Path(root).parent) + "/"
+	try:
+		shutil.rmtree(parent + ".iibackup")
+	except:
+		pass
 
 	#Backup
 	if os.path.isdir(parent + ".iibackup"):
@@ -389,21 +394,148 @@ def doUpdate(branch=0, style=style):
 	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
 		os.system("chmod +x launcher.sh")
 
-	#no more backup
-	shutil.rmtree(parent + ".iibackup")
-
 	#yay, nothing terrible has happened
 	x = input(style.important + "Update Complete. Would you like to restart? [Y/n] ")
 	if x != "n":
 		restart()
 
 def update(style=style, config=config):
+	if input("Would you like to update? [y/N] ").lower() == "y":
+		branch = "master"
+		try:
+			branch = config["updates"]["branch"]
+		except Exception as e:
+			print(style.important + "Could not read config file\n" + e)
+
+		doUpdate(branch)
+	
+	
+#Update wizard by tabulate
+def doGuiUpdate(branch=0, style=style):
+	d = Dialog(dialog="dialog")
+	d.gauge_start("Updating...\nEstablishing Directories...", height=0, width=0, percent=0)
+	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
-	branch = "master"
+	parent = str(Path(root).parent) + "/"
 	try:
-		branch = config["updates"]["branch"]
-	except Exception as e:
-		print(style.important + "Could not read config file\n" + e)
+		shutil.rmtree(parent + ".iibackup")
+	except:
+		pass
+	d.gauge_update(13, "Updating...\nBacking Up...", update_text=True)
+	
+	#Backup
+	if os.path.isdir(parent + ".iibackup"):
+		shutil.rmtree(parent + ".iibackup")
+	shutil.copytree(root, parent + ".iibackup/")
+	d.gauge_update(25, "Updating...\nMoving Plugins...", update_text=True)
 
-	doUpdate(branch)
+	#Move Plugins out of Plugins
+	os.chdir(parent)
+	tempDir = secrets.token_hex(64)
+	os.mkdir(tempDir)
+	os.chdir(plugins)
+	files = os.listdir(".")
+	for file in files:
+		if file in nonplugins:
+			continue
+		else:
+			source = os.path.join(plugins, file)
+			dest = os.path.join(parent, tempDir)
+			shutil.move(source, dest)
+	d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
+
+	#Delete contents of calculator
+	for filename in os.listdir(root):
+		file_path = os.path.join(root, filename)
+		try:
+			if os.path.isfile(file_path) or os.path.islink(file_path):
+				os.unlink(file_path)
+			elif os.path.isdir(file_path):
+				shutil.rmtree(file_path)
+		except Exception as e:
+			print('Failed to delete %s. Reason: %s' % (file_path, e))
+	d.gauge_update(51, "Updating...\nDownloading Update...", update_text=True)
+
+	#download files
+	try:
+		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
+	except:
+		print(style.error + "Fatal Error. No Connection, Restoring Backup")
+		#Restore Backup
+		for f in os.listdir(parent + ".iibackup/"):
+			shutil.move(os.path.join(parent + ".iibackup", f), root)
+		os.rmdir(parent + ".iibackup")
+		shutil.rmtree(parent + tempDir)
+		sys.exit("No Connection")
+	d.gauge_update(64, "Updating...\nUnzipping...", update_text=True)
+	
+	#Unzip File
+	os.chdir(root)
+	with zipfile.ZipFile("newcalc.zip", 'r') as z:
+		z.extractall()
+
+	os.chdir("ImaginaryInfinity-Calculator-" + branch)
+
+	files = os.listdir(".")
+	source = root + "ImaginaryInfinity-Calculator-" + branch + "/"
+	for file in files:
+		shutil.move(source+file, root)
+	os.chdir("..")
+	os.rmdir("ImaginaryInfinity-Calculator-" + branch)
+	os.remove("newcalc.zip")
+	d.gauge_update(77, "Updating...\nRestoring Plugins...", update_text=True)
+
+	#move plugins back into /plugins
+	os.chdir(parent)
+	os.chdir(tempDir)
+	files = os.listdir(".")
+	for file in files:
+		shutil.move(parent + tempDir + "/" + file, plugins)
+	os.chdir("..")
+	os.rmdir(tempDir)
+	os.chdir(root)
+	d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
+
+	#check if all is fine
+	if os.path.isfile("main.py"):
+		pass
+	elif os.path.exists("plugins"):
+		pass
+	else:
+		#VERY BAD THINGS HAVE HAPPENED
+		print(style.error + "Fatal Error. Files not Found")
+		#Restore Backup
+		for f in os.listdir(parent + ".iibackup/"):
+			shutil.move(os.path.join(parent + ".iibackup", f), root)
+		os.rmdir(parent + ".iibackup")
+		sys.exit(1)
+	d.gauge_update(100, "Updating...\nFinishing Up...", update_text=True)
+
+	#make launcher.sh executable
+	OS = platform.system()
+	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
+		os.system("chmod +x launcher.sh")
+	d.gauge_stop()
+
+	#yay, nothing terrible has happened
+	d = Dialog(dialog="dialog").yesno("Update Complete. Would you like to restart?", width=0, height=0)
+	if d == "ok":
+		clear()
+		restart()
+	else:
+		clear()
+
+def guiUpdate(style=style, config=config):
+	d = Dialog(dialog="dialog").yesno("Would you like to update?", width=0, height=0)
+	if d == "ok":
+		branch = "master"
+		try:
+			branch = config["updates"]["branch"]
+		except Exception as e:
+			print(style.important + "Could not read config file\n" + e)
+
+		doGuiUpdate(branch)
+	else:
+		clear()
+		return
