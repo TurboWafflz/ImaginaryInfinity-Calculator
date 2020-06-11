@@ -21,13 +21,13 @@ def editor():
 										("Prompt", "The prompt that will be displayed"),
 										("Discord rich presence", "Display ImaginaryInfinity Calculator as your status in Discord"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
-										("Save and exit", "Exit the settings editor")], width=100, height=50)
+										("Save and exit", "Exit the settings editor")], width=0, height=0)
 			if code == d.OK:
 				clear()
 				if tag == "Theme":
 					tcode, ttag = d.menu("ImaginaryInfinity Calculator Theme Settings",
 										choices=[("Dark", "The default theme, for use in terminals with a dark background"),
-												("Light", "Built in alternate theme for use in terminals with a light background")], width=100, height=50)
+												("Light", "Built in alternate theme for use in terminals with a light background")], width=0, height=0)
 					if tcode == d.OK:
 						config["appearance"]["theme"] = ttag.lower()
 						with open("config.ini", "w") as configFile:
@@ -47,7 +47,7 @@ def editor():
 				if tag == "Discord rich presence":
 					dcode, dtag = d.menu("ImaginaryInfinity Calculator Discord Settings",
 										choices=[("On", "Enable Discord rich presence"),
-												("Off", "Disable Discord rich presence")], width=100, height=50)
+												("Off", "Disable Discord rich presence")], width=0, height=0)
 					if dcode == d.OK:
 						if dtag == "On":
 							config["discord"]["enablerpc"] = "true"
