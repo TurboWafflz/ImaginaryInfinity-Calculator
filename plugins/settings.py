@@ -21,6 +21,7 @@ def editor():
 										("Prompt", "The prompt that will be displayed"),
 										("Discord rich presence", "Display ImaginaryInfinity Calculator as your status in Discord"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
+										("Plugins", "Enable/disable plugins"),
 										("Save and exit", "Exit the settings editor")], width=0, height=0)
 			if code == d.OK:
 				clear()
@@ -61,6 +62,34 @@ def editor():
 				if tag=="Update":
 					update()
 					break
+				if tag=="Plugins":
+					plugins = os.listdir('plugins/')
+					plugins.remove("core.py")
+					plugins.remove("settings.py")
+					plugins.remove("discordrpc.py")
+					plugins.remove("dev.py")
+					plugins.remove("debug.py")
+					plugins.remove("beta.py")
+					plugins.remove("__init__.py")
+					plugins.remove("__pycache__")
+					i=0
+					if len(plugins) > 0:
+						for plugin in plugins:
+							if plugin[-3:] == ".py":
+								plugins[i] = (plugin, plugin, True)
+							if plugin[-9:] == ".disabled":
+								plugins[i] = (plugin, plugin, False)
+							i += 1
+						pcode, ptags = d.checklist("Plugins", choices=plugins, height=0, width=0)
+						i=0
+						print(ptags)
+						for plugin in plugins:
+							if not plugin[0][-9:] == ".disabled" and not plugin[0] in ptags:
+								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0] + ".disabled")
+							if plugin[0][-9:] == ".disabled" and plugin[0] in ptags:
+								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0][:-9])
+					else:
+						d.msgbox("You have not installed any plugins.")
 				if tag == "Save and exit":
 					break
 			else:
