@@ -297,7 +297,7 @@ def shell():
 # 	return data[key]
 
 #Update wizard by tabulate
-def doUpdate(branch=0, style=style):
+def doCmdUpdate(branch=0, style=style):
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
@@ -398,7 +398,7 @@ def doUpdate(branch=0, style=style):
 	if x != "n":
 		restart()
 
-def update(style=style, config=config):
+def cmdUpdate(style=style, config=config):
 	if input("Would you like to update? [y/N] ").lower() == "y":
 		branch = "master"
 		try:
@@ -538,3 +538,9 @@ def guiUpdate(style=style, config=config):
 	else:
 		clear()
 		return
+		
+def update():
+	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+		guiUpdate()
+	else:
+		cmdUpdate()
