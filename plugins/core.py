@@ -241,12 +241,32 @@ def isPrime(num, printResult=True):
 #List Plugins
 def plugins():
 	plugins = os.listdir('plugins/')
-	plugins.remove("dev.py")
-	plugins.remove("core.py")
-	plugins.remove("__init__.py")
-	plugins.remove("beta.py")
-	plugins.remove("__pycache__")
-	plugins.remove("debug.py")
+	nonplugins = getDefaults("plugins")
+	if nonplugins != None:
+		listprogs = ""
+		for i in range(len(nonplugins)):
+			if i != len(nonplugins) - 1:
+				listprogs = listprogs + nonplugins[i] + ", "
+			else:
+				listprogs += nonplugins[i]
+	config["updates"]["nonplugins"] = listprogs
+	with open("config.ini", "r+") as cf:
+		try:
+			config.write(cf)
+		except:
+			pass
+	try:
+		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
+	except:
+		nonplugins = []
+	
+	j = len(plugins) - 1
+	for i in range(j, 0, -1):
+		if plugins[i] in nonplugins:
+			plugins.remove(plugins[i])
+	if plugins[0] in nonplugins:
+		plugins = []
+
 	i = 0
 	while i < len(plugins):
 		print(Fore.GREEN + plugins[i])
