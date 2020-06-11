@@ -11,6 +11,8 @@ import sys
 import json
 import secrets
 import zipfile
+from bs4 import BeautifulSoup
+import requests
 import urllib.request
 import shutil
 from pathlib import Path
@@ -18,11 +20,51 @@ import time
 from shutil import copytree, rmtree, copy
 from dialog import Dialog
 import configparser
-nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py", "settings.py", "discordrpc.py"]
 import themes
 config = configparser.ConfigParser()
 config.read("config.ini")
 exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
+
+#Not Sure how to explain this
+
+def getDefaults(folder):
+	try:
+		soup = BeautifulSoup(requests.get("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/tree/development/" + folder).text, "html.parser")
+		soup = soup.find_all("a", {"class": "js-navigation-open"})
+		plugins = []
+		for i in range(len(soup)):
+			if not " " in soup[i].text and soup[i].text != "..":
+				plugins.append(soup[i].text)
+		plugins.append("__pycache__")
+		return plugins
+	except:
+		return None
+
+#Update configs
+nonplugins = getDefaults("plugins")
+nonthemes = getDefaults("themes")
+
+if nonplugins != None:
+	listprogs = ""
+	for i in range(len(nonplugins)):
+		if i != len(nonplugins) - 1:
+			listprogs = listprogs + nonplugins[i] + ", "
+		else:
+			listprogs += nonplugins[i]
+	config["updates"]["nonplugins"] = listprogs
+if nonthemes != None:
+	listprogs = ""
+	for i in range(len(nonthemes)):
+		if i != len(nonthemes) - 1:
+			listprogs = listprogs + nonthemes[i] + ", "
+		else:
+			listprogs += nonthemes[i]
+	config["updates"]["nonthemes"] = listprogs
+with open("config.ini", "r+") as cf:
+	try:
+		config.write(cf)
+	except:
+		pass
 
 #Restart
 def restart():
@@ -305,9 +347,19 @@ def loadConfig():
 	return items
 
 def doCmdUpdate(branch=0, style=style):
+	try:
+		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
+	except:
+		nonplugins = []
+	try:
+		nonthemes = [e.strip() for e in config["updates"]["nonthemes"].split(',')]
+	except:
+		nonthemes = []
+
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
+	themes = os.path.join(root, "themes")
 	parent = str(Path(root).parent) + "/"
 	confVals = loadConfig()
 	try:
@@ -332,6 +384,20 @@ def doCmdUpdate(branch=0, style=style):
 		else:
 			source = os.path.join(plugins, file)
 			dest = os.path.join(parent, tempDir)
+			shutil.move(source, dest)
+			
+	#Move Themes out of Themes
+	os.chdir(parent)
+	tempThemeDir = secrets.token_hex(64)
+	os.mkdir(tempThemeDir)
+	os.chdir(themes)
+	files = os.listdir(".")
+	for file in files:
+		if file in nonthemes:
+			continue
+		else:
+			source = os.path.join(themes, file)
+			dest = os.path.join(parent, tempThemeDir)
 			shutil.move(source, dest)
 
 	#Delete contents of calculator
@@ -380,6 +446,16 @@ def doCmdUpdate(branch=0, style=style):
 		shutil.move(parent + tempDir + "/" + file, plugins)
 	os.chdir("..")
 	os.rmdir(tempDir)
+	os.chdir(root)
+	
+	#move themes back into /themes
+	os.chdir(parent)
+	os.chdir(tempThemeDir)
+	files = os.listdir(".")
+	for file in files:
+		shutil.move(parent + tempThemeDir + "/" + file, themes)
+	os.chdir("..")
+	os.rmdir(tempThemeDir)
 	os.chdir(root)
 
 	#check if all is fine
@@ -431,11 +507,21 @@ def cmdUpdate(style=style, config=config):
 	
 #Update wizard by tabulate
 def doGuiUpdate(branch=0, style=style):
+	try:
+		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
+	except:
+		nonplugins = []
+	try:
+		nonthemes = [e.strip() for e in config["updates"]["nonthemes"].split(',')]
+	except:
+		nonthemes = []
+		
 	d = Dialog(dialog="dialog")
 	d.gauge_start("Updating...\nEstablishing Directories...", height=0, width=0, percent=0)
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
+	themes = os.path.join(root, "themes")
 	parent = str(Path(root).parent) + "/"
 	confVals = loadConfig()
 	try:
@@ -462,6 +548,20 @@ def doGuiUpdate(branch=0, style=style):
 		else:
 			source = os.path.join(plugins, file)
 			dest = os.path.join(parent, tempDir)
+			shutil.move(source, dest)
+			
+	#Move Themes out of Themes
+	os.chdir(parent)
+	tempThemeDir = secrets.token_hex(64)
+	os.mkdir(tempThemeDir)
+	os.chdir(themes)
+	files = os.listdir(".")
+	for file in files:
+		if file in nonthemes:
+			continue
+		else:
+			source = os.path.join(themes, file)
+			dest = os.path.join(parent, tempThemeDir)
 			shutil.move(source, dest)
 	d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
 
@@ -514,6 +614,16 @@ def doGuiUpdate(branch=0, style=style):
 		shutil.move(parent + tempDir + "/" + file, plugins)
 	os.chdir("..")
 	os.rmdir(tempDir)
+	os.chdir(root)
+	
+	#move themes back into /themes
+	os.chdir(parent)
+	os.chdir(tempThemeDir)
+	files = os.listdir(".")
+	for file in files:
+		shutil.move(parent + tempThemeDir + "/" + file, themes)
+	os.chdir("..")
+	os.rmdir(tempThemeDir)
 	os.chdir(root)
 	d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
 
