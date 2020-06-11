@@ -660,25 +660,25 @@ def guiUpdate(style=style, config=config):
 		
 def update():
 	#Update configs
-nonplugins = getDefaults("plugins")
-nonthemes = getDefaults("themes")
+	nonplugins = getDefaults("plugins")
+	nonthemes = getDefaults("themes")
 
-if nonplugins != None:
-	listprogs = ""
+	if nonplugins != None:
+		listprogs = ""
 		for i in range(len(nonplugins)):
 			if i != len(nonplugins) - 1:
 				listprogs = listprogs + nonplugins[i] + ", "
 			else:
 				listprogs += nonplugins[i]
-		config["updates"]["nonplugins"] = listprogs
+	config["updates"]["nonplugins"] = listprogs
 	if nonthemes != None:
 		listprogs = ""
-		for i in range(len(nonthemes)):
-			if i != len(nonthemes) - 1:
-				listprogs = listprogs + nonthemes[i] + ", "
-			else:
-				listprogs += nonthemes[i]
-		config["updates"]["nonthemes"] = listprogs
+	for i in range(len(nonthemes)):
+		if i != len(nonthemes) - 1:
+			listprogs = listprogs + nonthemes[i] + ", "
+		else:
+			listprogs += nonthemes[i]
+	config["updates"]["nonthemes"] = listprogs
 	with open("config.ini", "r+") as cf:
 		try:
 			config.write(cf)
