@@ -63,27 +63,19 @@ def editor():
 					update()
 					break
 				if tag=="Plugins":
-					plugins = os.listdir('plugins/')
-					plugins.remove("core.py")
-					plugins.remove("settings.py")
-					plugins.remove("discordrpc.py")
-					plugins.remove("dev.py")
-					plugins.remove("debug.py")
-					plugins.remove("beta.py")
-					plugins.remove("__init__.py")
-					plugins.remove("__pycache__")
+					pluginslist = plugins(False)
 					i=0
-					if len(plugins) > 0:
-						for plugin in plugins:
+					if len(pluginslist) > 0:
+						for plugin in pluginslist:
 							if plugin[-3:] == ".py":
-								plugins[i] = (plugin, plugin, True)
+								pluginslist[i] = (plugin, plugin, True)
 							if plugin[-9:] == ".disabled":
-								plugins[i] = (plugin, plugin, False)
+								pluginslist[i] = (plugin, plugin, False)
 							i += 1
-						pcode, ptags = d.checklist("Plugins", choices=plugins, height=0, width=0)
+						pcode, ptags = d.checklist("Plugins", choices=pluginslist, height=0, width=0)
 						i=0
 						print(ptags)
-						for plugin in plugins:
+						for plugin in pluginslist:
 							if not plugin[0][-9:] == ".disabled" and not plugin[0] in ptags:
 								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0] + ".disabled")
 							if plugin[0][-9:] == ".disabled" and plugin[0] in ptags:
@@ -94,8 +86,12 @@ def editor():
 					break
 			else:
 				clear()
-		d.msgbox("Your settings have been saved. Some settings may require a restart to take effect.")
-		clear()
+		restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)
+		if restartbox == "ok":
+			clear()
+			restart()
+		else:
+			clear()
 	elif platform.system() == "Windows":
 		print("The setting editor does not support Windows. Don't start an issue, support will not be added.")
 	else:
