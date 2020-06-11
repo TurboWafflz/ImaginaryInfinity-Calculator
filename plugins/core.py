@@ -11,7 +11,6 @@ import sys
 import json
 import zipfile
 from bs4 import BeautifulSoup
-import requests
 import urllib.request
 import shutil
 from pathlib import Path
@@ -28,7 +27,7 @@ exec("style = themes." + config["appearance"]["theme"] + "." + config["appearanc
 
 def getDefaults(folder):
 	try:
-		soup = BeautifulSoup(requests.get("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/tree/development/" + folder).text, "html.parser")
+		soup = BeautifulSoup(urllib.request.urlopen("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/tree/development/" + folder).read(), "html.parser")
 		soup = soup.find_all("a", {"class": "js-navigation-open"})
 		plugins = []
 		for i in range(len(soup)):
