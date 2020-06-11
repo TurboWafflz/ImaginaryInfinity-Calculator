@@ -9,8 +9,8 @@ import colorama
 import math
 import sys
 import json
-import secrets
 import zipfile
+from bs4 import BeautifulSoup
 import urllib.request
 import shutil
 from pathlib import Path
@@ -18,11 +18,25 @@ import time
 from shutil import copytree, rmtree, copy
 from dialog import Dialog
 import configparser
-nonplugins = ["__init__.py", "__pycache__", "dev.py", "core.py", "beta.py", "debug.py"]
 import themes
 config = configparser.ConfigParser()
 config.read("config.ini")
 exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
+
+#Not Sure how to explain this
+
+def getDefaults(folder):
+	try:
+		soup = BeautifulSoup(urllib.request.urlopen("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/tree/development/" + folder).read(), "html.parser")
+		soup = soup.find_all("a", {"class": "js-navigation-open"})
+		plugins = []
+		for i in range(len(soup)):
+			if not " " in soup[i].text and soup[i].text != "..":
+				plugins.append(soup[i].text)
+		plugins.append("__pycache__")
+		return plugins
+	except:
+		return None
 
 #Restart
 def restart():
@@ -225,18 +239,42 @@ def isPrime(num, printResult=True):
 		return(False)
 
 #List Plugins
-def plugins():
+def plugins(printval=True):
 	plugins = os.listdir('plugins/')
-	plugins.remove("dev.py")
-	plugins.remove("core.py")
-	plugins.remove("__init__.py")
-	plugins.remove("beta.py")
-	plugins.remove("__pycache__")
-	plugins.remove("debug.py")
+	nonplugins = getDefaults("plugins")
+	if nonplugins != None:
+		listprogs = ""
+		for i in range(len(nonplugins)):
+			if i != len(nonplugins) - 1:
+				listprogs = listprogs + nonplugins[i] + ", "
+			else:
+				listprogs += nonplugins[i]
+	config["updates"]["nonplugins"] = listprogs
+	with open("config.ini", "r+") as cf:
+		try:
+			config.write(cf)
+		except:
+			pass
+	try:
+		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
+	except:
+		nonplugins = []
+	
+	j = len(plugins) - 1
+	for i in range(j, 0, -1):
+		if plugins[i] in nonplugins:
+			plugins.remove(plugins[i])
+	if plugins[0] in nonplugins:
+		plugins = []
+
 	i = 0
-	while i < len(plugins):
-		print(Fore.GREEN + plugins[i])
-		i += 1
+	if printval == True:
+		while i < len(plugins):
+			print(Fore.GREEN + plugins[i])
+			i += 1
+	else:
+		return plugins
+	
 #Quit
 def quit():
 	print(style.important + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
@@ -298,11 +336,29 @@ def shell():
 # 	return data[key]
 
 #Update wizard by tabulate
-def doUpdate(branch=0, style=style):
+def loadConfig():
+	items = []
+	for each_section in config.sections():
+		for (each_key, each_val) in config.items(each_section):
+			items.append((each_section, each_key, each_val))
+	return items
+
+def doCmdUpdate(branch=0, style=style):
+	try:
+		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
+	except:
+		nonplugins = []
+	try:
+		nonthemes = [e.strip() for e in config["updates"]["nonthemes"].split(',')]
+	except:
+		nonthemes = []
+
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
+	themes = os.path.join(root, "themes")
 	parent = str(Path(root).parent) + "/"
+	confVals = loadConfig()
 	try:
 		shutil.rmtree(parent + ".iibackup")
 	except:
@@ -315,7 +371,7 @@ def doUpdate(branch=0, style=style):
 
 	#Move Plugins out of Plugins
 	os.chdir(parent)
-	tempDir = secrets.token_hex(64)
+	tempDir = ".iipluginsbackup"
 	os.mkdir(tempDir)
 	os.chdir(plugins)
 	files = os.listdir(".")
@@ -325,6 +381,20 @@ def doUpdate(branch=0, style=style):
 		else:
 			source = os.path.join(plugins, file)
 			dest = os.path.join(parent, tempDir)
+			shutil.move(source, dest)
+			
+	#Move Themes out of Themes
+	os.chdir(parent)
+	tempThemeDir = ".iithemesbackup"
+	os.mkdir(tempThemeDir)
+	os.chdir(themes)
+	files = os.listdir(".")
+	for file in files:
+		if file in nonthemes:
+			continue
+		else:
+			source = os.path.join(themes, file)
+			dest = os.path.join(parent, tempThemeDir)
 			shutil.move(source, dest)
 
 	#Delete contents of calculator
@@ -374,6 +444,16 @@ def doUpdate(branch=0, style=style):
 	os.chdir("..")
 	os.rmdir(tempDir)
 	os.chdir(root)
+	
+	#move themes back into /themes
+	os.chdir(parent)
+	os.chdir(tempThemeDir)
+	files = os.listdir(".")
+	for file in files:
+		shutil.move(parent + tempThemeDir + "/" + file, themes)
+	os.chdir("..")
+	os.rmdir(tempThemeDir)
+	os.chdir(root)
 
 	#check if all is fine
 	if os.path.isfile("main.py"):
@@ -393,13 +473,25 @@ def doUpdate(branch=0, style=style):
 	OS = platform.system()
 	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
 		os.system("chmod +x launcher.sh")
+		
+	#Load old conf vals
+	for i in range(len(confVals)):
+		try:
+			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
+		except:
+			pass
+	try:
+		with open("config.ini", "r+") as cf:
+			config.write(cf)
+	except:
+		pass
 
 	#yay, nothing terrible has happened
 	x = input(style.important + "Update Complete. Would you like to restart? [Y/n] ")
 	if x != "n":
 		restart()
 
-def update(style=style, config=config):
+def cmdUpdate(style=style, config=config):
 	if input("Would you like to update? [y/N] ").lower() == "y":
 		branch = "master"
 		try:
@@ -412,12 +504,23 @@ def update(style=style, config=config):
 
 #Update wizard by tabulate
 def doGuiUpdate(branch=0, style=style):
+	try:
+		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
+	except:
+		nonplugins = []
+	try:
+		nonthemes = [e.strip() for e in config["updates"]["nonthemes"].split(',')]
+	except:
+		nonthemes = []
+		
 	d = Dialog(dialog="dialog")
 	d.gauge_start("Updating...\nEstablishing Directories...", height=0, width=0, percent=0)
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
+	themes = os.path.join(root, "themes")
 	parent = str(Path(root).parent) + "/"
+	confVals = loadConfig()
 	try:
 		shutil.rmtree(parent + ".iibackup")
 	except:
@@ -432,7 +535,7 @@ def doGuiUpdate(branch=0, style=style):
 
 	#Move Plugins out of Plugins
 	os.chdir(parent)
-	tempDir = secrets.token_hex(64)
+	tempDir = ".iipluginsbackup"
 	os.mkdir(tempDir)
 	os.chdir(plugins)
 	files = os.listdir(".")
@@ -442,6 +545,20 @@ def doGuiUpdate(branch=0, style=style):
 		else:
 			source = os.path.join(plugins, file)
 			dest = os.path.join(parent, tempDir)
+			shutil.move(source, dest)
+			
+	#Move Themes out of Themes
+	os.chdir(parent)
+	tempThemeDir = ".iithemesbackup"
+	os.mkdir(tempThemeDir)
+	os.chdir(themes)
+	files = os.listdir(".")
+	for file in files:
+		if file in nonthemes:
+			continue
+		else:
+			source = os.path.join(themes, file)
+			dest = os.path.join(parent, tempThemeDir)
 			shutil.move(source, dest)
 	d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
 
@@ -495,6 +612,16 @@ def doGuiUpdate(branch=0, style=style):
 	os.chdir("..")
 	os.rmdir(tempDir)
 	os.chdir(root)
+	
+	#move themes back into /themes
+	os.chdir(parent)
+	os.chdir(tempThemeDir)
+	files = os.listdir(".")
+	for file in files:
+		shutil.move(parent + tempThemeDir + "/" + file, themes)
+	os.chdir("..")
+	os.rmdir(tempThemeDir)
+	os.chdir(root)
 	d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
 
 	#check if all is fine
@@ -516,6 +643,20 @@ def doGuiUpdate(branch=0, style=style):
 	OS = platform.system()
 	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
 		os.system("chmod +x launcher.sh")
+		
+	#Load old conf vals
+	for i in range(len(confVals)):
+		try:	
+			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
+			
+		except Exception as e:
+			pass
+	try:
+		with open("config.ini", "r+") as cf:
+			config.write(cf)
+	except:
+		pass
+
 	d.gauge_stop()
 
 	#yay, nothing terrible has happened
@@ -539,3 +680,34 @@ def guiUpdate(style=style, config=config):
 	else:
 		clear()
 		return
+		
+def update():
+	#Update configs
+	nonplugins = getDefaults("plugins")
+	nonthemes = getDefaults("themes")
+
+	if nonplugins != None:
+		listprogs = ""
+		for i in range(len(nonplugins)):
+			if i != len(nonplugins) - 1:
+				listprogs = listprogs + nonplugins[i] + ", "
+			else:
+				listprogs += nonplugins[i]
+	config["updates"]["nonplugins"] = listprogs
+	if nonthemes != None:
+		listprogs = ""
+	for i in range(len(nonthemes)):
+		if i != len(nonthemes) - 1:
+			listprogs = listprogs + nonthemes[i] + ", "
+		else:
+			listprogs += nonthemes[i]
+	config["updates"]["nonthemes"] = listprogs
+	with open("config.ini", "r+") as cf:
+		try:
+			config.write(cf)
+		except:
+			pass
+	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+		guiUpdate()
+	else:
+		cmdUpdate()
