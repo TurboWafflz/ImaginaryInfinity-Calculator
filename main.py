@@ -124,8 +124,8 @@ def main(config=config):
 				print(style.startupmessage + msg + style.normal)
 		except:
 			print("Could not find messages file")
-		if(platform.system()=="Windows"):
-			print(style.important + "Eww, Windows")
+		# if(platform.system()=="Windows"):
+		# 	print(style.important + "Eww, Windows")
 		global cplx
 		ans=0
 		print('')
