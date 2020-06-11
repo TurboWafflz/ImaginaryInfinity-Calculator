@@ -239,7 +239,7 @@ def isPrime(num, printResult=True):
 		return(False)
 
 #List Plugins
-def plugins():
+def plugins(printval=True):
 	plugins = os.listdir('plugins/')
 	nonplugins = getDefaults("plugins")
 	if nonplugins != None:
@@ -268,9 +268,13 @@ def plugins():
 		plugins = []
 
 	i = 0
-	while i < len(plugins):
-		print(Fore.GREEN + plugins[i])
-		i += 1
+	if printval == True:
+		while i < len(plugins):
+			print(Fore.GREEN + plugins[i])
+			i += 1
+	else:
+		return plugins
+	
 #Quit
 def quit():
 	print(style.important + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
