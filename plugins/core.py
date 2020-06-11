@@ -9,7 +9,6 @@ import colorama
 import math
 import sys
 import json
-import secrets
 import zipfile
 from bs4 import BeautifulSoup
 import requests
@@ -348,7 +347,7 @@ def doCmdUpdate(branch=0, style=style):
 
 	#Move Plugins out of Plugins
 	os.chdir(parent)
-	tempDir = secrets.token_hex(64)
+	tempDir = ".iipluginsbackup"
 	os.mkdir(tempDir)
 	os.chdir(plugins)
 	files = os.listdir(".")
@@ -362,7 +361,7 @@ def doCmdUpdate(branch=0, style=style):
 			
 	#Move Themes out of Themes
 	os.chdir(parent)
-	tempThemeDir = secrets.token_hex(64)
+	tempThemeDir = ".iithemesbackup"
 	os.mkdir(tempThemeDir)
 	os.chdir(themes)
 	files = os.listdir(".")
@@ -512,7 +511,7 @@ def doGuiUpdate(branch=0, style=style):
 
 	#Move Plugins out of Plugins
 	os.chdir(parent)
-	tempDir = secrets.token_hex(64)
+	tempDir = ".iipluginsbackup"
 	os.mkdir(tempDir)
 	os.chdir(plugins)
 	files = os.listdir(".")
@@ -526,7 +525,7 @@ def doGuiUpdate(branch=0, style=style):
 			
 	#Move Themes out of Themes
 	os.chdir(parent)
-	tempThemeDir = secrets.token_hex(64)
+	tempThemeDir = ".iithemesbackup"
 	os.mkdir(tempThemeDir)
 	os.chdir(themes)
 	files = os.listdir(".")
