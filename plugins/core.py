@@ -80,7 +80,6 @@ try:
 			print(style.important + "Loading default theme instead")
 	#Security scan passed, proceeding as usual
 	elif trusted:
-		print("Loading " + config["appearance"]["theme"])
 		exec("import themes." + config["appearance"]["theme"])
 		exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
 #Error importing theme, warn user
@@ -543,6 +542,7 @@ def doCmdUpdate(branch=0, style=style):
 		os.system("chmod +x launcher.sh")
 
 	#Load old conf vals
+	config.read("config.ini")
 	for i in range(len(confVals)):
 		try:
 			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
@@ -713,6 +713,7 @@ def doGuiUpdate(branch=0, style=style):
 		os.system("chmod +x launcher.sh")
 
 	#Load old conf vals
+	config.read("config.ini")
 	for i in range(len(confVals)):
 		try:
 			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
