@@ -6,7 +6,7 @@ for module in os.listdir("themes"):
 	module=module[:-3]
 	moduleRaw=module
 	module="themes."+module
-	print(module)
+	#print(module)
 	__import__(module, locals(), globals())
 	#functions = dir(moduleRaw)
 	#print(dir(moduleRaw))

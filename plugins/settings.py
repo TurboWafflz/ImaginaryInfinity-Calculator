@@ -27,9 +27,18 @@ def editor():
 			if code == d.OK:
 				clear()
 				if tag == "Theme":
+					themes=[("Dark", "The default theme, for use in terminals with a dark background"),
+							("Light", "Built in alternate theme for use in terminals with a light background")]
+					extraThemes = os.listdir("themes/")
+					extraThemes.remove("__pycache__")
+					extraThemes.remove("__init__.py")
+					extraThemes.remove("dark.py")
+					extraThemes.remove("light.py")
+					for theme in extraThemes:
+						if theme[-3:] == ".py":
+							themes.append((theme[:-3], "Third party theme"))
 					tcode, ttag = d.menu("ImaginaryInfinity Calculator Theme Settings",
-										choices=[("Dark", "The default theme, for use in terminals with a dark background"),
-												("Light", "Built in alternate theme for use in terminals with a light background")], width=0, height=0)
+										choices=themes, width=0, height=0)
 					if tcode == d.OK:
 						config["appearance"]["theme"] = ttag.lower()
 					else:
