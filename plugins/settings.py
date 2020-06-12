@@ -22,6 +22,7 @@ def editor():
 										("Discord rich presence", "Display ImaginaryInfinity Calculator as your status in Discord"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
+										("Safe mode", "Disable all plugins except core and settings"),
 										("Save and exit", "Exit the settings editor")], width=0, height=0)
 			if code == d.OK:
 				clear()
@@ -31,18 +32,12 @@ def editor():
 												("Light", "Built in alternate theme for use in terminals with a light background")], width=0, height=0)
 					if tcode == d.OK:
 						config["appearance"]["theme"] = ttag.lower()
-						with open("config.ini", "w") as configFile:
-							config.write(configFile)
-							configFile.close()
 					else:
 						clear()
 				if tag == "Prompt":
 					pcode, pstring = d.inputbox("ImaginaryInfinity Calculator Prompt Settings", init = config["appearance"]["prompt"])
 					if pcode == d.OK:
 						config["appearance"]["prompt"] = pstring
-						with open("config.ini", "w") as configFile:
-							config.write(configFile)
-							configFile.close()
 					else:
 						clear()
 				if tag == "Discord rich presence":
@@ -54,9 +49,6 @@ def editor():
 							config["discord"]["enablerpc"] = "true"
 						if dtag == "Off":
 							config["discord"]["enablerpc"] = "false"
-						with open("config.ini", "w") as configFile:
-							config.write(configFile)
-							configFile.close()
 					else:
 						clear()
 				if tag=="Update":
@@ -82,7 +74,19 @@ def editor():
 								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0][:-9])
 					else:
 						d.msgbox("You have not installed any plugins.")
+				if tag=="Safe mode":
+					scode, stag = d.menu("ImaginaryInfinity Calculator Safe Mode Settings",
+										choices=[("On", "Enable safe mode"),
+												("Off", "Disable safe mode")], width=0, height=0)
+					if scode == d.OK:
+						if stag == "On":
+							config["startup"]["safemode"] = "true"
+						if stag == "Off":
+							config["startup"]["safemode"] = "false"
 				if tag == "Save and exit":
+					with open("config.ini", "w") as configFile:
+						config.write(configFile)
+						configFile.close()
 					break
 			else:
 				clear()
