@@ -18,6 +18,7 @@ import time
 from shutil import copytree, rmtree, copy
 from dialog import Dialog
 import configparser
+import re
 config = configparser.ConfigParser()
 config.read("config.ini")
 try:
@@ -35,6 +36,18 @@ try:
 	for requirement in required:
 		if not requirement in themeContents:
 			trusted = False
+	themeLines = themeContents.split("\n")
+	for line in themeLines:
+		if line == "import colorama":
+			pass
+		elif line == "class " + config["appearance"]["theme"]:
+			pass
+		else:
+			vars = ["normal", "error", "important", "startupmessage", "prompt", "link", "answer", "input", "output"]
+			trusted = False
+			for var in vars:
+				if bool(re.match("^	" + var + "=colorama\.[^\+\s]*\s*\+\s*colorama\.[^\+\s]*\s*\+\s*colorama\.[^\+\s]*$", line)):
+					trusted = True
 	#Make sure theme isn't concatinating lines
 	if ";" in themeContents:
 		trusted = False
@@ -67,6 +80,7 @@ try:
 			print(style.important + "Loading default theme instead")
 	#Security scan passed, proceeding as usual
 	elif trusted:
+		print("Loading " + config["appearance"]["theme"])
 		exec("import themes." + config["appearance"]["theme"])
 		exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
 #Error importing theme, warn user
