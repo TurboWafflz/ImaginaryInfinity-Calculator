@@ -1,4 +1,3 @@
-from dialog import Dialog
 from plugins.core import *
 import configparser
 import platform
@@ -15,6 +14,7 @@ def configMod(section, key, value, config=config):
 
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
+		from dialog import Dialog
 		while True:
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
 								choices=[("Theme", "The colors the calculator will use"),
