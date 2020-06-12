@@ -21,11 +21,60 @@ import configparser
 config = configparser.ConfigParser()
 config.read("config.ini")
 try:
-	exec("import themes." + config["appearance"]["theme"])
-	exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
-except:
+	print("Loading theme " + config["appearance"]["theme"] + "...")
+	#Theme security scan
+	themeFile = open("themes/" + config["appearance"]["theme"] + ".py")
+	themeContents = themeFile.read();
+	themeFile = open("themes/" + config["appearance"]["theme"] + ".py")
+	i=0
+	for i, l in enumerate(themeFile):
+		pass
+	trusted = True
+	#Make sure theme contains all required elements
+	required = ["import colorama", "class " + config["appearance"]["theme"] + ":\n", "normal=", "error=", "important=", "startupmessage=", "prompt=", "link=", "answer=", "input=", "output="]
+	for requirement in required:
+		if not requirement in themeContents:
+			trusted = False
+	#Make sure theme isn't concatinating lines
+	if ";" in themeContents:
+		trusted = False
+	#Make sure theme doesn't have any extra lines
+	if i + 1 != 11:
+		trusted = False
+	#Ignore failed scan if theme is trusted
+	if config["appearance"]["theme"] == config["appearance"]["trustedTheme"]:
+		trusted = True
+	#Warn user about untrusted theme
+	if not trusted:
+		print("This theme looks suspicious and may damage your device. Make sure you trust the source. (You can set this theme as trusted to supress this warning until the next theme change)")
+		yesno = input("Are you sure you want to load this theme? (y/N/trust)")
+		#Import theme
+		if yesno.lower() == "y":
+			exec("import themes." + config["appearance"]["theme"])
+			exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
+		#Import theme and set it as trusted
+		elif yesno.lower() == "trust":
+			config["appearance"]["trustedTheme"] = config["appearance"]["theme"]
+			with open("config.ini", "w") as configFile:
+				config.write(configFile)
+				configFile.close()
+			exec("import themes." + config["appearance"]["theme"])
+			exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
+		#Do not import theme, use default instead
+		else:
+			import themes.dark
+			style = themes.dark.dark
+			print(style.important + "Loading default theme instead")
+	#Security scan passed, proceeding as usual
+	elif trusted:
+		exec("import themes." + config["appearance"]["theme"])
+		exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
+#Error importing theme, warn user
+except Exception as e:
+	import themes.dark
 	style = themes.dark.dark
-	print(style.error + "Failed to load the specified theme, using default theme instead.")
+	print(style.important + "Failed to load the specified theme, using default theme instead.")
+	print(style.error + "Error: " + str(e))
 	input("[Press enter to continue]")
 
 #Not Sure how to explain this
