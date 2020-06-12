@@ -18,10 +18,15 @@ import time
 from shutil import copytree, rmtree, copy
 from dialog import Dialog
 import configparser
-import themes
 config = configparser.ConfigParser()
 config.read("config.ini")
-exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
+try:
+	exec("import themes." + config["appearance"]["theme"])
+	exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
+except:
+	style = themes.dark.dark
+	print(style.error + "Failed to load the specified theme, using default theme instead.")
+	input("[Press enter to continue]")
 
 #Not Sure how to explain this
 
@@ -259,7 +264,7 @@ def plugins(printval=True):
 		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
 	except:
 		nonplugins = []
-	
+
 	j = len(plugins) - 1
 	for i in range(j, 0, -1):
 		if plugins[i] in nonplugins:
@@ -274,7 +279,7 @@ def plugins(printval=True):
 			i += 1
 	else:
 		return plugins
-	
+
 #Quit
 def quit():
 	print(style.important + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
@@ -382,7 +387,7 @@ def doCmdUpdate(branch=0, style=style):
 			source = os.path.join(plugins, file)
 			dest = os.path.join(parent, tempDir)
 			shutil.move(source, dest)
-			
+
 	#Move Themes out of Themes
 	os.chdir(parent)
 	tempThemeDir = ".iithemesbackup"
@@ -444,7 +449,7 @@ def doCmdUpdate(branch=0, style=style):
 	os.chdir("..")
 	os.rmdir(tempDir)
 	os.chdir(root)
-	
+
 	#move themes back into /themes
 	os.chdir(parent)
 	os.chdir(tempThemeDir)
@@ -473,7 +478,7 @@ def doCmdUpdate(branch=0, style=style):
 	OS = platform.system()
 	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
 		os.system("chmod +x launcher.sh")
-		
+
 	#Load old conf vals
 	for i in range(len(confVals)):
 		try:
@@ -512,7 +517,7 @@ def doGuiUpdate(branch=0, style=style):
 		nonthemes = [e.strip() for e in config["updates"]["nonthemes"].split(',')]
 	except:
 		nonthemes = []
-		
+
 	d = Dialog(dialog="dialog")
 	d.gauge_start("Updating...\nEstablishing Directories...", height=0, width=0, percent=0)
 	#Establish directories
@@ -546,7 +551,7 @@ def doGuiUpdate(branch=0, style=style):
 			source = os.path.join(plugins, file)
 			dest = os.path.join(parent, tempDir)
 			shutil.move(source, dest)
-			
+
 	#Move Themes out of Themes
 	os.chdir(parent)
 	tempThemeDir = ".iithemesbackup"
@@ -612,7 +617,7 @@ def doGuiUpdate(branch=0, style=style):
 	os.chdir("..")
 	os.rmdir(tempDir)
 	os.chdir(root)
-	
+
 	#move themes back into /themes
 	os.chdir(parent)
 	os.chdir(tempThemeDir)
@@ -643,12 +648,12 @@ def doGuiUpdate(branch=0, style=style):
 	OS = platform.system()
 	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
 		os.system("chmod +x launcher.sh")
-		
+
 	#Load old conf vals
 	for i in range(len(confVals)):
-		try:	
+		try:
 			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
-			
+
 		except Exception as e:
 			pass
 	try:
@@ -680,7 +685,7 @@ def guiUpdate(style=style, config=config):
 	else:
 		clear()
 		return
-		
+
 def update():
 	#Update configs
 	nonplugins = getDefaults("plugins")
