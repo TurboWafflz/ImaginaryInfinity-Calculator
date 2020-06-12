@@ -26,8 +26,12 @@ if config["discord"]["enableRPC"] == "true":
 					"details": "https://turbowafflz.gitlab.io/iicalc.html",
 					"timestamps": {
 						"start": start_time
+						},
+					"assets": {
+						"large_text": "ImaginaryInfinity Calculator",
+						"large_image": "iicalclogo"
+						}
 					}
-				}
 		rpc_obj.set_activity(activity)
 	except:
 		yesno = input("Your system doesn't seem to support Discord rich presence. Would you like to disable it? (Y/n)")
