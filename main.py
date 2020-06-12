@@ -20,9 +20,19 @@ import platform
 import os
 import requests
 import json
-
+print("Importing plugins...")
+print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 #Load plugins
-from plugins import *
+plugins = os.listdir('plugins/')
+for plugin in plugins:
+	if plugin[-3:] == ".py":
+		try:
+			exec("from plugins import " + plugin[:-3])
+		except KeyboardInterrupt:
+			print("Cancelled loading of " + plugin )
+		except:
+			print("Error importing " + plugin + ", you might want to disable or remove it.")
+# from plugins import *
 from plugins.core import *
 
 # #Complex toggle
