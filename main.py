@@ -20,21 +20,34 @@ import platform
 import os
 import requests
 import json
+import configparser
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
+config = configparser.ConfigParser()
+config.read("config.ini")
 #Load plugins
-plugins = os.listdir('plugins/')
-for plugin in plugins:
-	if plugin[-3:] == ".py":
-		try:
-			exec("from plugins import " + plugin[:-3])
-		except KeyboardInterrupt:
-			print("Cancelled loading of " + plugin )
-		except:
-			print("Error importing " + plugin + ", you might want to disable or remove it.")
+if config["startup"]["safemode"] == "false":
+	plugins = os.listdir('plugins/')
+	plugins.remove("__init__.py")
+	plugins.remove("core.py")
+	plugins.remove("settings.py")
+	for plugin in plugins:
+		if plugin[-3:] == ".py":
+			try:
+				exec("from plugins import " + plugin[:-3])
+			except KeyboardInterrupt:
+				print("Cancelled loading of " + plugin )
+			except:
+				print("Error importing " + plugin + ", you might want to disable or remove it.")
+		elif plugin[-9:] == ".disabled":
+			print("Not loading " + plugin[:-9] + " as it has been disabled in settings.")
+		else:
+			print("Not loading " + plugin + " as it is not a valid plugin.")
+else:
+	print("Safe mode, only loading core and settings plugin.")
 # from plugins import *
 from plugins.core import *
-
+from plugins import settings
 # #Complex toggle
 # def complex(onOff):
 # 	global cplx
