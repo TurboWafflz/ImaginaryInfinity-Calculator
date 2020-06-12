@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator v2.1
+##ImaginaryInfinity Calculator v2.2
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
@@ -18,11 +18,36 @@ import pkgutil
 import sys
 import platform
 import os
-
+import requests
+import json
+import configparser
+print("Importing plugins...")
+print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
+config = configparser.ConfigParser()
+config.read("config.ini")
 #Load plugins
-from plugins import *
+if config["startup"]["safemode"] == "false":
+	plugins = os.listdir('plugins/')
+	plugins.remove("__init__.py")
+	plugins.remove("core.py")
+	plugins.remove("settings.py")
+	for plugin in plugins:
+		if plugin[-3:] == ".py":
+			try:
+				exec("from plugins import " + plugin[:-3])
+			except KeyboardInterrupt:
+				print("Cancelled loading of " + plugin )
+			except:
+				print("Error importing " + plugin + ", you might want to disable or remove it.")
+		elif plugin[-9:] == ".disabled":
+			print("Not loading " + plugin[:-9] + " as it has been disabled in settings.")
+		else:
+			print("Not loading " + plugin + " as it is not a valid plugin.")
+else:
+	print("Safe mode, only loading core and settings plugin.")
+# from plugins import *
 from plugins.core import *
-
+from plugins import settings
 # #Complex toggle
 # def complex(onOff):
 # 	global cplx
@@ -39,8 +64,40 @@ cplx=True
 #Restart
 def restart():
 	os.execl(sys.executable, sys.executable, * sys.argv)
-	
-def main():
+
+#Check for Internet Connection
+def hasInternet():
+	try:
+		import httplib
+	except:
+		import http.client as httplib
+	conn = httplib.HTTPConnection("www.google.com", timeout=5)
+	try:
+		conn.request("HEAD", "/")
+		conn.close()
+		return True
+	except:
+		conn.close()
+		return False
+
+#Get National Debt
+def getDebt():
+	soup = requests.get("https://www.treasurydirect.gov/NP_WS/debt/current?format=json").text
+	data = json.loads(soup)
+	index = str(data["totalDebt"]).find(".") - 1
+	data = str(data["totalDebt"])
+	j = 0
+	for i in range(index, -1, -1):
+		if j == 2:
+			data = data[:i] + "," + data[i:]
+			j = 0
+		else:
+			j += 1
+	data = data[:0] + "$" + data[0:]
+	return data
+
+def main(config=config):
+	oldcalc=" "
 	try:
 		global debugMode
 		if(len(sys.argv)>1):
@@ -72,17 +129,26 @@ def main():
 					except:
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
-		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.1")
+		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.2")
 		print(style.normal + "Copyright 2020 Finian Wright")
-		print(style.link + "https://turbowafflz.github.io/iicalc.html" + style.normal)
+		print(style.link + "https://turbowafflz.gitlab.io/iicalc.html" + style.normal)
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
 		try:
-			with open('messages.txt') as messagesFile:
+			with open(config["appearance"]["messageFile"]) as messagesFile:
 				messages=messagesFile.readlines()
-				print(style.startupmessage + messages[randint(0,len(messages)-1)] + style.normal)
+				msg = messages[randint(0,len(messages)-1)]
+				if msg == "[debt]":
+					if hasInternet():
+						msg = getDebt()
+					else:
+						while msg == "[debt]":
+							msg = messages[randint(0,len(messages)-1)]
+				print(style.startupmessage + msg + style.normal)
 		except:
-			print("Could not find messages.txt")
+			print("Could not find messages file")
+		# if(platform.system()=="Windows"):
+		# 	print(style.important + "Eww, Windows")
 		global cplx
 		ans=0
 		print('')
@@ -90,8 +156,9 @@ def main():
 		while True:
 			pr=True
 			print('')
-			calc=input(style.prompt + ">" + style.input + " ")
+			calc=input(style.prompt + config["appearance"]["prompt"] + style.input + " ")
 			print('')
+			print(style.output)
 			try:
 				cl=list(calc)
 				if calc=='AllWillPerish':
@@ -103,6 +170,8 @@ def main():
 				if calc == '':
 					calc=oldcalc
 					cl=list(calc)
+				if calc == ' ':
+					pr=0
 				eqn=calc
 				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 					eqn=str(ans)+str(calc)
@@ -135,6 +204,10 @@ def main():
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
 	except KeyboardInterrupt:
 		print(style.important + "\nKeyboard Interrupt, exiting...")
+		print(Fore.RESET + Back.RESET + Style.NORMAL)
+		exit()
+	except EOFError:
+		print(style.important + "\nEOF, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
 	except Exception as e:
