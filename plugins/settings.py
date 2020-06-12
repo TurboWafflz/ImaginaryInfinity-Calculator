@@ -3,7 +3,6 @@ import configparser
 import platform
 config = configparser.ConfigParser()
 config.read("config.ini")
-d = Dialog(dialog="dialog")
 #Modify Configuration file
 def configMod(section, key, value, config=config):
 	config[section][key] = value
@@ -15,6 +14,7 @@ def configMod(section, key, value, config=config):
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
+		d = Dialog(dialog="dialog")
 		while True:
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
 								choices=[("Theme", "The colors the calculator will use"),
