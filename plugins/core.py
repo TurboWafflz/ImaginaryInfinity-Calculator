@@ -16,9 +16,10 @@ import shutil
 from pathlib import Path
 import time
 from shutil import copytree, rmtree, copy
-from dialog import Dialog
 import configparser
 import re
+if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+	from dialog import Dialog
 config = configparser.ConfigParser()
 config.read("config.ini")
 try:
