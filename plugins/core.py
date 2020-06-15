@@ -22,76 +22,46 @@ import re
 config = configparser.ConfigParser()
 config.read("config.ini")
 try:
-	print("Loading theme " + config["appearance"]["theme"] + "...")
-	#Theme security scan
-	themeFile = open("themes/" + config["appearance"]["theme"] + ".py")
-	themeContents = themeFile.read();
-	themeFile = open("themes/" + config["appearance"]["theme"] + ".py")
-	i=0
-	for i, l in enumerate(themeFile):
-		pass
-	trusted = True
-	#Make sure theme contains all required elements
-	required = ["import colorama", "class " + config["appearance"]["theme"] + ":\n", "normal=", "error=", "important=", "startupmessage=", "prompt=", "link=", "answer=", "input=", "output="]
-	for requirement in required:
-		if not requirement in themeContents:
-			trusted = False
-	themeLines = themeContents.split("\n")
-	for line in themeLines:
-		if line == "import colorama":
-			pass
-		elif line == "class " + config["appearance"]["theme"]:
-			pass
-		else:
-			vars = ["normal", "error", "important", "startupmessage", "prompt", "link", "answer", "input", "output"]
-			trusted = False
-			for var in vars:
-				if bool(re.match("^	" + var + "=colorama\.[^\+\s]*\s*\+\s*colorama\.[^\+\s]*\s*\+\s*colorama\.[^\+\s]*$", line)):
-					trusted = True
-	#Make sure theme isn't concatinating lines
-	if ";" in themeContents:
-		trusted = False
-	#Make sure theme doesn't have any extra lines
-	if i + 1 != 11:
-		trusted = False
-	#Ignore failed scan if theme is trusted
-	if config["appearance"]["theme"] == config["appearance"]["trustedTheme"]:
-		trusted = True
-	#Warn user about untrusted theme
-	if not trusted:
-		print("This theme looks suspicious and may damage your device. Make sure you trust the source. (You can set this theme as trusted to supress this warning until the next theme change)")
-		yesno = input("Are you sure you want to load this theme? (y/N/trust)")
-		#Import theme
-		if yesno.lower() == "y":
-			exec("import themes." + config["appearance"]["theme"])
-			exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
-		#Import theme and set it as trusted
-		elif yesno.lower() == "trust":
-			config["appearance"]["trustedTheme"] = config["appearance"]["theme"]
-			with open("config.ini", "w") as configFile:
-				config.write(configFile)
-				configFile.close()
-			exec("import themes." + config["appearance"]["theme"])
-			exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
-		#Do not import theme, use default instead
-		else:
-			import themes.dark
-			style = themes.dark.dark
-			print(style.important + "Loading default theme instead")
-	#Security scan passed, proceeding as usual
-	elif trusted:
-		exec("import themes." + config["appearance"]["theme"])
-		exec("style = themes." + config["appearance"]["theme"] + "." + config["appearance"]["theme"])
-#Error importing theme, warn user
-except Exception as e:
-	import themes.dark
-	style = themes.dark.dark
-	print(style.important + "Failed to load the specified theme, using default theme instead.")
-	print(style.error + "Error: " + str(e))
+	theme = configparser.ConfigParser()
+	theme.read("themes/" + config["appearance"]["theme"])
+	#Define style class for compatibility with legacy plugins
+	class style:
+		normal=str(eval(theme["styles"]["normal"]))
+		error=str(eval(theme["styles"]["error"]))
+		important=str(eval(theme["styles"]["important"]))
+		startupmessage=str(eval(theme["styles"]["startupmessage"]))
+		prompt=str(eval(theme["styles"]["prompt"]))
+		link=str(eval(theme["styles"]["link"]))
+		answer=str(eval(theme["styles"]["answer"]))
+		input=str(eval(theme["styles"]["input"]))
+		output=str(eval(theme["styles"]["output"]))
+	#Convert strings to the proper escape sequences
+	for s in theme["styles"]:
+		print(theme["styles"][str(s)])
+		theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+except:
+	theme = configparser.ConfigParser()
+	theme.read("themes/dark.iitheme")
+	#Define style class for compatibility with legacy plugins
+	class style:
+		normal=str(eval(theme["styles"]["normal"]))
+		error=str(eval(theme["styles"]["error"]))
+		important=str(eval(theme["styles"]["important"]))
+		startupmessage=str(eval(theme["styles"]["startupmessage"]))
+		prompt=str(eval(theme["styles"]["prompt"]))
+		link=str(eval(theme["styles"]["link"]))
+		answer=str(eval(theme["styles"]["answer"]))
+		input=str(eval(theme["styles"]["input"]))
+		output=str(eval(theme["styles"]["output"]))
+	#Convert strings to the proper escape sequences
+	for s in theme["styles"]:
+		print(theme["styles"][str(s)])
+		theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+	print(theme["styles"]["error"] + "Unable to load the specified theme" + theme["styles"]["normal"])
 	input("[Press enter to continue]")
 
-#Not Sure how to explain this
 
+#Not Sure how to explain this
 def getDefaults(folder):
 	try:
 		soup = BeautifulSoup(urllib.request.urlopen("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/tree/development/" + folder).read(), "html.parser")
@@ -344,7 +314,7 @@ def plugins(printval=True):
 
 #Quit
 def quit():
-	print(style.important + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
+	print(theme["styles"]["important"] + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
 	sys.exit()
 
 #README (Linux only)
@@ -410,7 +380,7 @@ def loadConfig():
 			items.append((each_section, each_key, each_val))
 	return items
 
-def doCmdUpdate(branch=0, style=style):
+def doCmdUpdate(branch=0, theme=theme):
 	try:
 		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
 	except:
@@ -479,7 +449,7 @@ def doCmdUpdate(branch=0, style=style):
 	try:
 		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
 	except:
-		print(style.error + "Fatal Error. No Connection, Restoring Backup")
+		print(theme["styles"]["error"] + "Fatal Error. No Connection, Restoring Backup")
 		#Restore Backup
 		for f in os.listdir(parent + ".iibackup/"):
 			shutil.move(os.path.join(parent + ".iibackup", f), root)
@@ -529,7 +499,7 @@ def doCmdUpdate(branch=0, style=style):
 		pass
 	else:
 		#VERY BAD THINGS HAVE HAPPENED
-		print(style.error + "Fatal Error. Files not Found")
+		print(theme["styles"]["error"] + "Fatal Error. Files not Found")
 		#Restore Backup
 		for f in os.listdir(parent + ".iibackup/"):
 			shutil.move(os.path.join(parent + ".iibackup", f), root)
@@ -555,23 +525,23 @@ def doCmdUpdate(branch=0, style=style):
 		pass
 
 	#yay, nothing terrible has happened
-	x = input(style.important + "Update Complete. Would you like to restart? [Y/n] ")
+	x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 	if x != "n":
 		restart()
 
-def cmdUpdate(style=style, config=config):
+def cmdUpdate(theme=theme, config=config):
 	if input("Would you like to update? [y/N] ").lower() == "y":
 		branch = "master"
 		try:
 			branch = config["updates"]["branch"]
 		except Exception as e:
-			print(style.important + "Could not read config file\n" + e)
+			print(theme["styles"]["error"] + "Could not read config file\n" + e)
 
 		doUpdate(branch)
 
 
 #Update wizard by tabulate
-def doGuiUpdate(branch=0, style=style):
+def doGuiUpdate(branch=0, theme=theme):
 	try:
 		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
 	except:
@@ -646,7 +616,7 @@ def doGuiUpdate(branch=0, style=style):
 	try:
 		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
 	except:
-		print(style.error + "Fatal Error. No Connection, Restoring Backup")
+		print(theme["styles"]["error"] + "Fatal Error. No Connection, Restoring Backup")
 		#Restore Backup
 		for f in os.listdir(parent + ".iibackup/"):
 			shutil.move(os.path.join(parent + ".iibackup", f), root)
@@ -699,7 +669,7 @@ def doGuiUpdate(branch=0, style=style):
 		pass
 	else:
 		#VERY BAD THINGS HAVE HAPPENED
-		print(style.error + "Fatal Error. Files not Found")
+		print(theme["styles"]["error"] + "Fatal Error. Files not Found")
 		#Restore Backup
 		for f in os.listdir(parent + ".iibackup/"):
 			shutil.move(os.path.join(parent + ".iibackup", f), root)
@@ -736,14 +706,14 @@ def doGuiUpdate(branch=0, style=style):
 	else:
 		clear()
 
-def guiUpdate(style=style, config=config):
+def guiUpdate(theme=theme, config=config):
 	d = Dialog(dialog="dialog").yesno("Would you like to update?", width=0, height=0)
 	if d == "ok":
 		branch = "master"
 		try:
 			branch = config["updates"]["branch"]
 		except Exception as e:
-			print(style.important + "Could not read config file\n" + e)
+			print(theme["styles"]["important"] + "Could not read config file\n" + e)
 
 		doGuiUpdate(branch)
 	else:
