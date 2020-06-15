@@ -1,7 +1,6 @@
 [theme]
-name = "Dark"
-description = "The default theme, for use on terminals with a dark background."
-filename = light.ini
+name = Dark
+description = The default theme, for use on terminals with a dark background.
 builtin=true
 [styles]
 normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
