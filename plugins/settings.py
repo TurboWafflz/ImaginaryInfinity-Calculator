@@ -1,4 +1,4 @@
-from plugins.core import *
+from plugins.core import 
 import configparser
 import platform
 config = configparser.ConfigParser()
