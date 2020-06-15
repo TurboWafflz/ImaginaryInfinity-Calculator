@@ -29,7 +29,7 @@ Functions in the "core" plugin can be accessed without specifying "core".
 ex. "factor(7)" instead of "core.factor(7)"
 
 ## Themes
-The colors used by the calculator can be modified by themes. Themes are python scripts that define a class and are stored in the `themes` folder. To change the theme used by the calculator, run `settings.configMod("appearance", "theme", "<theme name>")`, or select a theme in the settings editor. Two themes are included by default, `dark` for use on terminals with a dark background, and `light` for use on terminals with a light background.
+The colors used by the calculator can be modified by themes. Themes are ini that define the colors the calculator will use and are stored in the `themes` folder. To change the theme used by the calculator, run `settings.configMod("appearance", "theme", "<theme name>")`, or select a theme in the settings editor. Two themes are included by default, `dark` for use on terminals with a dark background, and `light` for use on terminals with a light background.
 
 ## Built in commands:
 The following commands are built in to the calculator or added by the "core"

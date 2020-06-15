@@ -130,8 +130,8 @@ def main(config=config):
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v2.2")
-		print(style.normal + "Copyright 2020 Finian Wright")
-		print(style.link + "https://turbowafflz.gitlab.io/iicalc.html" + style.normal)
+		print(theme["styles"]["normal"] + "Copyright 2020 Finian Wright")
+		print(theme["styles"]["link"] + "https://turbowafflz.gitlab.io/iicalc.html" + theme["styles"]["normal"])
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
 		try:
@@ -144,7 +144,7 @@ def main(config=config):
 					else:
 						while msg == "[debt]":
 							msg = messages[randint(0,len(messages)-1)]
-				print(style.startupmessage + msg + style.normal)
+				print(theme["styles"]["startupmessage"] + msg + theme["styles"]["normal"])
 		except:
 			print("Could not find messages file")
 		# if(platform.system()=="Windows"):
@@ -156,16 +156,16 @@ def main(config=config):
 		while True:
 			pr=True
 			print('')
-			calc=input(style.prompt + config["appearance"]["prompt"] + style.input + " ")
+			calc=input(theme["styles"]["prompt"] + config["appearance"]["prompt"] + theme["styles"]["input"] + " ")
 			print('')
-			print(style.output)
+			print(theme["styles"]["output"])
 			try:
 				cl=list(calc)
 				if calc=='AllWillPerish':
 					pr=0
-					print(style.important + "Cheat mode active" + style.normal)
+					print(theme["styles"]["important"] + "Cheat mode active" + theme["styles"]["normal"])
 				if calc.lower()=='exit' or calc.lower()=='quit':
-					print(style.important + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
+					print(theme["styles"]["important"] + "Goodbye \n" + Fore.RESET + Back.RESET + Style.NORMAL)
 					break
 				if calc == '':
 					calc=oldcalc
@@ -181,42 +181,42 @@ def main(config=config):
 				ans=eval(str(eqn))
 			except Exception as e:
 				try:
-					print(style.output + exec(str(calc)))
+					print(theme["styles"]["output"] + exec(str(calc)))
 					pr=0
 				except:
 					if pr:
-						print(style.error + "Error: " + str(e) + style.normal)
+						print(theme["styles"]["error"] + "Error: " + str(e) + theme["styles"]["normal"])
 						pr=0
 			#Print answer
 			if(pr==1 and ans!=None):
 				#Just print answer if in complex mode
 				if(cplx):
-					print(style.answer + str(ans) + style.normal)
+					print(theme["styles"]["answer"] + str(ans) + theme["styles"]["normal"])
 				else:
 					try:
 						if(ans.imag == 0):
-							print(style.answer + str(ans.real))
+							print(theme["styles"]["answer"] + str(ans.real))
 						else:
-							print(style.error + "Domain error" + style.normal)
+							print(theme["styles"]["error"] + "Domain error" + theme["styles"]["normal"])
 					except:
 						print()
 			#if ans==None and pr==1:
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
 	except KeyboardInterrupt:
-		print(style.important + "\nKeyboard Interrupt, exiting...")
+		print(theme["styles"]["important"] + "\nKeyboard Interrupt, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
 	except EOFError:
-		print(style.important + "\nEOF, exiting...")
+		print(theme["styles"]["important"] + "\nEOF, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
 	except Exception as e:
-		print(style.error)
+		print(theme["styles"]["error"])
 		print("==============")
 		print("= Fatal error=")
 		print("==============")
 		print(Style.NORMAL + "The calculator has encountered an error and cannot continue.")
-		print(Style.BRIGHT + "Error: " + str(e) + style.normal)
+		print(Style.BRIGHT + "Error: " + str(e) + theme["styles"]["normal"])
 		print("Please start an issue on the GitHub repository at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues")
 
 main()
