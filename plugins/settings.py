@@ -1,4 +1,4 @@
-from plugins.core import 
+from plugins.core import *
 import configparser
 import platform
 config = configparser.ConfigParser()
@@ -23,7 +23,8 @@ def editor():
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
 										("Safe mode", "Disable all plugins except core and settings"),
-										("Save and exit", "Exit the settings editor")], width=0, height=0)
+										("Save and exit", "Exit the settings editor"),
+										("Exit without saving", "Exit the settings editor without saving your changes")], width=0, height=0)
 			if code == d.OK:
 				clear()
 				if tag == "Theme":
@@ -102,12 +103,17 @@ def editor():
 						config.write(configFile)
 						configFile.close()
 					break
+				if tag == "Exit without saving":
+					break
 			else:
 				clear()
-		restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)
-		if restartbox == "ok":
-			clear()
-			restart()
+		if tag != "Exit without saving":
+			restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)
+			if restartbox == "ok":
+				clear()
+				restart()
+			else:
+				clear()
 		else:
 			clear()
 	elif platform.system() == "Windows":
