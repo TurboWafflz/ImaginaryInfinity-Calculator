@@ -1,7 +1,6 @@
 [theme]
-name = "Light"
-description = "Built in alternate theme, for use on terminals with a light background."
-filename = light.ini
+name = Light
+description = Built in alternate theme, for use on terminals with a light background.
 builtin=true
 [styles]
 normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
