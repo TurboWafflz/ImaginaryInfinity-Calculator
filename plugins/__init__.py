@@ -1,12 +1,13 @@
 import os
 import inspect
+builtin=True
 for module in os.listdir("plugins"):
 	if module == '__init__.py' or module[-3:] != '.py':
 		continue
 	module=module[:-3]
 	moduleRaw=module
 	module="plugins."+module
-	print(module)
+	#print(module)
 	__import__(module, locals(), globals())
 	#functions = dir(moduleRaw)
 	#print(dir(moduleRaw))
