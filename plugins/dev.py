@@ -1,4 +1,4 @@
-#The dev plugin contains advanced functions not intended for most users
+#The dev plugin contains advanced functions not intended for most users 
 import os
 from plugins.core import *
 from colorama import Fore, Back
