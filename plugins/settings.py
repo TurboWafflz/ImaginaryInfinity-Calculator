@@ -1,6 +1,7 @@
 from plugins.core import *
 import configparser
 import platform
+builtin=True
 config = configparser.ConfigParser()
 config.read("config.ini")
 #Modify Configuration file

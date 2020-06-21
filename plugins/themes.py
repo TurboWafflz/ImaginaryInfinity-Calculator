@@ -1,6 +1,7 @@
 import configparser
 import colorama
 from plugins.core import *
+builtin=True
 def editor():
 	print(theme["styles"]["important"] + "ImaginaryInfinity Calculator Theme Editor" + theme["styles"]["normal"])
 	foreColors = dir(colorama.Fore)

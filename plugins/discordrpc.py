@@ -1,5 +1,6 @@
 import time
 import configparser
+builtin=True
 config = configparser.ConfigParser()
 config.read("config.ini")
 if config["discord"]["enableRPC"] == "ask":
