@@ -38,7 +38,7 @@ try:
 		output=str(eval(theme["styles"]["output"]))
 	#Convert strings to the proper escape sequences
 	for s in theme["styles"]:
-		print(theme["styles"][str(s)])
+		#print(theme["styles"][str(s)])
 		theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
 except:
 	theme = configparser.ConfigParser()
@@ -87,7 +87,7 @@ def getDefaults(folder):
 					defaults.append(themelist[i])
 			except:
 				pass
-		return defaults			
+		return defaults
 
 #Restart
 def restart():
