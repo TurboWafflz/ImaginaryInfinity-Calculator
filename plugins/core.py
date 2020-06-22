@@ -10,7 +10,6 @@ import math
 import sys
 import json
 import zipfile
-from bs4 import BeautifulSoup
 import urllib.request
 import shutil
 from pathlib import Path
