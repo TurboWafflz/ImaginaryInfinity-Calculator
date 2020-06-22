@@ -10,7 +10,6 @@ import math
 import sys
 import json
 import zipfile
-from bs4 import BeautifulSoup
 import urllib.request
 import shutil
 from pathlib import Path
@@ -18,6 +17,7 @@ import time
 from shutil import copytree, rmtree, copy
 import configparser
 import re
+builtin=True
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 	from dialog import Dialog
 config = configparser.ConfigParser()
@@ -61,20 +61,33 @@ except:
 	print(theme["styles"]["error"] + "Unable to load the specified theme" + theme["styles"]["normal"])
 	input("[Press enter to continue]")
 
-
+cur_builtin = None
 #Not Sure how to explain this
 def getDefaults(folder):
-	try:
-		soup = BeautifulSoup(urllib.request.urlopen("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/tree/development/" + folder).read(), "html.parser")
-		soup = soup.find_all("a", {"class": "js-navigation-open"})
-		plugins = []
-		for i in range(len(soup)):
-			if not " " in soup[i].text and soup[i].text != "..":
-				plugins.append(soup[i].text)
-		plugins.append("__pycache__")
-		return plugins
-	except:
-		return None
+	if folder == "plugins":
+		files = os.listdir("plugins")
+		defaults = []
+		for file in files:
+			try:
+				exec("global cur_builtin; from plugins." + file[:-3] + " import builtin; cur_builtin = builtin")
+				if cur_builtin == True:
+					defaults.append(file)
+			except:
+				pass
+		defaults.append("__pycache__")
+		return defaults
+	elif folder == "themes":
+		themelist = os.listdir("themes")
+		defaults = []
+		for i in range(len(themelist)):
+			cur_theme = configparser.ConfigParser()
+			cur_theme.read("themes/" + themelist[i])
+			try:
+				if cur_theme["theme"]["builtin"] == "true":
+					defaults.append(themelist[i])
+			except:
+				pass
+		return defaults			
 
 #Restart
 def restart():
@@ -280,24 +293,6 @@ def isPrime(num, printResult=True):
 def plugins(printval=True):
 	plugins = os.listdir('plugins/')
 	nonplugins = getDefaults("plugins")
-	if nonplugins != None:
-		listprogs = ""
-		for i in range(len(nonplugins)):
-			if i != len(nonplugins) - 1:
-				listprogs = listprogs + nonplugins[i] + ", "
-			else:
-				listprogs += nonplugins[i]
-	config["updates"]["nonplugins"] = listprogs
-	with open("config.ini", "r+") as cf:
-		try:
-			config.write(cf)
-		except:
-			pass
-	try:
-		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
-	except:
-		nonplugins = []
-
 	j = len(plugins) - 1
 	for i in range(j, 0, -1):
 		if plugins[i] in nonplugins:
