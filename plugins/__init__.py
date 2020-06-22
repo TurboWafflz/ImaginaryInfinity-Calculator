@@ -7,7 +7,8 @@ for module in os.listdir("plugins"):
 	module=module[:-3]
 	moduleRaw=module
 	module="plugins."+module
-	#print(module)
+	if __name__ == "plugins":
+		print(module)
 	__import__(module, locals(), globals())
 	#functions = dir(moduleRaw)
 	#print(dir(moduleRaw))
