@@ -1,4 +1,4 @@
-#ImaginaryInfinity Calculator Core Plugin v2.2 
+#ImaginaryInfinity Calculator Core Plugin v2.2
 #Copyright 2020 Finian Wright
 import os
 import platform
@@ -377,14 +377,8 @@ def loadConfig():
 	return items
 
 def doCmdUpdate(branch=0, theme=theme):
-	try:
-		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
-	except:
-		nonplugins = []
-	try:
-		nonthemes = [e.strip() for e in config["updates"]["nonthemes"].split(',')]
-	except:
-		nonthemes = []
+	nonplugins = getDefaults("plugins")
+	nonthemes = getDefaults("themes")
 
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
@@ -538,14 +532,8 @@ def cmdUpdate(theme=theme, config=config):
 
 #Update wizard by tabulate
 def doGuiUpdate(branch=0, theme=theme):
-	try:
-		nonplugins = [e.strip() for e in config["updates"]["nonplugins"].split(',')]
-	except:
-		nonplugins = []
-	try:
-		nonthemes = [e.strip() for e in config["updates"]["nonthemes"].split(',')]
-	except:
-		nonthemes = []
+	nonplugins = getDeafults("plugins")
+	nonthemes = getDefaults("themes")
 
 	d = Dialog(dialog="dialog")
 	d.gauge_start("Updating...\nEstablishing Directories...", height=0, width=0, percent=0)
