@@ -527,7 +527,7 @@ def cmdUpdate(theme=theme, config=config):
 		except Exception as e:
 			print(theme["styles"]["error"] + "Could not read config file\n" + e)
 
-		doUpdate(branch)
+		doCmdUpdate(branch)
 
 
 #Update wizard by tabulate
