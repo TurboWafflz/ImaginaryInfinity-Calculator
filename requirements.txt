@@ -1,3 +1,4 @@
-colorama==0.4.1
 pythondialog==3.5.1
-requests==2.22.0
+colorama==0.4.1
+requests==2.23.0
+fuzzywuzzy==0.18.0
