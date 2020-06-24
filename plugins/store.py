@@ -2,16 +2,42 @@ import requests
 from dialog import Dialog
 import configparser
 from fuzzywuzzy import fuzz
+import os
 config = configparser.ConfigParser()
 config.read("test.ini")
 
+def uninstall(filename):
+	d = Dialog(dialog="dialog")
+	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:	
+		os.remove("plugins/" + filename)
+		d.msgbox(filename + " has been uninstalled.", width=None, height=None)
+
+def ratePlugin(plugin):
+	pass
+
 def pluginpage(plugin):
 	d = Dialog(dialog="dialog")
-	d.add_persistent_args(["--ok-label", "Download", "--title", plugin])
-	x = d.msgbox(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=None, width=None, extra_button=True, extra_label="Back")
-	if x == d.OK:
-		download(config[plugin]["download"], config[plugin]["filename"])
-
+	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
+	x = []
+	if True:#os.path.isfile("plugins/" + config[plugin]["filename"]):
+		if False:#os.stat("plugins/" + config[plugin]["filename"]).st_size == len(requests.get(config[plugin]["download"], stream=True).content):		
+			x.append(d.yesno(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+			x.append("uninstall")
+		else:
+			 x.append(d.yesno(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+			 x.append("update")
+	else:
+		x.append(d.yesno(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append("download")
+	if x[0] == d.OK:
+		if x[1] == "download" or x[1] == "update":
+			download(config[plugin]["download"], config[plugin]["filename"])
+		elif x[1] == "uninstall":
+			uninstall(config[plugin]["filename"])
+	elif x[0] == d.EXTRA:
+		ratePlugin(plugin)
+	elif x[0] == d.HELP:
+		uninstall(config[plugin]["filename"])
 
 def search():
 	d = Dialog(dialog="dialog")
