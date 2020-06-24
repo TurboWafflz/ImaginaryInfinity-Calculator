@@ -19,8 +19,8 @@ def pluginpage(plugin):
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
 	x = []
-	if True:#os.path.isfile("plugins/" + config[plugin]["filename"]):
-		if False:#os.stat("plugins/" + config[plugin]["filename"]).st_size == len(requests.get(config[plugin]["download"], stream=True).content):		
+	if os.path.isfile("plugins/" + config[plugin]["filename"]):
+		if os.stat("plugins/" + config[plugin]["filename"]).st_size == len(requests.get(config[plugin]["download"], stream=True).content):		
 			x.append(d.yesno(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 			x.append("uninstall")
 		else:
