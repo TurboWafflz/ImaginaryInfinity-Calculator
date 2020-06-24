@@ -13,7 +13,9 @@ def uninstall(filename):
 		d.msgbox(filename + " has been uninstalled.", width=None, height=None)
 
 def ratePlugin(plugin):
-	pass
+	d = Dialog(dialog="dialog")
+	requests.post("https://turbowafflz.azurewebsites.net/iicalc/plugins/rate", {"plugin":plugin, "rating":d.rangebox("Rate " + plugin, height=0, width=0, min=1, max=5, init=5)[1]})
+	
 
 def pluginpage(plugin):
 	d = Dialog(dialog="dialog")
@@ -99,4 +101,5 @@ def store():
 			search()
 		else:
 			pluginpage(mainmenu[1])
-store()
+#store()
+ratePlugin("plugin")
