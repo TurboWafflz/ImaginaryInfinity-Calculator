@@ -58,8 +58,7 @@ def uninstall(filename):
 def ratePlugin(plugin):
 	d = Dialog(dialog="dialog")
 	data = {"plugin":plugin, "rating":d.rangebox("Rate " + plugin, height=0, width=0, min=1, max=5, init=5)[1]}
-	resp = requests.post("https://turbowafflz.azurewebsites.net/iicalc/plugins/rate", data)
-	resp = resp.status_code
+	resp = requests.post("https://turbowafflz.azurewebsites.net/iicalc/plugins/rate", data).status_code
 	if resp == 200:
 		d.msgbox("Your review has been submitted")
 	elif resp == 404:
