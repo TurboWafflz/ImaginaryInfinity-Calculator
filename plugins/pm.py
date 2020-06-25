@@ -3,6 +3,7 @@ from tqdm import tqdm
 import os
 import configparser
 from py_essentials import hashing as hs
+from shutil import copyfile
 def download(url, localFilename):
 	# NOTE the stream=True parameter
 	r = requests.get(url, stream=True)
@@ -12,8 +13,7 @@ def download(url, localFilename):
 				f.write(chunk)
 	return localFilename
 def update(silent=False):
-	if not silent:
-		print("Updating package list...")
+	print("Updating package list...")
 	if not os.path.isdir(".pluginstore"):
 		os.makedirs(".pluginstore")
 	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", ".pluginstore/index.ini")
@@ -71,12 +71,27 @@ def install(plugin):
 		verified = installed[plugin]["verified"]
 	except:
 		verified = "none"
+	try:
+		dependencies = index[plugin]["depends"]
+	except:
+		index[plugin]["depends"] = "none"
 	if installed.has_section(plugin) and not verified == "false":
 		if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
 			print("Updating " + plugin + "...")
 			try:
+				print("Installing dependencies...")
+				dependencies = index[plugin]["depends"].split(",")
+				for dependency in dependencies:
+					if index.has_section(dependency):
+						install(dependency)
+					elif dependency != "none":
+						print("Dependency unsatisfyable: " + dependency)
+						return
+					else:
+						pass
 				download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
 				installed[plugin] = index[plugin]
+				installed[plugin]["source"] = "index"
 			except Exception as e:
 				print("Could not download file: " + e)
 				pass
@@ -92,8 +107,19 @@ def install(plugin):
 	elif verified != "true" and installed.has_section(plugin):
 		print("Redownloading damaged plugin " + plugin + "...")
 		try:
+			print("Installing dependencies...")
+			dependencies = index[plugin]["depends"].split(",")
+			for dependency in dependencies:
+				if index.has_section(dependency):
+					install(dependency)
+				elif dependency != "none":
+					print("Dependency unsatisfyable: " + dependency)
+					return
+				else:
+					pass
 			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
 			installed[plugin] = index[plugin]
+			installed[plugin]["source"] = "index"
 		except Exception as e:
 			print("Could not download file: " + e)
 			pass
@@ -109,8 +135,19 @@ def install(plugin):
 	elif index.has_section(plugin):
 		print("Downloading " + plugin + "...")
 		try:
+			print("Installing dependencies...")
+			dependencies = index[plugin]["depends"].split(",")
+			for dependency in dependencies:
+				if index.has_section(dependency):
+					install(dependency)
+				elif dependency != "none":
+					print("Dependency unsatisfyable: " + dependency)
+					return
+				else:
+					pass
 			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
 			installed[plugin] = index[plugin]
+			installed[plugin]["source"] = "index"
 		except Exception as e:
 			print("Could not download file: " + e)
 			pass
@@ -236,3 +273,74 @@ def list(scope="available"):
 			else:
 				status = " | Not installed"
 			print(plugin + " - " + index[plugin]["description"] + status)
+def installFromFile(file):
+	copyfile(file, ".pluginstore/installer.ini")
+	try:
+		index = configparser.ConfigParser()
+		index.read(".pluginstore/index.ini")
+	except:
+		print("Could not find plugin list, maybe run pm.update()")
+		return
+	icpk = configparser.ConfigParser()
+	icpk.read(".pluginstore/installer.ini")
+	try:
+		dependencies = icpk[plugin]["depends"]
+	except:
+		icpk[plugin]["depends"] = "none"
+	if os.path.exists(".pluginstore/installed.ini"):
+		installed = configparser.ConfigParser()
+		installed.read(".pluginstore/installed.ini")
+	else:
+		with open(".pluginstore/installed.ini", "w+") as installedFile:
+			installedFile.close()
+			installed = configparser.ConfigParser()
+			installed.read(".pluginstore/installed.ini")
+	print(icpk.sections())
+	for plugin in icpk.sections():
+		print("Installing dependencies...")
+		dependencies = icpk[plugin]["depends"].split(",")
+		for dependency in dependencies:
+			if index.has_section(dependency):
+				install(dependency)
+			elif dependency != "none":
+				print("Dependency unsatisfyable: " + dependency)
+				return
+			else:
+				pass
+		print("Installing " + plugin + "...")
+		try:
+			download(icpk[plugin]["download"], "plugins/" + icpk[plugin]["filename"])
+			installed[plugin] = icpk[plugin]
+			installed[plugin]["source"] = "icpk"
+			print("Verifying...")
+			if not hs.fileChecksum("plugins/" + icpk[plugin]["filename"], "sha256") == icpk[plugin]["hash"]:
+				installed[plugin]["verified"] = "false"
+				with open(".pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
+			else:
+				installed[plugin]["verified"] = "true"
+				with open(".pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
+		except Exception as e:
+			print("Unable to download " + plugin +  ": " + str(e))
+def info(plugin):
+	try:
+		index = configparser.ConfigParser()
+		index.read(".pluginstore/index.ini")
+	except:
+		print("Could not find plugin list, maybe run pm.update()")
+		return
+	if index.has_section(plugin):
+		print("Name: " + plugin)
+		print("Description: " + index[plugin]["description"])
+		print("Author: " + index[plugin]["maintainer"])
+		print("Version: " + index[plugin]["description"])
+		print("Rating: " + index[plugin]["rating"] + "(" + index[plugin]["ratings"] + ")")
+	elif installed.has_section(plugin):
+		print("Name: " + plugin)
+		print("Description: " + index[plugin]["description"])
+		print("Author: " + index[plugin]["maintainer"])
+		print("Version: " + index[plugin]["description"])
+		print("Rating: " + index[plugin]["rating"] + "(" + index[plugin]["ratings"] + ")")
+	else:
+		print("Plugin not found")

@@ -3,6 +3,8 @@ builtin=True
 import os
 from plugins.core import *
 from colorama import Fore, Back
+from py_essentials import hashing as hs
+import time
 def switchBranch(branch):
 	if branch != "master":
 		print(Fore.RESET + "Warning, branches other than " + Fore.CYAN + "master " + Fore.RESET + "may be unstable and buggy. Are you sure you want to continue switching to " + Fore.CYAN + branch + Fore.RESET + "?(y/n)")
@@ -38,3 +40,20 @@ def showPallate():
 	print(theme["styles"]["answer"] + "Answer")
 	print(theme["styles"]["input"] + "Input")
 	print(theme["styles"]["output"] + "Output")
+def generateStoreInfo(plugin):
+	name = input("Plugin name (No spaces): ")
+	description = input("Plugin description: ")
+	version = input("Plugin version: ")
+	maintainer = input("Maintainer email address: ")
+	link = input("Direct download link (Please use GitHub or GitLab for hosting): ")
+	lastUpdate=time.time()
+	hash = hs.fileChecksum("plugins/" + plugin)
+	print()
+	print("Plugin listing information:")
+	print()
+	print("[" + name + "]")
+	print("description = " + description)
+	print("maintainer = " + maintainer)
+	print("version = " + version)
+	print("download = " + link)
+	print("hash = " + hash)
