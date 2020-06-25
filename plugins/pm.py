@@ -38,16 +38,23 @@ def update(silent=False):
 	updates = 0
 	reinstall = 0
 	for plugin in installed.sections():
-		if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+		if os.path.exists("plugins/" + installed[plugin]["filename"]):
+			if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+				installed[plugin]["verified"] = "false"
+				with open(".pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
+			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]) and not silent:
+				updates = updates + 1
+				print("An update is available for " + plugin)
+			if installed[plugin]["verified"] != "true" and not silent:
+				reinstall = reinstall + 1
+				print(plugin + " is damaged and should be reinstalled")
+		else:
+			print(plugin + " is missing and needs to be reinstalled")
+			reinstall = reinstall + 1
 			installed[plugin]["verified"] = "false"
 			with open(".pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
-		if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]) and not silent:
-			updates = updates + 1
-			print("An update is available for " + plugin)
-		if installed[plugin]["verified"] != "true" and not silent:
-			reinstall = reinstall + 1
-			print(plugin + " is damaged and should be reinstalled")
 	if not silent:
 		print(str(updates) + " plugins have updates available")
 		print(str(reinstall) + " plugins are damaged and should be reinstalled")
@@ -166,7 +173,6 @@ def install(plugin):
 	with open(".pluginstore/installed.ini", "w+") as f:
 		installed.write(f)
 def remove(plugin):
-	update(silent=True)
 	if os.path.exists(".pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
 		installed.read(".pluginstore/installed.ini")
@@ -177,7 +183,10 @@ def remove(plugin):
 			installed.read(".pluginstore/installed.ini")
 	if installed.has_section(plugin):
 		print("Removing plugin...")
-		os.remove("plugins/" + installed[plugin]["filename"])
+		try:
+			os.remove("plugins/" + installed[plugin]["filename"])
+		except:
+			pass
 		installed.remove_section(plugin)
 		print("Done")
 	else:
@@ -203,15 +212,20 @@ def upgrade():
 	for plugin in installed.sections():
 		installed.read(".pluginstore/installed.ini")
 		index.read(".pluginstore/index.ini")
-		if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-			installed[plugin]["verified"] = "false"
-			with open(".pluginstore/installed.ini", "w+") as f:
-				installed.write(f)
-		if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
-			#print("Updating " + plugin + "...")
-			install(plugin)
-			updates = updates + 1
-		elif installed[plugin]["verified"] == "false":
+		if os.path.exists("plugins/" + installed[plugin]["filename"]):
+			if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+				installed[plugin]["verified"] = "false"
+				with open(".pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
+			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
+				#print("Updating " + plugin + "...")
+				install(plugin)
+				updates = updates + 1
+			elif installed[plugin]["verified"] == "false":
+				if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
+					install(plugin)
+					reinstall = reinstall + 1
+		else:
 			if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
 				install(plugin)
 				reinstall = reinstall + 1
