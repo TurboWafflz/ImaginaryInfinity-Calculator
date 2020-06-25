@@ -5,3 +5,4 @@ plugins/tw.py
 plugins.egg-info
 poetry.lock
 pyproject.toml
+.pluginstore
