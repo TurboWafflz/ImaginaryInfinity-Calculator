@@ -3,6 +3,7 @@ from dialog import Dialog
 import configparser
 from fuzzywuzzy import fuzz
 import os
+from plugins.core import clear
 
 builtin=True
 
@@ -213,6 +214,7 @@ def store():
 	while True:
 		mainmenu = d.menu("", height=None, width=None, menu_height=None, choices=choices)
 		if mainmenu[0] == d.CANCEL:
+			clear()
 			break
 		elif mainmenu[1] == "Search":
 			search()
@@ -224,3 +226,5 @@ def store():
 			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
+if __name__ == "__main__":
+	store()
