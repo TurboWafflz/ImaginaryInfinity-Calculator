@@ -89,17 +89,17 @@ def pluginpage(plugin):
 	if os.path.isfile("plugins/" + config[plugin]["filename"]):
 		try:
 			if pluginconfig[plugin]["lastupdate"] == config[plugin]["lastUpdate"]:
-				x.append(d.yesno(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+				x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				 x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
 			print(pluginconfig[plugin])
-			x.append(d.yesno(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+			x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
-		x.append(d.yesno(config[plugin]["longdesc"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
 	if x[0] == d.OK:
 		if x[1] == "download" or x[1] == "update":
@@ -119,7 +119,7 @@ def search():
 		for key in config.sections():
 			if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
 				choices.append((key, config[key]["shortdesc"]))
-			if fuzz.partial_ratio(x[1].lower(), config[key]["longdesc"].lower()) >= 70:
+			if fuzz.partial_ratio(x[1].lower(), config[key]["description"].lower()) >= 70:
 				if not (key, config[key]["shortdesc"]) in choices:
 					choices.append((key, config[key]["shortdesc"]))
 		text = " "
