@@ -46,7 +46,7 @@ def reloadPluginList():
 					d.gauge_update(done)
 	d.gauge_stop()
 
-#reloadPluginList()
+reloadPluginList()
 config.read(".pluginstore/index.ini")
 
 def uninstall(filename):
@@ -203,4 +203,3 @@ def store():
 			updateMenu()
 		else:
 			pluginpage(mainmenu[1])
-pluginpage("formulas")
