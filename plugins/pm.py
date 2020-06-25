@@ -90,16 +90,25 @@ def install(plugin):
 				print("Installing dependencies...")
 				dependencies = index[plugin]["depends"].split(",")
 				for dependency in dependencies:
+					with open(".pluginstore/installed.ini", "w+") as f:
+						installed.write(f)
+					installed.read(".pluginstore/installed.ini")
 					if index.has_section(dependency):
+						with open(".pluginstore/installed.ini", "w+") as f:
+							installed.write(f)
 						install(dependency)
+						installed.read(".pluginstore/installed.ini")
 					elif dependency != "none":
 						print("Dependency unsatisfyable: " + dependency)
 						return
 					else:
 						pass
+				installed.read(".pluginstore/installed.ini")
 				download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
 				installed[plugin] = index[plugin]
 				installed[plugin]["source"] = "index"
+				with open(".pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
 			except Exception as e:
 				print("Could not download file: " + e)
 				pass
@@ -107,9 +116,13 @@ def install(plugin):
 			if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 				print("Plugin verification failed, the plugin should be reinstalled.")
 				installed[plugin]["verified"] = "false"
+				with open(".pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
 			else:
 				print("Plugin verification passed")
 				installed[plugin]["verified"] = "true"
+				with open(".pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
 		else:
 			print(plugin + " is already installed and has no update available")
 	elif verified != "true" and installed.has_section(plugin):
@@ -119,7 +132,10 @@ def install(plugin):
 			dependencies = index[plugin]["depends"].split(",")
 			for dependency in dependencies:
 				if index.has_section(dependency):
+					with open(".pluginstore/installed.ini", "w+") as f:
+						installed.write(f)
 					install(dependency)
+					installed.read(".pluginstore/installed.ini")
 				elif dependency != "none":
 					print("Dependency unsatisfyable: " + dependency)
 					return
@@ -128,6 +144,8 @@ def install(plugin):
 			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
+			with open(".pluginstore/installed.ini", "w+") as f:
+				installed.write(f)
 		except Exception as e:
 			print("Could not download file: " + e)
 			pass
@@ -137,6 +155,8 @@ def install(plugin):
 			print("Expected: " + index[plugin]["hash"])
 			print("Plugin verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
+			with open(".pluginstore/installed.ini", "w+") as f:
+				installed.write(f)
 		else:
 			print("Plugin verification passed")
 			installed[plugin]["verified"] = "true"
@@ -147,7 +167,10 @@ def install(plugin):
 			dependencies = index[plugin]["depends"].split(",")
 			for dependency in dependencies:
 				if index.has_section(dependency):
+					with open(".pluginstore/installed.ini", "w+") as f:
+						installed.write(f)
 					install(dependency)
+					installed.read(".pluginstore/installed.ini")
 				elif dependency != "none":
 					print("Dependency unsatisfyable: " + dependency)
 					return
@@ -156,6 +179,8 @@ def install(plugin):
 			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
+			with open(".pluginstore/installed.ini", "w+") as f:
+				installed.write(f)
 		except Exception as e:
 			print("Could not download file: " + e)
 			pass
@@ -165,9 +190,13 @@ def install(plugin):
 			print("Expected: " + index[plugin]["hash"])
 			print("Plugin verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
+			with open(".pluginstore/installed.ini", "w+") as f:
+				installed.write(f)
 		else:
 			print("Plugin verification passed")
 			installed[plugin]["verified"] = "true"
+			with open(".pluginstore/installed.ini", "w+") as f:
+				installed.write(f)
 	else:
 		print("Plugin " + plugin + " not found.")
 	with open(".pluginstore/installed.ini", "w+") as f:
@@ -277,7 +306,7 @@ def list(scope="available"):
 				verified = "Verified"
 			else:
 				verified = "Damaged, should be reinstalled"
-			print(plugin + " - " + installed[plugin]["description"] + " | " + verified)
+			print(plugin + " - " + installed[plugin]["summary"] + " | " + verified)
 	if scope == "available":
 		for plugin in index.sections():
 			if installed.has_section(plugin):
@@ -287,7 +316,7 @@ def list(scope="available"):
 					status = " | Damaged, should be reinstalled"
 			else:
 				status = " | Not installed"
-			print(plugin + " - " + index[plugin]["description"] + status)
+			print(plugin + " - " + index[plugin]["summary"] + status)
 def installFromFile(file):
 	copyfile(file, ".pluginstore/installer.ini")
 	try:
