@@ -16,9 +16,9 @@ if not os.path.isfile(".pluginstore/index.ini"):
 	with open(".pluginstore/index.ini", "w+") as f:
 		f.write("#")
 
-config = configparser.ConfigParser()
-pluginconfig = configparser.ConfigParser()
-pluginconfig.read(".pluginstore/installed.ini")
+index = configparser.ConfigParser()
+installed = configparser.ConfigParser()
+installed.read(".pluginstore/installed.ini")
 
 def reloadPluginList():
 	file_name = ".pluginstore/index.ini"
@@ -52,10 +52,10 @@ def uninstall(filename, plugin):
 	d = Dialog(dialog="dialog")
 	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:
 		os.remove("plugins/" + filename)
-		pluginconfig.remove_section(plugin)
+		installed.remove_section(plugin)
 		with open(".pluginstore/installed.ini", "r+") as f:
 			f.seek(0)
-			pluginconfig.write(f)
+			installed.write(f)
 			f.truncate()
 		d.msgbox(filename + " has been uninstalled.", width=None, height=None)
 
@@ -108,13 +108,12 @@ def download(link, file_name, plugin_name, bulk=False):
 					d.gauge_update(done)
 	d.gauge_stop()
 	try:
-		pluginconfig.add_section(plugin_name)
+		installed.add_section(plugin_name)
 	except:
 		pass
-	pluginconfig[plugin_name]["lastupdate"] = config[plugin_name]["lastUpdate"]
-	pluginconfig[plugin_name]["version"] = config[plugin_name]["version"]
+	installed[plugin_name] = index[plugin_name]
 	with open(".pluginstore/installed.ini", "r+") as f:
-		pluginconfig.write(f)
+		installed.write(f)
 	if bulk == False:
 		d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
 
@@ -122,35 +121,35 @@ def pluginpage(plugin):
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
 	x = []
-	if os.path.isfile("plugins/" + config[plugin]["filename"]):
+	if os.path.isfile("plugins/" + index[plugin]["filename"]):
 		try:
-			if float(pluginconfig[plugin]["lastupdate"]) == float(config[plugin]["lastUpdate"]):
-				x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]):
+				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
-			x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
-		x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
 	if x[0] == d.OK:
 		if x[1] == "download" or x[1] == "update":
-			download(config[plugin]["download"], "plugins/" + config[plugin]["filename"], plugin)
+			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"], plugin)
 		elif x[1] == "uninstall":
-			uninstall(config[plugin]["filename"], plugin)
+			uninstall(index[plugin]["filename"], plugin)
 	elif x[0] == d.EXTRA:
 		ratePlugin(plugin)
 	elif x[0] == d.HELP:
-		uninstall(config[plugin]["filename"], plugin)
+		uninstall(index[plugin]["filename"], plugin)
 		
 def pluginmenu():
 		choices = []
 		d = Dialog()
-		for key in pluginconfig.sections():
-			choices.append((key, config[key]["summary"]))
+		for key in installed.sections():
+			choices.append((key, index[key]["summary"]))
 		if len(choices) == 0:
 			choices.append(("No Installed Plugins", ""))
 		else:
@@ -163,9 +162,9 @@ def updateMenu():
 	d = Dialog(dialog="dialog")
 	updates = []
 	updatenum = 0
-	for key in pluginconfig.sections():
-		if float(pluginconfig[key]["lastupdate"]) < float(config[key]["lastUpdate"]):
-			updates.append((key, pluginconfig[key]["version"] + " > " + config[key]["version"]))
+	for key in installed.sections():
+		if float(installed[key]["lastupdate"]) < float(index[key]["lastUpdate"]):
+			updates.append((key, installed[key]["version"] + " > " + index[key]["version"]))
 			updatenum += 1
 	if len(updates) == 0:
 		updates.append(("", ""))
@@ -174,12 +173,12 @@ def updateMenu():
 	else:
 		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back")
 	if x[0] == d.OK and x[1] != "":
-		download(config[x[1]]["download"], "plugins/" + config[x[1]]["filename"], x[1])
+		download(index[x[1]]["download"], "plugins/" + index[x[1]]["filename"], x[1])
 	elif x[0] == d.EXTRA:
 		failed = 0
 		for i in range(len(updates)):
 			try:
-				download(config[updates[i][0]]["download"], "plugins/" + config[updates[i][0]]["filename"], updates[i][0], True)
+				download(index[updates[i][0]]["download"], "plugins/" + index[updates[i][0]]["filename"], updates[i][0], True)
 			except:
 				failed += 1
 		d.msgbox("Updated " + str(len(updates) - failed) + " plugins successfully. " + str(failed) + " updates failed")
@@ -189,12 +188,12 @@ def search():
 	x = d.inputbox("Search", height=None, width=None, init="")
 	if x[0] == d.OK:
 		choices = []
-		for key in config.sections():
+		for key in index.sections():
 			if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
-				choices.append((key, config[key]["summary"]))
-			if fuzz.partial_ratio(x[1].lower(), config[key]["description"].lower()) >= 70:
-				if not (key, config[key]["summary"]) in choices:
-					choices.append((key, config[key]["summary"]))
+				choices.append((key, index[key]["summary"]))
+			if fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >= 70:
+				if not (key, index[key]["summary"]) in choices:
+					choices.append((key, index[key]["summary"]))
 		text = " "
 		if len(choices) == 0:
 			choices.append(("", ""))
@@ -205,12 +204,12 @@ def search():
 
 def store():
 	reloadPluginList()
-	config.read(".pluginstore/index.ini")
+	index.read(".pluginstore/index.ini")
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
 	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed Plugins", "View Your Installed Plugins"), ("", "")]
-	for key in config.sections():
-		choices.append((key, config[key]["summary"]))
+	for key in index.sections():
+		choices.append((key, index[key]["summary"]))
 	while True:
 		mainmenu = d.menu("", height=None, width=None, menu_height=None, choices=choices)
 		if mainmenu[0] == d.CANCEL:
@@ -225,3 +224,4 @@ def store():
 			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
+store()
