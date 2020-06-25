@@ -150,13 +150,13 @@ def pluginmenu():
 		choices = []
 		d = Dialog()
 		for key in pluginconfig.sections():
-			choices.append((key, config[key]["shortdesc"]))
+			choices.append((key, config[key]["summary"]))
 		if len(choices) == 0:
 			choices.append(("No Installed Plugins", ""))
 		else:
 			d.add_persistent_args(["--ok-label", "View Page"])
 		x = d.menu("Installed Plugins", choices=choices, cancel_label="Back")
-		if x[0] == d.OK and len(choices) > 0:
+		if x[0] == d.OK and x[1] != "No Installed Plugins":
 			pluginpage(x[1])
 		
 def updateMenu():
@@ -191,10 +191,10 @@ def search():
 		choices = []
 		for key in config.sections():
 			if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
-				choices.append((key, config[key]["shortdesc"]))
+				choices.append((key, config[key]["summary"]))
 			if fuzz.partial_ratio(x[1].lower(), config[key]["description"].lower()) >= 70:
-				if not (key, config[key]["shortdesc"]) in choices:
-					choices.append((key, config[key]["shortdesc"]))
+				if not (key, config[key]["summary"]) in choices:
+					choices.append((key, config[key]["summary"]))
 		text = " "
 		if len(choices) == 0:
 			choices.append(("", ""))
@@ -210,7 +210,7 @@ def store():
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
 	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed Plugins", "View Your Installed Plugins"), ("", "")]
 	for key in config.sections():
-		choices.append((key, config[key]["shortdesc"]))
+		choices.append((key, config[key]["summary"]))
 	while True:
 		mainmenu = d.menu("", height=None, width=None, menu_height=None, choices=choices)
 		if mainmenu[0] == d.CANCEL:
