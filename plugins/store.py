@@ -4,6 +4,8 @@ import configparser
 from fuzzywuzzy import fuzz
 import os
 
+builtin=True
+
 #init
 if not os.path.isdir(".pluginstore"):
 	os.mkdir(".pluginstore")
@@ -46,10 +48,15 @@ def reloadPluginList():
 					d.gauge_update(done)
 	d.gauge_stop()
 
-def uninstall(filename):
+def uninstall(filename, plugin):
 	d = Dialog(dialog="dialog")
 	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:
 		os.remove("plugins/" + filename)
+		pluginconfig.remove_section(plugin)
+		with open(".pluginstore/installed.ini", "r+") as f:
+			f.seek(0)
+			pluginconfig.write(f)
+			f.truncate()
 		d.msgbox(filename + " has been uninstalled.", width=None, height=None)
 
 def ratePlugin(plugin):
@@ -133,11 +140,11 @@ def pluginpage(plugin):
 		if x[1] == "download" or x[1] == "update":
 			download(config[plugin]["download"], "plugins/" + config[plugin]["filename"], plugin)
 		elif x[1] == "uninstall":
-			uninstall(config[plugin]["filename"])
+			uninstall(config[plugin]["filename"], plugin)
 	elif x[0] == d.EXTRA:
 		ratePlugin(plugin)
 	elif x[0] == d.HELP:
-		uninstall(config[plugin]["filename"])
+		uninstall(config[plugin]["filename"], plugin)
 		
 def updateMenu():
 	d = Dialog(dialog="dialog")
@@ -148,12 +155,12 @@ def updateMenu():
 			updates.append((key, pluginconfig[key]["version"] + " > " + config[key]["version"]))
 			updatenum += 1
 	if len(updates) == 0:
-		updates.append((" ", " "))
+		updates.append(("", ""))
 	if updatenum > 0:
 		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back", ok_label="Update", extra_button=True, extra_label="Update All")
 	else:
 		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back")
-	if x[0] == d.OK:
+	if x[0] == d.OK and x[1] != "":
 		download(config[x[1]]["download"], "plugins/" + config[x[1]]["filename"], x[1])
 	elif x[0] == d.EXTRA:
 		failed = 0
@@ -180,7 +187,7 @@ def search():
 			choices.append(("", ""))
 			text="No Results"
 		x = d.menu(text, height=None, width=None, menu_height=None, choices=choices, cancel_label="Back")
-		if x[0] == d.OK:
+		if x[0] == d.OK and x[1] != "":
 			pluginpage(x[1])
 
 def store():
@@ -188,7 +195,7 @@ def store():
 	config.read(".pluginstore/index.ini")
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
-	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), (" ", " ")]
+	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("", "")]
 	for key in config.sections():
 		choices.append((key, config[key]["shortdesc"]))
 	while True:
@@ -199,5 +206,7 @@ def store():
 			search()
 		elif mainmenu[1] == "Updates":
 			updateMenu()
+		elif mainmenu[1] == "":
+			pass
 		else:
 			pluginpage(mainmenu[1])
