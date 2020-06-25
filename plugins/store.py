@@ -46,9 +46,6 @@ def reloadPluginList():
 					d.gauge_update(done)
 	d.gauge_stop()
 
-reloadPluginList()
-config.read(".pluginstore/index.ini")
-
 def uninstall(filename):
 	d = Dialog(dialog="dialog")
 	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:
@@ -187,6 +184,8 @@ def search():
 			pluginpage(x[1])
 
 def store():
+	reloadPluginList()
+	config.read(".pluginstore/index.ini")
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
 	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), (" ", " ")]
