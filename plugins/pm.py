@@ -4,6 +4,7 @@ import os
 import configparser
 from py_essentials import hashing as hs
 from shutil import copyfile
+builtin = True
 def download(url, localFilename):
 	# NOTE the stream=True parameter
 	r = requests.get(url, stream=True)
