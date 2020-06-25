@@ -57,3 +57,4 @@ def generateStoreInfo(plugin):
 	print("version = " + version)
 	print("download = " + link)
 	print("hash = " + hash)
+	print("lastupdate = " + str(time.time()))
