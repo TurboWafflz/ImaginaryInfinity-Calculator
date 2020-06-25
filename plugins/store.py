@@ -224,4 +224,3 @@ def store():
 			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
-store()
