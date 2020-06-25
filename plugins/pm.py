@@ -12,7 +12,8 @@ def download(url, localFilename):
 				f.write(chunk)
 	return localFilename
 def update(silent=False):
-	print("Updating package list...")
+	if not silent:
+		print("Updating package list...")
 	if not os.path.isdir(".pluginstore"):
 		os.makedirs(".pluginstore")
 	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", ".pluginstore/index.ini")
@@ -123,7 +124,7 @@ def install(plugin):
 	with open(".pluginstore/installed.ini", "w+") as f:
 		installed.write(f)
 def remove(plugin):
-	update()
+	update(silent=True)
 	if os.path.exists(".pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
 		installed.read(".pluginstore/installed.ini")
@@ -223,4 +224,11 @@ def list(scope="available"):
 			print(plugin + " - " + installed[plugin]["description"] + " | " + verified)
 	if scope == "available":
 		for plugin in index.sections():
-			print(plugin + " - " + index[plugin]["description"])
+			if installed.has_section(plugin):
+				if installed[plugin]["verified"] == "true":
+					installed = " | Installed & verified"
+				else:
+					installed = " | Damaged, should be reinstalled"
+			else:
+				installed = " | Not installed"
+			print(plugin + " - " + index[plugin]["description"] + installed)
