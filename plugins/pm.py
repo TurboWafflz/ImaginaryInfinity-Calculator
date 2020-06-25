@@ -99,6 +99,8 @@ def install(plugin):
 			pass
 		print("Verifying...")
 		if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			print("File hash: " + hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256"))
+			print("Expected: " + index[plugin]["hash"])
 			print("Plugin verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
 		else:
@@ -114,6 +116,8 @@ def install(plugin):
 			pass
 		print("Verifying...")
 		if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			print("File hash: " + hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256"))
+			print("Expected: " + index[plugin]["hash"])
 			print("Plugin verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
 		else:
