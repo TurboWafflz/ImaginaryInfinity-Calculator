@@ -3,12 +3,23 @@ from dialog import Dialog
 import configparser
 from fuzzywuzzy import fuzz
 import os
+
+#init
+if not os.path.isdir(".pluginstore"):
+	os.mkdir(".pluginstore")
+if not os.path.isfile(".pluginstore/.plugins.ini"):
+	with open(".pluginstore/.plugins.ini", "w+") as f:
+		f.write("#")
+if not os.path.isfile(".pluginstore/.index.ini"):
+	with open(".pluginstore/.index.ini", "w+") as f:
+		f.write("#")
+
 config = configparser.ConfigParser()
 pluginconfig = configparser.ConfigParser()
-pluginconfig.read("plugins/.plugins.ini")
+pluginconfig.read(".pluginstore/.plugins.ini")
 
 def reloadPluginList():
-	file_name = "plugins/.index.ini"
+	file_name = ".pluginstore/.index.ini"
 	link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Reloading Plugin List..."])
@@ -36,7 +47,7 @@ def reloadPluginList():
 	d.gauge_stop()
 
 reloadPluginList()
-config.read("plugins/.index.ini")
+config.read(".pluginstore/.index.ini")
 
 def uninstall(filename):
 	d = Dialog(dialog="dialog")
@@ -78,7 +89,7 @@ def download(link, file_name, plugin_name):
 	except:
 		pass
 	pluginconfig[plugin_name]["lastupdate"] = config[plugin_name]["lastUpdate"]
-	with open("plugins/.plugins.ini", "r+") as f:
+	with open(".pluginstore/.plugins.ini", "r+") as f:
 		pluginconfig.write(f)
 	d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
 
@@ -144,3 +155,4 @@ def store():
 			search()
 		else:
 			pluginpage(mainmenu[1])
+store()
