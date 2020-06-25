@@ -226,9 +226,9 @@ def list(scope="available"):
 		for plugin in index.sections():
 			if installed.has_section(plugin):
 				if installed[plugin]["verified"] == "true":
-					installed = " | Installed & verified"
+					status = " | Installed & verified"
 				else:
-					installed = " | Damaged, should be reinstalled"
+					status = " | Damaged, should be reinstalled"
 			else:
-				installed = " | Not installed"
-			print(plugin + " - " + index[plugin]["description"] + installed)
+				status = " | Not installed"
+			print(plugin + " - " + index[plugin]["description"] + status)
