@@ -146,6 +146,19 @@ def pluginpage(plugin):
 	elif x[0] == d.HELP:
 		uninstall(config[plugin]["filename"], plugin)
 		
+def pluginmenu():
+		choices = []
+		d = Dialog()
+		for key in pluginconfig.sections():
+			choices.append((key, config[key]["shortdesc"]))
+		if len(choices) == 0:
+			choices.append(("No Installed Plugins", ""))
+		else:
+			d.add_persistent_args(["--ok-label", "View Page"])
+		x = d.menu("Installed Plugins", choices=choices, cancel_label="Back")
+		if x[0] == d.OK and len(choices) > 0:
+			pluginpage(x[1])
+		
 def updateMenu():
 	d = Dialog(dialog="dialog")
 	updates = []
@@ -195,7 +208,7 @@ def store():
 	config.read(".pluginstore/index.ini")
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
-	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("", "")]
+	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed Plugins", "View Your Installed Plugins"), ("", "")]
 	for key in config.sections():
 		choices.append((key, config[key]["shortdesc"]))
 	while True:
@@ -208,5 +221,7 @@ def store():
 			updateMenu()
 		elif mainmenu[1] == "":
 			pass
+		elif mainmenu[1] == "Installed Plugins":
+			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
