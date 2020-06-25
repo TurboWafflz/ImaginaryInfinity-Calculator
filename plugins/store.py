@@ -155,4 +155,3 @@ def store():
 			search()
 		else:
 			pluginpage(mainmenu[1])
-store()
