@@ -223,4 +223,4 @@ def list(scope="available"):
 			print(plugin + " - " + installed[plugin]["description"] + " | " + verified)
 	if scope == "available":
 		for plugin in index.sections():
-			print(plugin + " - " + installed[plugin]["description"])
+			print(plugin + " - " + index[plugin]["description"])
