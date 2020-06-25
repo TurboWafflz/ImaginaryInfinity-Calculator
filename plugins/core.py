@@ -532,7 +532,7 @@ def cmdUpdate(theme=theme, config=config):
 
 #Update wizard by tabulate
 def doGuiUpdate(branch=0, theme=theme):
-	nonplugins = getDeafults("plugins")
+	nonplugins = getDefaults("plugins")
 	nonthemes = getDefaults("themes")
 
 	d = Dialog(dialog="dialog")
