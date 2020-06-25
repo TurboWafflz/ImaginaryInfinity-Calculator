@@ -65,4 +65,4 @@ def generateStoreInfo(plugin):
 		print("rating = 5")
 		print("ratings = 0")
 	else:
-		print("File not found")
+		print("File not found: plugins/" + plugin)
