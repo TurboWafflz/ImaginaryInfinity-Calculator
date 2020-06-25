@@ -1,4 +1,5 @@
 touch .start
+python3 -m pip install -r requirements.txt
 while [ -f ".start" ]
 do
   rm .start
