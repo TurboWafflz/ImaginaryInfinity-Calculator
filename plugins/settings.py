@@ -56,17 +56,6 @@ def editor():
 						config["appearance"]["prompt"] = pstring
 					else:
 						clear()
-				if tag == "Discord rich presence":
-					dcode, dtag = d.menu("ImaginaryInfinity Calculator Discord Settings",
-										choices=[("On", "Enable Discord rich presence"),
-												("Off", "Disable Discord rich presence")], width=0, height=0)
-					if dcode == d.OK:
-						if dtag == "On":
-							config["discord"]["enablerpc"] = "true"
-						if dtag == "Off":
-							config["discord"]["enablerpc"] = "false"
-					else:
-						clear()
 				if tag=="Update":
 					update()
 					break
