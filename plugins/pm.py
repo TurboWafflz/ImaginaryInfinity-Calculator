@@ -220,7 +220,7 @@ def list(scope="available"):
 			if installed[plugin]["verified"] == "true":
 				verified = "Verified"
 			else:
-				verified = "Possibly damaged, should be reinstalled"
+				verified = "Damaged, should be reinstalled"
 			print(plugin + " - " + installed[plugin]["description"] + " | " + verified)
 	if scope == "available":
 		for plugin in index.sections():
