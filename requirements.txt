@@ -1,3 +1,5 @@
 colorama==0.4.1
 pythondialog==3.5.1
 requests==2.22.0
+tqdm==4.46.1
+py_essentials==1.4.12
