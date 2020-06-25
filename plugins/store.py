@@ -7,19 +7,19 @@ import os
 #init
 if not os.path.isdir(".pluginstore"):
 	os.mkdir(".pluginstore")
-if not os.path.isfile(".pluginstore/.plugins.ini"):
-	with open(".pluginstore/.plugins.ini", "w+") as f:
+if not os.path.isfile(".pluginstore/installed.ini"):
+	with open(".pluginstore/installed.ini", "w+") as f:
 		f.write("#")
-if not os.path.isfile(".pluginstore/.index.ini"):
-	with open(".pluginstore/.index.ini", "w+") as f:
+if not os.path.isfile(".pluginstore/index.ini"):
+	with open(".pluginstore/index.ini", "w+") as f:
 		f.write("#")
 
 config = configparser.ConfigParser()
 pluginconfig = configparser.ConfigParser()
-pluginconfig.read(".pluginstore/.plugins.ini")
+pluginconfig.read(".pluginstore/installed.ini")
 
 def reloadPluginList():
-	file_name = ".pluginstore/.index.ini"
+	file_name = ".pluginstore/index.ini"
 	link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Reloading Plugin List..."])
@@ -47,7 +47,7 @@ def reloadPluginList():
 	d.gauge_stop()
 
 reloadPluginList()
-config.read(".pluginstore/.index.ini")
+config.read(".pluginstore/index.ini")
 
 def uninstall(filename):
 	d = Dialog(dialog="dialog")
@@ -59,7 +59,7 @@ def ratePlugin(plugin):
 	d = Dialog(dialog="dialog")
 	requests.post("https://turbowafflz.azurewebsites.net/iicalc/plugins/rate", {"plugin":plugin, "rating":d.rangebox("Rate " + plugin, height=0, width=0, min=1, max=5, init=5)[1]})
 
-def download(link, file_name, plugin_name):
+def download(link, file_name, plugin_name, bulk=False):
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Downloading " + file_name])
 	d.gauge_start(text="", height=None, width=None, percent=0)
@@ -89,9 +89,11 @@ def download(link, file_name, plugin_name):
 	except:
 		pass
 	pluginconfig[plugin_name]["lastupdate"] = config[plugin_name]["lastUpdate"]
-	with open(".pluginstore/.plugins.ini", "r+") as f:
+	pluginconfig[plugin_name]["version"] = config[plugin_name]["version"]
+	with open(".pluginstore/installed.ini", "r+") as f:
 		pluginconfig.write(f)
-	d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
+	if bulk == False:
+		d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
 
 def pluginpage(plugin):
 	d = Dialog(dialog="dialog")
@@ -99,14 +101,13 @@ def pluginpage(plugin):
 	x = []
 	if os.path.isfile("plugins/" + config[plugin]["filename"]):
 		try:
-			if pluginconfig[plugin]["lastupdate"] == config[plugin]["lastUpdate"]:
+			if float(pluginconfig[plugin]["lastupdate"]) == float(config[plugin]["lastUpdate"]):
 				x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
 				 x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
-			print(pluginconfig[plugin])
 			x.append(d.yesno(config[plugin]["description"] + "\n\nRating: " + config[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
@@ -121,6 +122,31 @@ def pluginpage(plugin):
 		ratePlugin(plugin)
 	elif x[0] == d.HELP:
 		uninstall(config[plugin]["filename"])
+		
+def updateMenu():
+	d = Dialog(dialog="dialog")
+	updates = []
+	updatenum = 0
+	for key in pluginconfig.sections():
+		if float(pluginconfig[key]["lastupdate"]) < float(config[key]["lastUpdate"]):
+			updates.append((key, pluginconfig[key]["version"] + " > " + config[key]["version"]))
+			updatenum += 1
+	if len(updates) == 0:
+		updates.append((" ", " "))
+	if updatenum > 0:
+		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back", ok_label="Update", extra_button=True, extra_label="Update All")
+	else:
+		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back")
+	if x[0] == d.OK:
+		download(config[x[1]]["download"], "plugins/" + config[x[1]]["filename"], x[1])
+	elif x[0] == d.EXTRA:
+		failed = 0
+		for i in range(len(updates)):
+			try:
+				download(config[updates[i][0]]["download"], "plugins/" + config[updates[i][0]]["filename"], updates[i][0], True)
+			except:
+				failed += 1
+		d.msgbox("Updated " + str(len(updates) - failed) + " plugins successfully. " + str(failed) + " updates failed")
 
 def search():
 	d = Dialog(dialog="dialog")
@@ -144,7 +170,7 @@ def search():
 def store():
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
-	choices = [("Search", "Search for plugins")]
+	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), (" ", " ")]
 	for key in config.sections():
 		choices.append((key, config[key]["shortdesc"]))
 	while True:
@@ -153,5 +179,7 @@ def store():
 			break
 		elif mainmenu[1] == "Search":
 			search()
+		elif mainmenu[1] == "Updates":
+			updateMenu()
 		else:
 			pluginpage(mainmenu[1])
