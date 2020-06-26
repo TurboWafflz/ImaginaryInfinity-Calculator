@@ -1,4 +1,4 @@
-#ImaginaryInfinity Calculator Core Plugin v2.2
+#ImaginaryInfinity Calculator Core Plugin v2.3
 #Copyright 2020 Finian Wright
 import os
 import platform

@@ -4,6 +4,7 @@ import configparser
 from fuzzywuzzy import fuzz
 import os
 from plugins.core import clear
+from plugins import pm
 
 builtin=True
 
@@ -17,16 +18,21 @@ if not os.path.isfile(".pluginstore/index.ini"):
 	with open(".pluginstore/index.ini", "w+") as f:
 		f.write("#")
 
+#set configs
 index = configparser.ConfigParser()
 installed = configparser.ConfigParser()
 installed.read(".pluginstore/installed.ini")
 
+#reload index
 def reloadPluginList():
 	file_name = ".pluginstore/index.ini"
 	link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
+	#display progress box of updating index
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Reloading Plugin List..."])
 	d.gauge_start(text="This may take a while if the server hasn\'t been pinged in a while", height=None, width=None, percent=0)
+
+	#download actual index from site
 	with open(file_name, "wb") as f:
 		response = requests.get(link, stream=True)
 		total_length = response.headers.get('content-length')
@@ -49,21 +55,32 @@ def reloadPluginList():
 					d.gauge_update(done)
 	d.gauge_stop()
 
+#Uninstall plugin
 def uninstall(filename, plugin):
+	#Confirmation Box
 	d = Dialog(dialog="dialog")
 	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:
+		#Delete file
 		os.remove("plugins/" + filename)
+		#Remove section in installed
 		installed.remove_section(plugin)
+		#write the updated install file to the install file
 		with open(".pluginstore/installed.ini", "r+") as f:
 			f.seek(0)
 			installed.write(f)
 			f.truncate()
+		#msgbox saying plugin has been uninstalled
 		d.msgbox(filename + " has been uninstalled.", width=None, height=None)
 
+#Plugin rating function
 def ratePlugin(plugin):
 	d = Dialog(dialog="dialog")
+	#define data
 	data = {"plugin":plugin, "rating":d.rangebox("Rate " + plugin, height=0, width=0, min=1, max=5, init=5)[1]}
+	#post data to form
 	resp = requests.post("https://turbowafflz.azurewebsites.net/iicalc/plugins/rate", data).status_code
+
+	#Response from server processing
 	if resp == 200:
 		d.msgbox("Your review has been submitted")
 	elif resp == 404:
@@ -79,14 +96,17 @@ def ratePlugin(plugin):
 	elif resp == 500:
 		d.msgbox("500 Internal Server Error. Please open an issue on GitHub with the following debug information:\n" + str(data))
 	elif resp == 503:
-		d.msgbox("503 Service Unavailable. The server is currently unable to handle the request due to a temporary overloading or maintenance of the server")
+		d.msgbox("503 Service Unavailable. The server is currently unable to handle the request due to a temporary overload  or maintenance of the server")
 	else:
 		d.msgbox("Error " + str(resp) + ". Please open an issue on GitHub")
 
+#download plugins
 def download(link, file_name, plugin_name, bulk=False):
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Downloading " + file_name])
+	#Progress gauge
 	d.gauge_start(text="", height=None, width=None, percent=0)
+	#Actual downloading of file
 	with open(file_name, "wb") as f:
 		response = requests.get(link, stream=True)
 		total_length = response.headers.get('content-length')
@@ -108,23 +128,42 @@ def download(link, file_name, plugin_name, bulk=False):
 
 					d.gauge_update(done)
 	d.gauge_stop()
+	#verify plugin
+	failed = False
+	if pm.verify(plugin_name) == False:
+		d.msgbox("The plugin " + plugin_name + " did not download correctly. Please redownload this plugin")
+		failed = True
+
+	#add plugin to installed
 	try:
 		installed.add_section(plugin_name)
 	except:
 		pass
 	installed[plugin_name] = index[plugin_name]
+	if failed == True:
+		installed[plugin_name]["verified"] = "false"
+
+	#write to installed file
 	with open(".pluginstore/installed.ini", "r+") as f:
 		installed.write(f)
-	if bulk == False:
+
+	depends = index[plugin_name]["depends"]
+	depends = depends.split(",")
+	for i in range(len(depends)):
+		download(index[depends[i]]["download"], index[depends[i]]["filename"], depends[i], True)
+
+	if bulk == False and failed == False:
 		d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
 
+#Plugin page
 def pluginpage(plugin):
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
 	x = []
+	#processing to detect what labels to put on the buttons
 	if os.path.isfile("plugins/" + index[plugin]["filename"]):
 		try:
-			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]):
+			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
 				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
@@ -136,6 +175,8 @@ def pluginpage(plugin):
 	else:
 		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
+
+	#processing to tell what to do when buttons are pressed
 	if x[0] == d.OK:
 		if x[1] == "download" or x[1] == "update":
 			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"], plugin)
@@ -146,33 +187,42 @@ def pluginpage(plugin):
 	elif x[0] == d.HELP:
 		uninstall(index[plugin]["filename"], plugin)
 
+#Menu to list all plugins
 def pluginmenu():
 		choices = []
 		d = Dialog()
+		#append installed plugins to list
 		for key in installed.sections():
 			choices.append((key, index[key]["summary"]))
 		if len(choices) == 0:
 			choices.append(("No Installed Plugins", ""))
 		else:
+			#display all installed plugins
 			d.add_persistent_args(["--ok-label", "View Page"])
 		x = d.menu("Installed Plugins", choices=choices, cancel_label="Back")
 		if x[0] == d.OK and x[1] != "No Installed Plugins":
 			pluginpage(x[1])
 
+#Menu to show all available updates
 def updateMenu():
 	d = Dialog(dialog="dialog")
 	updates = []
 	updatenum = 0
+	#append all plugins with available updates to list
 	for key in installed.sections():
-		if float(installed[key]["lastupdate"]) < float(index[key]["lastUpdate"]):
+		if float(installed[key]["lastupdate"]) < float(index[key]["lastUpdate"]) or installed[key]["verified"] == "false":
 			updates.append((key, installed[key]["version"] + " > " + index[key]["version"]))
 			updatenum += 1
+	#create list with empty tuple if no plugins require updates
 	if len(updates) == 0:
 		updates.append(("", ""))
+
+	#actually display the update box
 	if updatenum > 0:
 		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back", ok_label="Update", extra_button=True, extra_label="Update All")
 	else:
 		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back")
+	#processing to detect what the buttons do
 	if x[0] == d.OK and x[1] != "":
 		download(index[x[1]]["download"], "plugins/" + index[x[1]]["filename"], x[1])
 	elif x[0] == d.EXTRA:
@@ -184,9 +234,12 @@ def updateMenu():
 				failed += 1
 		d.msgbox("Updated " + str(len(updates) - failed) + " plugins successfully. " + str(failed) + " updates failed")
 
+#Search index for plugin
 def search():
 	d = Dialog(dialog="dialog")
+	#display search box
 	x = d.inputbox("Search", height=None, width=None, init="")
+	#fuzzy string searching
 	if x[0] == d.OK:
 		choices = []
 		for key in index.sections():
@@ -196,6 +249,7 @@ def search():
 				if not (key, index[key]["summary"]) in choices:
 					choices.append((key, index[key]["summary"]))
 		text = " "
+		#detect if no results
 		if len(choices) == 0:
 			choices.append(("", ""))
 			text="No Results"
@@ -203,14 +257,19 @@ def search():
 		if x[0] == d.OK and x[1] != "":
 			pluginpage(x[1])
 
+#Main store function
 def store():
+	#reload index
 	reloadPluginList()
 	index.read(".pluginstore/index.ini")
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
+	#default options
 	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed Plugins", "View Your Installed Plugins"), ("", "")]
+	#add all plugins to result
 	for key in index.sections():
 		choices.append((key, index[key]["summary"]))
+	#display menu
 	while True:
 		mainmenu = d.menu("", height=None, width=None, menu_height=None, choices=choices)
 		if mainmenu[0] == d.CANCEL:
@@ -226,5 +285,6 @@ def store():
 			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
+#run store() if store.py is executed
 if __name__ == "__main__":
 	store()
