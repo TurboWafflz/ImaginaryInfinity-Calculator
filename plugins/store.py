@@ -152,9 +152,9 @@ def download(plugin_name, bulk=False):
 	with open(".pluginstore/installed.ini", "r+") as f:
 		installed.write(f)
 
+	dependencies = True
 	try:
 		depends = index[plugin_name]["depends"]
-		dependancies = True
 	except:
 		dependencies = False
 	if dependencies == True:
