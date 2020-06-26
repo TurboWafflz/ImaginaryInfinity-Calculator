@@ -202,7 +202,7 @@ def pluginpage(plugin, cache=None):
 	elif x[0] == d.HELP:
 		uninstall(index[plugin]["filename"], plugin)
 	elif x[0] == d.CANCEL and cache != None:
-		search(text=cache[1], bypass=True, choices=cache[0])
+		search(True, cache[0])
 
 #Menu to list all plugins
 def pluginmenu():
@@ -252,14 +252,13 @@ def updateMenu():
 		d.msgbox("Updated " + str(len(updates) - failed) + " plugins successfully. " + str(failed) + " updates failed")
 
 #Search index for plugin
-def search(init="", bypass=False, choices=[], text=" "):
-	currentsearch=init
+def search(bypass=False, choices=[]):
+	text = "Results"
 	d = Dialog(dialog="dialog")
 	
 	if bypass == False:
 		#display search box
-		x = d.inputbox("Search", height=None, width=None, init=init)
-		currentsearch = x[1]
+		x = d.inputbox("Search", height=None, width=None, init="")
 		#fuzzy string searching
 		if x[0] == d.OK:
 			choices = []
@@ -275,10 +274,10 @@ def search(init="", bypass=False, choices=[], text=" "):
 				text="No Results"
 	x = d.menu(text, height=None, width=None, menu_height=None, choices=choices, cancel_label="Back")
 	if x[0] == d.OK and x[1] != "":
-		pluginpage(x[1], (choices, text))
+		pluginpage(x[1], (choices,))
 	elif x[0] == d.CANCEL:
 		try:
-			search(currentsearch)
+			search()
 		except:
 			pass
 
