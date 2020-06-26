@@ -2,6 +2,4 @@ __pycache__
 plugins/__pycache__
 plugins/tw.py
 .update.log
-plugins.egg-info
-poetry.lock
-pyproject.toml
+.pluginstore
