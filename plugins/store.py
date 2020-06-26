@@ -5,6 +5,8 @@ from fuzzywuzzy import fuzz
 import os
 from plugins.core import clear
 from plugins import pm
+import sys
+import subprocess
 
 builtin=True
 
@@ -101,11 +103,13 @@ def ratePlugin(plugin):
 		d.msgbox("Error " + str(resp) + ". Please open an issue on GitHub")
 
 #download plugins
-def download(link, file_name, plugin_name, bulk=False):
+def download(plugin_name, bulk=False):
+	link = index[plugin_name]["download"]
+	file_name = "plugins/" + index[plugin_name]["filename"]
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Downloading " + file_name])
 	#Progress gauge
-	d.gauge_start(text="", height=None, width=None, percent=0)
+	d.gauge_start(text="Installing " + plugin_name, height=None, width=None, percent=0)
 	#Actual downloading of file
 	with open(file_name, "wb") as f:
 		response = requests.get(link, stream=True)
@@ -127,7 +131,6 @@ def download(link, file_name, plugin_name, bulk=False):
 					olddone = done
 
 					d.gauge_update(done)
-	d.gauge_stop()
 	#verify plugin
 	failed = False
 	if pm.verify(plugin_name) == False:
@@ -142,6 +145,8 @@ def download(link, file_name, plugin_name, bulk=False):
 	installed[plugin_name] = index[plugin_name]
 	if failed == True:
 		installed[plugin_name]["verified"] = "false"
+	else:
+		installed[plugin_name]["verified"] = "true"
 
 	#write to installed file
 	with open(".pluginstore/installed.ini", "r+") as f:
@@ -150,8 +155,12 @@ def download(link, file_name, plugin_name, bulk=False):
 	depends = index[plugin_name]["depends"]
 	depends = depends.split(",")
 	for i in range(len(depends)):
-		download(index[depends[i]]["download"], index[depends[i]]["filename"], depends[i], True)
-
+		if depends[i].startswith("pypi:"):
+			d.gauge_update(100, text="Installing Dependancy " + depends[i][5:], update_text=True)
+			subprocess.check_call([sys.executable, "-m", "pip","install", "-q", depends[i][5:]])
+		else:
+			download(depends[i], True)
+	d.gauge_stop()
 	if bulk == False and failed == False:
 		d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
 
@@ -179,7 +188,7 @@ def pluginpage(plugin):
 	#processing to tell what to do when buttons are pressed
 	if x[0] == d.OK:
 		if x[1] == "download" or x[1] == "update":
-			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"], plugin)
+			download(plugin)
 		elif x[1] == "uninstall":
 			uninstall(index[plugin]["filename"], plugin)
 	elif x[0] == d.EXTRA:
@@ -224,12 +233,12 @@ def updateMenu():
 		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back")
 	#processing to detect what the buttons do
 	if x[0] == d.OK and x[1] != "":
-		download(index[x[1]]["download"], "plugins/" + index[x[1]]["filename"], x[1])
+		download(x[1])
 	elif x[0] == d.EXTRA:
 		failed = 0
 		for i in range(len(updates)):
 			try:
-				download(index[updates[i][0]]["download"], "plugins/" + index[updates[i][0]]["filename"], updates[i][0], True)
+				download(updates[i][0], True)
 			except:
 				failed += 1
 		d.msgbox("Updated " + str(len(updates) - failed) + " plugins successfully. " + str(failed) + " updates failed")
@@ -260,7 +269,7 @@ def search():
 #Main store function
 def store():
 	#reload index
-	reloadPluginList()
+	#reloadPluginList()
 	index.read(".pluginstore/index.ini")
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
