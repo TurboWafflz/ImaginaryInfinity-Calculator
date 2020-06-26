@@ -1,4 +1,4 @@
-#ImaginaryInfinity Calculator Core Plugin v2.
+#ImaginaryInfinity Calculator Core Plugin v2.3
 #Copyright 2020 Finian Wright
 import os
 import platform
@@ -107,6 +107,8 @@ def chelp():
 	#print("shell() - Starts a shell directly on your computer")
 	print("plugins() - Lists all plugins")
 	print("update() - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins")
+	print("pm.help() - Package Manager Help")
+	print("store.store() - Plugin Store")
 	print("quit() - Quit ImaginaryInfinity Calculator")
 
 #AllWillPerish
