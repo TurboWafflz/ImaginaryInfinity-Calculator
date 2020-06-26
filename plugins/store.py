@@ -269,7 +269,7 @@ def search():
 #Main store function
 def store():
 	#reload index
-	#reloadPluginList()
+	reloadPluginList()
 	index.read(".pluginstore/index.ini")
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
