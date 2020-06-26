@@ -21,6 +21,7 @@ import os
 import requests
 import json
 import configparser
+import subprocess
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 config = configparser.ConfigParser()
@@ -106,6 +107,18 @@ def getDebt():
 	return data
 
 def main(config=config):
+	if config["startup"]["firststart"] == "true":
+		clear()
+		try:
+			print(theme["styles"]["important"] + "Downloading libraries...")
+			subprocess.check_call([sys.executable, "-m", "pip","install", "-rrequirements.txt"])
+			config["startup"]["firststart"] = "false"
+			with open("config.ini", "w+") as f:
+				config.write(f)
+		except Exception as e:
+			print("Failed to install required libraries. Make sure you have an internet connecion and can access PyPi.")
+			print(theme["styles"]["error"] + "Error: " + str(e))
+			return
 	oldcalc=" "
 	try:
 		global debugMode
