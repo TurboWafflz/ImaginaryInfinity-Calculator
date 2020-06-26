@@ -1,11 +1,9 @@
 # ImaginaryInfinity Calculator
-
 ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
 command line interface is designed to resemble that of some graphing
 calculators.
 
 ![Screenshot](iicalc.png)
-
 ## Supported platforms
 **ImaginaryInfinity Calculator fully supports the following platforms:**
 - **Linux**
@@ -21,15 +19,21 @@ calculators.
 - **Any other OS that can run Python 3**
 	- Start an issue on GitHub and we may improve support for your OS
 
+<hr style="border: 1px solid white">
+
 ## Plugins
-New functionality can easily be added by placing Python files with additional functions in the plugins directory. To access a function added by a plugin, type `[plugin].[function]()`. For example, if you wanted to run the function `egg` from the plugin `food`, you would type `food.egg()`. Arguments placed in the parentheses will be passed to the function.
+New functionality can easily be added by placing Python files with additional functions in the plugins directory or by downloading plugins from the store. To access a function added by a plugin, type `[plugin].[function]()`. For example, if you wanted to run the function `egg` from the plugin `food`, you would type `food.egg()`. Arguments placed in the parentheses will be passed to the function.
 
 **Note:**
 Functions in the "core" plugin can be accessed without specifying "core".
 ex. "factor(7)" instead of "core.factor(7)"
 
+<hr style="border: 1px solid white">
+
 ## Themes
 The colors used by the calculator can be modified by themes. Themes are ini that define the colors the calculator will use and are stored in the `themes` folder. To change the theme used by the calculator, run `settings.configMod("appearance", "theme", "<theme name>")`, or select a theme in the settings editor. Two themes are included by default, `dark` for use on terminals with a dark background, and `light` for use on terminals with a light background.
+
+<hr style="border: 1px solid white">
 
 ## Built in commands:
 The following commands are built in to the calculator or added by the "core"
@@ -62,6 +66,36 @@ starting number
 - `update()` - Updates the calculator
 
 - `quit()` - Quit ImaginaryInfinity Calculator
+
+<hr style="border: 1px solid white">
+
+## Plugin store
+
+#### CLI Store
+
+- `pm.update()` - Update the package list, this must be run before plugins can be installed or to check for updates
+
+- `pm.install("<plugin>")` - Installs a plugin from the plugin index
+
+- `pm.list("<available/installed>")` - List plugins
+
+- `pm.search("<term>")` - Search the plugin index
+
+- `pm.info("<plugin>")` - Show info about a plugin
+
+- `pm.upgrade()` - Install all available updates
+
+- `pm.remove("<plugin>")` - Removes an installed plugin
+
+- `pm.installFromFile("<filename>")` - Install a plugin from a local \*.icpk file
+
+----
+
+#### GUI Store
+
+- `store.store()` - Runs the GUI version of the plugin store
+
+<hr style="border: 1px solid white">
 
 **The following commands accept a second argument to prevent the result from being
 printed. This is useful when they are used in another function so they don't
