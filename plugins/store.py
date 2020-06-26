@@ -26,7 +26,7 @@ def reloadPluginList():
 	link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Reloading Plugin List..."])
-	d.gauge_start(text="", height=None, width=None, percent=0)
+	d.gauge_start(text="This may take a while if the server hasn\'t been pinged in a while", height=None, width=None, percent=0)
 	with open(file_name, "wb") as f:
 		response = requests.get(link, stream=True)
 		total_length = response.headers.get('content-length')
@@ -145,7 +145,7 @@ def pluginpage(plugin):
 		ratePlugin(plugin)
 	elif x[0] == d.HELP:
 		uninstall(index[plugin]["filename"], plugin)
-		
+
 def pluginmenu():
 		choices = []
 		d = Dialog()
@@ -158,7 +158,7 @@ def pluginmenu():
 		x = d.menu("Installed Plugins", choices=choices, cancel_label="Back")
 		if x[0] == d.OK and x[1] != "No Installed Plugins":
 			pluginpage(x[1])
-		
+
 def updateMenu():
 	d = Dialog(dialog="dialog")
 	updates = []
