@@ -540,3 +540,14 @@ def info(plugin):
 	#Couldn't find the plugin from any source
 	else:
 		print("Plugin not found")
+
+#Help
+def help():
+	print("pm.update() - Update the package list, this must be run before plugins can be installed or to check for updates")
+	print("pm.install(\"<plugin>\") - Installs a plugin from the plugin index")
+	print("pm.list(\"<available/installed>\") - List plugins")
+	print("pm.search(\"<term>\") - Search the plugin index")
+	print("pm.info(\"<plugin>\") - Show info about a plugin")
+	print("pm.upgrade() - Install all available updates")
+	print("pm.remove(\"<plugin>\") - Removes an installed plugin")
+	print("pm.installFromFile(\"<filename>\") - Install a plugin from a local *.icpk file")
