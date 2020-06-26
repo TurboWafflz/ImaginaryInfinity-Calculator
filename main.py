@@ -25,6 +25,13 @@ print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 config = configparser.ConfigParser()
 config.read("config.ini")
+def signal(sig,args=""):
+	nonplugins = ["__init__.py", "__pycache__", "core.py"]
+	for plugin in os.listdir("plugins"):
+		if not plugin in nonplugins:
+			plugin = plugin[:-3]
+			if sig in eval("dir(" + plugin + ")"):
+				exec(plugin + "." + sig + "(" + args + ")")
 #Load plugins
 if config["startup"]["safemode"] == "false":
 	plugins = os.listdir('plugins/')
@@ -153,10 +160,13 @@ def main(config=config):
 		ans=0
 		print('')
 		calc=''
+		signal("onStarted")
 		while True:
 			pr=True
 			print('')
+			signal("onReady")
 			calc=input(theme["styles"]["prompt"] + config["appearance"]["prompt"] + theme["styles"]["input"] + " ")
+			signal("onInput", "'" + calc + "'")
 			print('')
 			print(theme["styles"]["output"])
 			try:
