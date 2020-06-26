@@ -169,7 +169,11 @@ def install(plugin):
 					elif installed.has_section(dependency):
 						print("Dependancy already satisfied")
 					elif dependency.startswith("pypi:"):
-						subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+						try:
+							subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+						except:
+							print("Dependency not unsatisfyable: " + dependency)
+							return
 					elif dependency != "none":
 						print("Dependency unsatisfyable: " + dependency)
 						return
@@ -182,7 +186,7 @@ def install(plugin):
 				with open(".pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
 			except Exception as e:
-				print("Could not download file: " + e)
+				print("Could not download file: " + str(e))
 				pass
 			#Verify plugin against hash in index
 			print("Verifying...")
@@ -217,7 +221,11 @@ def install(plugin):
 				elif installed.has_section(dependency):
 					print("Dependancy already satisfied")
 				elif dependency.startswith("pypi:"):
-						subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+						try:
+							subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+						except:
+							print("Dependency not unsatisfyable: " + dependency)
+							return
 				elif dependency != "none":
 					print("Dependency unsatisfyable: " + dependency)
 					return
@@ -231,7 +239,7 @@ def install(plugin):
 			with open(".pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 		except Exception as e:
-			print("Could not download file: " + e)
+			print("Could not download file: " + str(e))
 			pass
 		#Verify plugin against hash stored in index
 		print("Verifying...")
@@ -264,7 +272,11 @@ def install(plugin):
 					print("Dependancy already satisfied")
 				#Dependency not satisfyable, abort
 				elif dependency.startswith("pypi:"):
-						subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+						try:
+							subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+						except:
+							print("Dependency not unsatisfyable: " + dependency)
+							return
 				elif dependency != "none":
 					print("Dependency unsatisfyable: " + dependency)
 					return
@@ -278,7 +290,7 @@ def install(plugin):
 			with open(".pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 		except Exception as e:
-			print("Could not download file: " + e)
+			print("Could not download file: " + str(e))
 			pass
 		#Check plugin against hash in index
 		print("Verifying...")
