@@ -89,8 +89,6 @@ starting number
 
 - `pm.installFromFile("<filename>")` - Install a plugin from a local \*.icpk file
 
-----
-
 #### GUI Store
 
 - `store.store()` - Runs the GUI version of the plugin store
