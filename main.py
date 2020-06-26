@@ -27,12 +27,15 @@ print("Plugin failing to start? You can cancel loading the current plugin by pre
 config = configparser.ConfigParser()
 config.read("config.ini")
 def signal(sig,args=""):
-	nonplugins = ["__init__.py", "__pycache__", "core.py"]
-	for plugin in os.listdir("plugins"):
-		if not plugin in nonplugins:
-			plugin = plugin[:-3]
-			if sig in eval("dir(" + plugin + ")"):
-				exec(plugin + "." + sig + "(" + args + ")")
+	try:
+		nonplugins = ["__init__.py", "__pycache__", "core.py"]
+		for plugin in os.listdir("plugins"):
+			if not plugin in nonplugins:
+				plugin = plugin[:-3]
+				if sig in eval("dir(" + plugin + ")"):
+					exec(plugin + "." + sig + "(" + args + ")")
+	except:
+		pass
 #Load plugins
 if config["startup"]["safemode"] == "false":
 	plugins = os.listdir('plugins/')
