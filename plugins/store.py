@@ -5,6 +5,8 @@ from fuzzywuzzy import fuzz
 import os
 from plugins.core import clear
 from plugins import pm
+import sys
+import subprocess
 
 builtin=True
 
@@ -71,6 +73,7 @@ def uninstall(filename, plugin):
 			f.truncate()
 		#msgbox saying plugin has been uninstalled
 		d.msgbox(filename + " has been uninstalled.", width=None, height=None)
+	pluginmenu()
 
 #Plugin rating function
 def ratePlugin(plugin):
@@ -101,11 +104,13 @@ def ratePlugin(plugin):
 		d.msgbox("Error " + str(resp) + ". Please open an issue on GitHub")
 
 #download plugins
-def download(link, file_name, plugin_name, bulk=False):
+def download(plugin_name, bulk=False):
+	link = index[plugin_name]["download"]
+	file_name = "plugins/" + index[plugin_name]["filename"]
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Downloading " + file_name])
 	#Progress gauge
-	d.gauge_start(text="", height=None, width=None, percent=0)
+	d.gauge_start(text="Installing " + plugin_name, height=None, width=None, percent=0)
 	#Actual downloading of file
 	with open(file_name, "wb") as f:
 		response = requests.get(link, stream=True)
@@ -127,7 +132,6 @@ def download(link, file_name, plugin_name, bulk=False):
 					olddone = done
 
 					d.gauge_update(done)
-	d.gauge_stop()
 	#verify plugin
 	failed = False
 	if pm.verify(plugin_name) == False:
@@ -142,21 +146,32 @@ def download(link, file_name, plugin_name, bulk=False):
 	installed[plugin_name] = index[plugin_name]
 	if failed == True:
 		installed[plugin_name]["verified"] = "false"
+	else:
+		installed[plugin_name]["verified"] = "true"
 
 	#write to installed file
 	with open(".pluginstore/installed.ini", "r+") as f:
 		installed.write(f)
 
-	depends = index[plugin_name]["depends"]
-	depends = depends.split(",")
-	for i in range(len(depends)):
-		download(index[depends[i]]["download"], index[depends[i]]["filename"], depends[i], True)
-
+	dependencies = True
+	try:
+		depends = index[plugin_name]["depends"]
+	except:
+		dependencies = False
+	if dependencies == True:
+		depends = depends.split(",")
+		for i in range(len(depends)):
+			if depends[i].startswith("pypi:"):
+				d.gauge_update(100, text="Installing Dependancy " + depends[i][5:], update_text=True)
+				subprocess.check_call([sys.executable, "-m", "pip","install", "-q", depends[i][5:]])
+			else:
+				download(depends[i], True)
+	d.gauge_stop()
 	if bulk == False and failed == False:
 		d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
 
 #Plugin page
-def pluginpage(plugin):
+def pluginpage(plugin, cache=None):
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
 	x = []
@@ -179,13 +194,15 @@ def pluginpage(plugin):
 	#processing to tell what to do when buttons are pressed
 	if x[0] == d.OK:
 		if x[1] == "download" or x[1] == "update":
-			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"], plugin)
+			download(plugin)
 		elif x[1] == "uninstall":
 			uninstall(index[plugin]["filename"], plugin)
 	elif x[0] == d.EXTRA:
 		ratePlugin(plugin)
 	elif x[0] == d.HELP:
 		uninstall(index[plugin]["filename"], plugin)
+	elif x[0] == d.CANCEL and cache != None:
+		search(True, cache[0])
 
 #Menu to list all plugins
 def pluginmenu():
@@ -224,38 +241,45 @@ def updateMenu():
 		x = d.menu("You have " + str(updatenum) + " updates available.", height=None, width=None, menu_height=None, choices=updates, cancel_label="Back")
 	#processing to detect what the buttons do
 	if x[0] == d.OK and x[1] != "":
-		download(index[x[1]]["download"], "plugins/" + index[x[1]]["filename"], x[1])
+		download(x[1])
 	elif x[0] == d.EXTRA:
 		failed = 0
 		for i in range(len(updates)):
 			try:
-				download(index[updates[i][0]]["download"], "plugins/" + index[updates[i][0]]["filename"], updates[i][0], True)
+				download(updates[i][0], True)
 			except:
 				failed += 1
 		d.msgbox("Updated " + str(len(updates) - failed) + " plugins successfully. " + str(failed) + " updates failed")
 
 #Search index for plugin
-def search():
+def search(bypass=False, choices=[]):
+	text = "Results"
 	d = Dialog(dialog="dialog")
-	#display search box
-	x = d.inputbox("Search", height=None, width=None, init="")
-	#fuzzy string searching
-	if x[0] == d.OK:
-		choices = []
-		for key in index.sections():
-			if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
-				choices.append((key, index[key]["summary"]))
-			if fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >= 70:
-				if not (key, index[key]["summary"]) in choices:
+	
+	if bypass == False:
+		#display search box
+		x = d.inputbox("Search", height=None, width=None, init="")
+		#fuzzy string searching
+		if x[0] == d.OK:
+			choices = []
+			for key in index.sections():
+				if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
 					choices.append((key, index[key]["summary"]))
-		text = " "
-		#detect if no results
-		if len(choices) == 0:
-			choices.append(("", ""))
-			text="No Results"
-		x = d.menu(text, height=None, width=None, menu_height=None, choices=choices, cancel_label="Back")
-		if x[0] == d.OK and x[1] != "":
-			pluginpage(x[1])
+				if fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >= 70:
+					if not (key, index[key]["summary"]) in choices:
+						choices.append((key, index[key]["summary"]))
+			#detect if no results
+			if len(choices) == 0:
+				choices.append(("", ""))
+				text="No Results"
+	x = d.menu(text, height=None, width=None, menu_height=None, choices=choices, cancel_label="Back")
+	if x[0] == d.OK and x[1] != "":
+		pluginpage(x[1], (choices,))
+	elif x[0] == d.CANCEL:
+		try:
+			search()
+		except:
+			pass
 
 #Main store function
 def store():
