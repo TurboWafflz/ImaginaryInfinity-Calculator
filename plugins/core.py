@@ -107,6 +107,8 @@ def chelp():
 	#print("shell() - Starts a shell directly on your computer")
 	print("plugins() - Lists all plugins")
 	print("update() - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins")
+	print("pm.help() - Package Manager Help")
+	print("store.store() - Plugin Store")
 	print("quit() - Quit ImaginaryInfinity Calculator")
 
 #AllWillPerish
@@ -296,9 +298,10 @@ def plugins(printval=True):
 	j = len(plugins) - 1
 	for i in range(j, 0, -1):
 		if plugins[i] in nonplugins:
+
 			plugins.remove(plugins[i])
 	if plugins[0] in nonplugins:
-		plugins = []
+		plugins.remove(plugins[0])
 
 	i = 0
 	if printval == True:

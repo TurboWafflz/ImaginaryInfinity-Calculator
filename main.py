@@ -205,6 +205,9 @@ def main(config=config):
 					signal("onError", str(e))
 					if pr:
 						print(theme["styles"]["error"] + "Error: " + str(e) + theme["styles"]["normal"])
+						if config["dev"]["debug"] == "true":
+							import traceback
+							traceback.print_exc()
 						pr=0
 			#Print answer
 			if(pr==1 and ans!=None):
