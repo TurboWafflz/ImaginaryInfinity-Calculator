@@ -8,6 +8,7 @@ import itertools
 import threading
 import sys
 import time
+import subprocess
 builtin = True
 
 def loading(text):
@@ -167,6 +168,8 @@ def install(plugin):
 					#Dependancy already installed, do nothing
 					elif installed.has_section(dependency):
 						print("Dependancy already satisfied")
+					elif dependency.startswith("pypi:"):
+						subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
 					elif dependency != "none":
 						print("Dependency unsatisfyable: " + dependency)
 						return
@@ -213,6 +216,8 @@ def install(plugin):
 				#Dependancy already installed, do nothing
 				elif installed.has_section(dependency):
 					print("Dependancy already satisfied")
+				elif dependency.startswith("pypi:"):
+						subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
 				elif dependency != "none":
 					print("Dependency unsatisfyable: " + dependency)
 					return
@@ -258,6 +263,8 @@ def install(plugin):
 				elif installed.has_section(dependency):
 					print("Dependancy already satisfied")
 				#Dependency not satisfyable, abort
+				elif dependency.startswith("pypi:"):
+						subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
 				elif dependency != "none":
 					print("Dependency unsatisfyable: " + dependency)
 					return
