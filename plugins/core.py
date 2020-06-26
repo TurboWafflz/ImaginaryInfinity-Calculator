@@ -298,9 +298,10 @@ def plugins(printval=True):
 	j = len(plugins) - 1
 	for i in range(j, 0, -1):
 		if plugins[i] in nonplugins:
+
 			plugins.remove(plugins[i])
 	if plugins[0] in nonplugins:
-		plugins = []
+		plugins.remove(plugins[0])
 
 	i = 0
 	if printval == True:
