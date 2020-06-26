@@ -152,14 +152,19 @@ def download(plugin_name, bulk=False):
 	with open(".pluginstore/installed.ini", "r+") as f:
 		installed.write(f)
 
-	depends = index[plugin_name]["depends"]
-	depends = depends.split(",")
-	for i in range(len(depends)):
-		if depends[i].startswith("pypi:"):
-			d.gauge_update(100, text="Installing Dependancy " + depends[i][5:], update_text=True)
-			subprocess.check_call([sys.executable, "-m", "pip","install", "-q", depends[i][5:]])
-		else:
-			download(depends[i], True)
+	try:
+		depends = index[plugin_name]["depends"]
+		dependancies = True
+	except:
+		dependencies = False
+	if dependencies == True:
+		depends = depends.split(",")
+		for i in range(len(depends)):
+			if depends[i].startswith("pypi:"):
+				d.gauge_update(100, text="Installing Dependancy " + depends[i][5:], update_text=True)
+				subprocess.check_call([sys.executable, "-m", "pip","install", "-q", depends[i][5:]])
+			else:
+				download(depends[i], True)
 	d.gauge_stop()
 	if bulk == False and failed == False:
 		d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
@@ -269,7 +274,7 @@ def search():
 #Main store function
 def store():
 	#reload index
-	#reloadPluginList()
+	reloadPluginList()
 	index.read(".pluginstore/index.ini")
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
