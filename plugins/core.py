@@ -536,7 +536,7 @@ def doGuiUpdate(branch=0, theme=theme):
 	nonthemes = getDefaults("themes")
 
 	d = Dialog(dialog="dialog")
-	d.gauge_start("Updating...\nEstablishing Directories...", height=0, width=0, percent=0)
+	d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
@@ -683,7 +683,7 @@ def doGuiUpdate(branch=0, theme=theme):
 	d.gauge_stop()
 
 	#yay, nothing terrible has happened
-	d = Dialog(dialog="dialog").yesno("Update Complete. Would you like to restart?", width=0, height=0)
+	d = Dialog(dialog="dialog").yesno("Update Complete. Would you like to restart?")
 	if d == "ok":
 		clear()
 		restart()
@@ -691,7 +691,7 @@ def doGuiUpdate(branch=0, theme=theme):
 		clear()
 
 def guiUpdate(theme=theme, config=config):
-	d = Dialog(dialog="dialog").yesno("Would you like to update?", width=0, height=0)
+	d = Dialog(dialog="dialog").yesno("Would you like to update?")
 	if d == "ok":
 		branch = "master"
 		try:
