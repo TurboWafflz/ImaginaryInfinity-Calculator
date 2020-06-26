@@ -55,6 +55,7 @@ else:
 # from plugins import *
 from plugins.core import *
 from plugins import settings
+signal("onPluginsLoaded")
 # #Complex toggle
 # def complex(onOff):
 # 	global cplx
@@ -70,6 +71,7 @@ cplx=True
 
 #Restart
 def restart():
+	signal("onRestart")
 	os.execl(sys.executable, sys.executable, * sys.argv)
 
 #Check for Internet Connection
@@ -109,6 +111,7 @@ def main(config=config):
 		global debugMode
 		if(len(sys.argv)>1):
 			if(sys.argv[1]=="online"):
+				signal("onOnlineStart")
 				import readline
 				os.system("clear")
 				onlineMode=True
@@ -117,17 +120,22 @@ def main(config=config):
 					print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
 		else:
 			if(platform.system()=="Linux"):
+				signal("onLinuxStart")
 				os.system("clear")
 				import readline
 			elif(platform.system()=="Haiku"):
+				signal("onHaikuStart")
 				os.system("clear")
 				import readline
 			elif(platform.system()=="Windows"):
+				signal("onWindowsStart")
 				os.system("cls")
 				colorama.init(convert=True)
 			elif(platform.system()=="Darwin"):
+				signal("onMacStart")
 				os.system("clear")
 			else:
+				signal("onUnknownStart")
 				try:
 					os.system("clear")
 				except:
@@ -194,11 +202,13 @@ def main(config=config):
 					print(theme["styles"]["output"] + exec(str(calc)))
 					pr=0
 				except:
+					signal("onError", str(e))
 					if pr:
 						print(theme["styles"]["error"] + "Error: " + str(e) + theme["styles"]["normal"])
 						pr=0
 			#Print answer
 			if(pr==1 and ans!=None):
+				signal("onPrintAnswer")
 				#Just print answer if in complex mode
 				if(cplx):
 					print(theme["styles"]["answer"] + str(ans) + theme["styles"]["normal"])
@@ -213,14 +223,17 @@ def main(config=config):
 			#if ans==None and pr==1:
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
 	except KeyboardInterrupt:
+		signal("onKeyboardInterrupt")
 		print(theme["styles"]["important"] + "\nKeyboard Interrupt, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
 	except EOFError:
+		signal("onEofExit")
 		print(theme["styles"]["important"] + "\nEOF, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
 	except Exception as e:
+		signal("onFatalError")
 		print(theme["styles"]["error"])
 		print("==============")
 		print("= Fatal error=")
