@@ -211,7 +211,10 @@ def main(config=config):
 				signal("onPrintAnswer")
 				#Just print answer if in complex mode
 				if(cplx):
-					print(theme["styles"]["answer"] + str(ans) + theme["styles"]["normal"])
+					if(ans.imag == 0):
+						print(theme["styles"]["answer"] + str(ans.real))
+					else:
+						print(theme["styles"]["answer"] + str(ans) + theme["styles"]["normal"])
 				else:
 					try:
 						if(ans.imag == 0):
