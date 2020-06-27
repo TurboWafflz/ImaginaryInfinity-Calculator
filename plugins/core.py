@@ -75,6 +75,7 @@ def getDefaults(folder):
 			except:
 				pass
 		defaults.append("__pycache__")
+		defaults.append(".reqs")
 		return defaults
 	elif folder == "themes":
 		themelist = os.listdir("themes")

@@ -6,6 +6,8 @@ from colorama import Fore, Back
 from py_essentials import hashing as hs
 from dialog import Dialog
 import time
+import shutil
+import subprocess
 def switchBranch(branch):
 	if branch != "master":
 		print(Fore.RESET + "Warning, branches other than " + Fore.CYAN + "master " + Fore.RESET + "may be unstable and buggy. Are you sure you want to continue switching to " + Fore.CYAN + branch + Fore.RESET + "?(y/n)")
@@ -41,6 +43,24 @@ def showPallate():
 	print(theme["styles"]["answer"] + "Answer")
 	print(theme["styles"]["input"] + "Input")
 	print(theme["styles"]["output"] + "Output")
+	
+def getReqs(filename):
+	if not os.path.isdir("plugins/.reqs"):
+		os.mkdir("plugins/.reqs")
+	shutil.move("plugins/" + filename, "plugins/.reqs/" + filename)
+	subprocess.call(
+  ["pipreqs", "--force","plugins/.reqs"],
+  stdout=subprocess.DEVNULL,
+  stderr=subprocess.DEVNULL
+)
+	shutil.move("plugins/.reqs/" + filename, "plugins/" + filename)
+	with open("plugins/.reqs/requirements.txt") as f:
+		reqs = [line.rstrip().split("==")[0] for line in f.readlines()]
+	reqstr = ""
+	for i in range(len(reqs)):
+		reqstr += "pypi:" + reqs[i] + "\n"
+	return reqstr
+
 def generateStoreInfo(plugin):
 	if os.path.exists("plugins/" + plugin):
 		name = input("Plugin name (No spaces): ")
@@ -98,7 +118,7 @@ def guiStoreInfo():
 				
 			description = "\n"
 			while description == "\n":
-				description = d.editbox_str("", title="Plugin Description")[1]
+				description = d.editbox_str("", title="Plugin Description")[1].rstrip()
 			
 			version = ""
 			while version == "":
@@ -115,12 +135,15 @@ def guiStoreInfo():
 			summary = ""
 			while summary == "":
 				summary = d.inputbox("Plugin Summary")[1]
-					
-			depends = d.editbox_str("", title="Dependancies separated by line breaks\nStart PiPI dependancies with \'pipy:\'")[1]
-			depends.replace("\n", ",")
+			
+			if type == "plugins":
+				reqs = getReqs(resp[1])
+				depends = d.editbox_str(reqs, title="Dependancies separated by line breaks\nStart PiPI dependancies with \'pipy:\'")[1]
+			depends = depends.replace("\n", ",")
+			depends = depends.rstrip(",")
 			
 			lastUpdate=time.time()
-			hash = hs.fileChecksum(type + "/" + plugin, "sha256")			
+			hash = hs.fileChecksum(type + "/" + resp[1], "sha256")			
 			
 	else:
 		clear()
