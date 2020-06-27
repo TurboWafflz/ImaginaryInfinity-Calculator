@@ -310,7 +310,7 @@ def store():
 		index.read(".pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
 		clear()
-		print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try agaon later.")
+		print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later.")
 		return
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
