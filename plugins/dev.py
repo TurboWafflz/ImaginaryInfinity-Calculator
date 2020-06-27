@@ -90,11 +90,14 @@ def guiStoreInfo():
 			name = ""
 			while name == "":
 				name = d.inputbox("Plugin Name (No Spaces)")[1].replace(" ", "_")
-			
-			type = d.menu("What type is your plugin?", choices=[("Plugin", ".py File to add Extra Functionality"), ("Theme", ".iitheme file to change the theme")])[1]	
 				
-			description = ""
-			while description == "":
+			if resp[1].endswith(".iitheme"):
+				type = "themes"
+			elif resp[1].endswith(".py"):
+				type = "plugins"
+				
+			description = "\n"
+			while description == "\n":
 				description = d.editbox_str("", title="Plugin Description")[1]
 			
 			version = ""
@@ -114,11 +117,10 @@ def guiStoreInfo():
 				summary = d.inputbox("Plugin Summary")[1]
 					
 			depends = d.editbox_str("", title="Dependancies separated by line breaks\nStart PiPI dependancies with \'pipy:\'")[1]
-			depends = depends.replace("\n", ",")[:-1]
+			depends.replace("\n", ",")
 			
 			lastUpdate=time.time()
-			hash = hs.fileChecksum(type.lower() + "s/" + resp[1], "sha256")
-			
+			hash = hs.fileChecksum(type + "/" + plugin, "sha256")			
 			
 	else:
 		clear()
