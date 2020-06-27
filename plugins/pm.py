@@ -45,9 +45,9 @@ def verify(plugin):
 			installedFile.close()
 			installed = configparser.ConfigParser()
 			installed.read(".pluginstore/installed.ini")
-	if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+	if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 		return False
-	if not os.path.exists("plugins/" + index[plugin]["filename"]):
+	if not os.path.exists(index[plugin]["type"] + "/" + index[plugin]["filename"]):
 		return False
 	else:
 		return True
@@ -87,13 +87,13 @@ def update(silent=False):
 	#Iterate through installed plugins
 	for plugin in installed.sections():
 		#Make sure plugin file exists
-		if os.path.exists("plugins/" + installed[plugin]["filename"]):
+		if os.path.exists(index[plugin]["type"] + "/" + installed[plugin]["filename"]):
 			#Check if an update is available
 			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]) and not silent:
 				updates = updates + 1
 				print("\nAn update is available for " + plugin)
 			#Verify plugin against the hash stored in the index
-			elif not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			elif not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 				installed[plugin]["verified"] = "false"
 				with open(".pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
@@ -180,7 +180,7 @@ def install(plugin):
 					else:
 						pass
 				installed.read(".pluginstore/installed.ini")
-				download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
+				download(index[plugin]["download"], index[plugin]["type"] + "/" + index[plugin]["filename"])
 				installed[plugin] = index[plugin]
 				installed[plugin]["source"] = "index"
 				with open(".pluginstore/installed.ini", "w+") as f:
@@ -190,7 +190,7 @@ def install(plugin):
 				pass
 			#Verify plugin against hash in index
 			print("Verifying...")
-			if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 				print("Plugin verification failed, the plugin should be reinstalled.")
 				installed[plugin]["verified"] = "false"
 				with open(".pluginstore/installed.ini", "w+") as f:
@@ -232,7 +232,7 @@ def install(plugin):
 				else:
 					pass
 			#Download plugin
-			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
+			download(index[plugin]["download"], index[plugin]["type"] + "/" + index[plugin]["filename"])
 			#Mark plugin as installed from index
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
@@ -243,8 +243,8 @@ def install(plugin):
 			pass
 		#Verify plugin against hash stored in index
 		print("Verifying...")
-		if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-			print("File hash: " + hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256"))
+		if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			print("File hash: " + hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256"))
 			print("Expected: " + index[plugin]["hash"])
 			print("Plugin verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
@@ -283,7 +283,7 @@ def install(plugin):
 				else:
 					pass
 			#Download plugin
-			download(index[plugin]["download"], "plugins/" + index[plugin]["filename"])
+			download(index[plugin]["download"], index[plugin]["type"] + "/" + index[plugin]["filename"])
 			#Mark plugin as installed
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
@@ -294,8 +294,8 @@ def install(plugin):
 			pass
 		#Check plugin against hash in index
 		print("Verifying...")
-		if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-			print("File hash: " + hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256"))
+		if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			print("File hash: " + hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256"))
 			print("Expected: " + index[plugin]["hash"])
 			print("Plugin verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
@@ -328,7 +328,7 @@ def remove(plugin):
 		print("Removing plugin...")
 		#Remove plugin from plugins
 		try:
-			os.remove("plugins/" + installed[plugin]["filename"])
+			os.remove(installed[plugin]["type"] + "/" + installed[plugin]["filename"])
 		except:
 			pass
 		#Remove plugin from installed list
@@ -367,9 +367,9 @@ def upgrade():
 		installed.read(".pluginstore/installed.ini")
 		index.read(".pluginstore/index.ini")
 		#Make sure plugin's file exists
-		if os.path.exists("plugins/" + installed[plugin]["filename"]):
+		if os.path.exists(index[plugin]["type"] + "/" + installed[plugin]["filename"]):
 			#Check plugin against hash
-			if not hs.fileChecksum("plugins/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 				installed[plugin]["verified"] = "false"
 				with open(".pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
@@ -520,11 +520,11 @@ def installFromFile(file):
 				pass
 		print("Installing " + plugin + "...")
 		try:
-			download(icpk[plugin]["download"], "plugins/" + icpk[plugin]["filename"])
+			download(icpk[plugin]["download"], index[plugin]["type"] + "/" + icpk[plugin]["filename"])
 			installed[plugin] = icpk[plugin]
 			installed[plugin]["source"] = "icpk"
 			print("Verifying...")
-			if not hs.fileChecksum("plugins/" + icpk[plugin]["filename"], "sha256") == icpk[plugin]["hash"]:
+			if not hs.fileChecksum(index[plugin]["type"] + "/" + icpk[plugin]["filename"], "sha256") == icpk[plugin]["hash"]:
 				installed[plugin]["verified"] = "false"
 				with open(".pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
