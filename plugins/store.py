@@ -63,7 +63,7 @@ def uninstall(filename, plugin):
 	d = Dialog(dialog="dialog")
 	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:
 		#Delete file
-		os.remove(installed[filename]["type"] + "/" + filename)
+		os.remove(installed[plugin]["type"] + "/" + filename)
 		#Remove section in installed
 		installed.remove_section(plugin)
 		#write the updated install file to the install file
@@ -179,16 +179,16 @@ def pluginpage(plugin, cache=None):
 	if os.path.isfile(index[plugin]["type"] + "/" + index[plugin]["filename"]):
 		try:
 			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
-				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
-			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
-		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
 
 	#processing to tell what to do when buttons are pressed
@@ -196,7 +196,7 @@ def pluginpage(plugin, cache=None):
 		if x[1] == "download" or x[1] == "update":
 			download(plugin)
 		elif x[1] == "uninstall":
-			uninstall(index[plugin]["filename"], plugin)
+			uninstall(installed[plugin]["filename"], plugin)
 	elif x[0] == d.EXTRA:
 		ratePlugin(plugin)
 	elif x[0] == d.HELP:
