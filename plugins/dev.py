@@ -41,7 +41,7 @@ def showPallate():
 	print(theme["styles"]["input"] + "Input")
 	print(theme["styles"]["output"] + "Output")
 def generateStoreInfo(plugin):
-	if os.path.exists("plugins/" + plugin):
+	if os.path.exists(plugin):
 		name = input("Plugin name (No spaces): ")
 		description = input("Plugin description: ")
 		version = input("Plugin version: ")
@@ -49,7 +49,7 @@ def generateStoreInfo(plugin):
 		link = input("Direct download link (Please use GitHub or GitLab for hosting): ")
 		summary = input("Description summary: ")
 		lastUpdate=time.time()
-		hash = hs.fileChecksum("plugins/" + plugin, "sha256")
+		hash = hs.fileChecksum(plugin, "sha256")
 		print()
 		print("Plugin listing information:")
 		print()
@@ -65,4 +65,4 @@ def generateStoreInfo(plugin):
 		print("rating = 5")
 		print("ratings = 0")
 	else:
-		print("File not found: plugins/" + plugin)
+		print("File not found: " + plugin)
