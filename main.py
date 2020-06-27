@@ -22,6 +22,7 @@ import requests
 import json
 import configparser
 import subprocess
+#from plugins import store
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 config = configparser.ConfigParser()
@@ -39,17 +40,19 @@ def signal(sig,args=""):
 #Load plugins
 if config["startup"]["safemode"] == "false":
 	plugins = os.listdir('plugins/')
-	plugins.remove("__init__.py")
 	plugins.remove("core.py")
 	plugins.remove("settings.py")
+	plugins.remove("__init__.py")
 	for plugin in plugins:
 		if plugin[-3:] == ".py":
+			print(plugin)
 			try:
 				exec("from plugins import " + plugin[:-3])
 			except KeyboardInterrupt:
 				print("Cancelled loading of " + plugin )
 			except:
 				print("Error importing " + plugin + ", you might want to disable or remove it.")
+				input("[Press enter to continue]")
 		elif plugin[-9:] == ".disabled":
 			print("Not loading " + plugin[:-9] + " as it has been disabled in settings.")
 		else:
@@ -230,9 +233,12 @@ def main(config=config):
 				signal("onPrintAnswer")
 				#Just print answer if in complex mode
 				if(cplx):
-					if(ans.imag == 0):
-						print(theme["styles"]["answer"] + str(ans.real))
-					else:
+					try:
+						if(ans.imag == 0):
+							print(theme["styles"]["answer"] + str(ans.real))
+						else:
+							print(theme["styles"]["answer"] + str(ans) + theme["styles"]["normal"])
+					except:
 						print(theme["styles"]["answer"] + str(ans) + theme["styles"]["normal"])
 				else:
 					try:
