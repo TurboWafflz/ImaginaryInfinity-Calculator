@@ -17,7 +17,7 @@ import time
 from shutil import copytree, rmtree, copy
 import configparser
 import re
-builtin=True
+
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 	from dialog import Dialog
 config = configparser.ConfigParser()
@@ -74,6 +74,7 @@ def getDefaults(folder):
 					defaults.append(file)
 			except:
 				pass
+		defaults.append("core.py")
 		defaults.append("__pycache__")
 		defaults.append(".reqs")
 		return defaults
