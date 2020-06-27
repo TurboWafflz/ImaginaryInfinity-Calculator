@@ -392,7 +392,7 @@ def upgrade():
 	print(str(updates) + " plugins updated")
 	print(str(reinstall) + " damaged plugins reinstalled")
 #Search the index for a plugin
-def search(term):
+def search(term, type="all"):
 	#Read index, if available
 	try:
 		index = configparser.ConfigParser()
@@ -419,9 +419,10 @@ def search(term):
 	for plugin in index.sections():
 		#Show plugin if search term is included in the name or description
 		if term in plugin or term in index[plugin]["description"]:
-			print(plugin + " - " + index[plugin]["description"])
+			if type=="all" or type == index[plugin]["type"]:
+				print(plugin + " - " + index[plugin]["description"] + " (" + index[plugin]["type"] + ")")
 #List packages
-def list(scope="available"):
+def list(scope="available", type="all"):
 	#Read index, if available
 	try:
 		index = configparser.ConfigParser()
@@ -450,11 +451,12 @@ def list(scope="available"):
 		for plugin in installed.sections():
 			#Check if plugin has passed hash verification
 			if installed[plugin]["verified"] == "true":
-				verified = "Verified"
+				verified = " (" + index[plugin]["type"] + ") | Verified"
 			else:
-				verified = "Damaged, should be reinstalled"
+				verified = " (" + index[plugin]["type"] + ") |Damaged, should be reinstalled"
 			#Print plugin info
-			print(plugin + " - " + installed[plugin]["summary"] + " | " + verified)
+			if type == "all" or installed[plugin]["type"] == type:
+				print(plugin + " - " + installed[plugin]["summary"] + "" + verified)
 	#List plugins in index
 	if scope == "available":
 		#Iterate through plugins in index
@@ -463,13 +465,14 @@ def list(scope="available"):
 			if installed.has_section(plugin):
 				#Check if plugin has passed hash verification
 				if installed[plugin]["verified"] == "true":
-					status = " | Installed & verified"
+					status = " (" + index[plugin]["type"] + ") | Installed & verified"
 				else:
-					status = " | Damaged, should be reinstalled"
+					status = " (" + index[plugin]["type"] + ") | Damaged, should be reinstalled"
 			else:
-				status = " | Not installed"
+				status = " (" + index[plugin]["type"] + ") | Not installed"
 			#Print plugin info
-			print(plugin + " - " + index[plugin]["summary"] + status)
+			if type == "all" or index[plugin]["type"] == type:
+				print(plugin + " - " + index[plugin]["summary"] + status)
 #Install a package from a file
 def installFromFile(file):
 	#Copy the file to an ini file so configparser doesn't get mad
