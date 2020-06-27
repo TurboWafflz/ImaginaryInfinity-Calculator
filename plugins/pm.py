@@ -9,6 +9,7 @@ import threading
 import sys
 import time
 import subprocess
+from plugins.core import theme
 builtin = True
 
 def loading(text):
@@ -52,14 +53,22 @@ def verify(plugin):
 	else:
 		return True
 #Update package lists from server
-def update(silent=False):
+def update(silent=False, theme=theme):
 	global done
 	done = False
 	t = threading.Thread(target=loading, args=("Updating package list...",))
 	t.start()
 	if not os.path.isdir(".pluginstore"):
 		os.makedirs(".pluginstore")
-	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", ".pluginstore/index.ini")
+	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", ".pluginstore/tmp.ini")
+	with open(".pluginstore/tmp.ini") as f:
+		tmp = f.readlines()
+	if "The service is unavailable." in tmp:
+		print(theme["styles"]["error"] + "\nThe index is currently unavailable due to a temporary Microsoft Azure outage. Please try again later.")
+		done=True
+		return
+	else:
+		copyfile(".pluginstore/tmp.ini", ".pluginstore/index.ini")
 	#Load index, if available
 	try:
 		index = configparser.ConfigParser()
