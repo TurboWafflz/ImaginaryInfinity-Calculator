@@ -34,7 +34,7 @@ def verify(plugin):
 		index.read(".pluginstore/index.ini")
 	#If not, suggest running pm.update()
 	except:
-		print("\nCould not find plugin list, maybe run pm.update()")
+		print("\nCould not find package list, maybe run pm.update()")
 	#Load installed list if available
 	if os.path.exists(".pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
@@ -66,7 +66,7 @@ def update(silent=False):
 		index.read(".pluginstore/index.ini")
 	#If not, suggest running pm.update()
 	except:
-		print("\nCould not find plugin list, maybe run pm.update()")
+		print("\nCould not find package list, maybe run pm.update()")
 	#Load installed list if available
 	if os.path.exists(".pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
@@ -111,8 +111,8 @@ def update(silent=False):
 	#Print summary for user
 	if not silent:
 		print("")
-		print("\n" + str(updates) + " plugins have updates available")
-		print(str(reinstall) + " plugins are damaged and should be reinstalled")
+		print("\n" + str(updates) + " packages have updates available")
+		print(str(reinstall) + " packages are damaged and should be reinstalled")
 	if updates > 0 or reinstall > 0 and not silent:
 		print("Run 'pm.upgrade()' to apply these changes")
 	done = True
@@ -125,7 +125,7 @@ def install(plugin):
 		index.read(".pluginstore/index.ini")
 	#If not, suggest running pm.update()
 	except:
-		print("Could not find plugin list, maybe run pm.update()")
+		print("Could not find package list, maybe run pm.update()")
 	#Load installed list if available
 	if os.path.exists(".pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
@@ -191,12 +191,12 @@ def install(plugin):
 			#Verify plugin against hash in index
 			print("Verifying...")
 			if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-				print("Plugin verification failed, the plugin should be reinstalled.")
+				print("Package verification failed, the package should be reinstalled.")
 				installed[plugin]["verified"] = "false"
 				with open(".pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
 			else:
-				print("Plugin verification passed")
+				print("Package verification passed")
 				installed[plugin]["verified"] = "true"
 				with open(".pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
@@ -205,7 +205,7 @@ def install(plugin):
 			print(plugin + " is already installed and has no update available")
 	#Plugin has failed verification, reinstall it
 	elif verified != "true" and installed.has_section(plugin):
-		print("Redownloading damaged plugin " + plugin + "...")
+		print("Redownloading damaged package " + plugin + "...")
 		try:
 			print("Installing dependencies...")
 			dependencies = index[plugin]["depends"].split(",")
@@ -246,12 +246,12 @@ def install(plugin):
 		if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 			print("File hash: " + hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256"))
 			print("Expected: " + index[plugin]["hash"])
-			print("Plugin verification failed, the plugin should be reinstalled.")
+			print("Package verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
 			with open(".pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 		else:
-			print("Plugin verification passed")
+			print("Package verification passed")
 			installed[plugin]["verified"] = "true"
 	#Plugin is not installed, install it
 	elif index.has_section(plugin):
@@ -297,18 +297,18 @@ def install(plugin):
 		if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 			print("File hash: " + hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256"))
 			print("Expected: " + index[plugin]["hash"])
-			print("Plugin verification failed, the plugin should be reinstalled.")
+			print("Packages verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
 			with open(".pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 		else:
-			print("Plugin verification passed")
+			print("Package verification passed")
 			installed[plugin]["verified"] = "true"
 			with open(".pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 	#Plugin could not be found
 	else:
-		print("Plugin " + plugin + " not found.")
+		print("Packages " + plugin + " not found.")
 	with open(".pluginstore/installed.ini", "w+") as f:
 		installed.write(f)
 #Remove a plugin
@@ -325,7 +325,7 @@ def remove(plugin):
 			installed.read(".pluginstore/installed.ini")
 	#Check if plugin is marked as installed
 	if installed.has_section(plugin):
-		print("Removing plugin...")
+		print("Removing packages...")
 		#Remove plugin from plugins
 		try:
 			os.remove(installed[plugin]["type"] + "/" + installed[plugin]["filename"])
@@ -348,7 +348,7 @@ def upgrade():
 		index.read(".pluginstore/index.ini")
 	#Index not found, suggest running pm.update()
 	except:
-		print("Could not find plugin list, maybe run pm.update()")
+		print("Could not find packages list, maybe run pm.update()")
 	#Check if installed list exists, if so, load it
 	if os.path.exists(".pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
@@ -389,8 +389,8 @@ def upgrade():
 				install(plugin)
 				reinstall = reinstall + 1
 	print("Done:")
-	print(str(updates) + " plugins updated")
-	print(str(reinstall) + " damaged plugins reinstalled")
+	print(str(updates) + " packages updated")
+	print(str(reinstall) + " damaged packages reinstalled")
 #Search the index for a plugin
 def search(term, type="all"):
 	#Read index, if available
@@ -429,7 +429,7 @@ def list(scope="available", type="all"):
 		index.read(".pluginstore/index.ini")
 	#Index not found, suggest running pm.update()
 	except:
-		print("Could not find plugin list, maybe run pm.update()")
+		print("Could not find packages list, maybe run pm.update()")
 	#Load installed list if possible
 	if os.path.exists(".pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
@@ -453,7 +453,7 @@ def list(scope="available", type="all"):
 			if installed[plugin]["verified"] == "true":
 				verified = " (" + index[plugin]["type"] + ") | Verified"
 			else:
-				verified = " (" + index[plugin]["type"] + ") |Damaged, should be reinstalled"
+				verified = " (" + index[plugin]["type"] + ") | Damaged, should be reinstalled"
 			#Print plugin info
 			if type == "all" or installed[plugin]["type"] == type:
 				print(plugin + " - " + installed[plugin]["summary"] + "" + verified)
@@ -483,7 +483,7 @@ def installFromFile(file):
 		index.read(".pluginstore/index.ini")
 	#Index not found, suggest running pm.update()
 	except:
-		print("Could not find plugin list, maybe run pm.update()")
+		print("Could not find package list, maybe run pm.update()")
 		return
 	#Load locak file
 	icpk = configparser.ConfigParser()
@@ -543,7 +543,7 @@ def info(plugin):
 		index = configparser.ConfigParser()
 		index.read(".pluginstore/index.ini")
 	except:
-		print("Could not find plugin list, maybe run pm.update()")
+		print("Could not find packages list, maybe run pm.update()")
 		return
 	#Show info from index if available
 	if index.has_section(plugin):
@@ -561,15 +561,15 @@ def info(plugin):
 		print("Rating: " + index[plugin]["rating"] + "(" + index[plugin]["ratings"] + ")")
 	#Couldn't find the plugin from any source
 	else:
-		print("Plugin not found")
+		print("Packages not found")
 
 #Help
 def help():
-	print("pm.update() - Update the package list, this must be run before plugins can be installed or to check for updates")
-	print("pm.install(\"<plugin>\") - Installs a plugin from the plugin index")
-	print("pm.list(\"<available/installed>\") - List plugins")
-	print("pm.search(\"<term>\") - Search the plugin index")
-	print("pm.info(\"<plugin>\") - Show info about a plugin")
+	print("pm.update() - Update the package list, this must be run before packages can be installed or to check for updates")
+	print("pm.install(\"<plugin>\") - Installs a package from the package index")
+	print("pm.list(\"<available/installed>\") - List packages")
+	print("pm.search(\"<term>\") - Search the package index")
+	print("pm.info(\"<plugin>\") - Show info about a package")
 	print("pm.upgrade() - Install all available updates")
-	print("pm.remove(\"<plugin>\") - Removes an installed plugin")
-	print("pm.installFromFile(\"<filename>\") - Install a plugin from a local *.icpk file")
+	print("pm.remove(\"<plugin>\") - Removes an installed packages")
+	print("pm.installFromFile(\"<filename>\") - Install a packages from a local *.icpk file")
