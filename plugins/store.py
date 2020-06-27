@@ -310,7 +310,7 @@ def store():
 		index.read(".pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
 		clear()
-		print("The plugin store is temporarily down. We don't know how long this could take.")
+		print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try agaon later.")
 		return
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
