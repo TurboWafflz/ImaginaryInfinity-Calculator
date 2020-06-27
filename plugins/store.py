@@ -255,7 +255,6 @@ def updateMenu():
 def search(bypass=False, choices=[]):
 	text = "Results"
 	d = Dialog(dialog="dialog")
-	d.msgbox(str(choices))
 
 	if bypass == False:
 		#display search box
