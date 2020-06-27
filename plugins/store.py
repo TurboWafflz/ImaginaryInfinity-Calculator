@@ -306,7 +306,12 @@ def search(bypass=False, choices=[]):
 def store():
 	#reload index
 	reloadPluginList()
-	index.read(".pluginstore/index.ini")
+	try:
+		index.read(".pluginstore/index.ini")
+	except configparser.MissingSectionHeaderError:
+		clear()
+		print("The plugin store is temporarily down. We don't know how long this could take.")
+		return
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
 	#default options
