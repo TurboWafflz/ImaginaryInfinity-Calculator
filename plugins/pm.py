@@ -451,12 +451,12 @@ def list(scope="available", type="all"):
 		for plugin in installed.sections():
 			#Check if plugin has passed hash verification
 			if installed[plugin]["verified"] == "true":
-				verified = " (" + index[plugin]["type"] + ") | Verified"
+				verified = " (" + index[plugin]["type"] + ") Verified | "
 			else:
-				verified = " (" + index[plugin]["type"] + ") | Damaged, should be reinstalled"
+				verified = " (" + index[plugin]["type"] + ") Damaged, should be reinstalled | "
 			#Print plugin info
 			if type == "all" or installed[plugin]["type"] == type:
-				print(plugin + " - " + installed[plugin]["summary"] + "" + verified)
+				print(verified + plugin + " - " + installed[plugin]["summary"])
 	#List plugins in index
 	if scope == "available":
 		#Iterate through plugins in index
@@ -465,14 +465,14 @@ def list(scope="available", type="all"):
 			if installed.has_section(plugin):
 				#Check if plugin has passed hash verification
 				if installed[plugin]["verified"] == "true":
-					status = " (" + index[plugin]["type"] + ") | Installed & verified"
+					status = " (" + index[plugin]["type"] + ") Installed & verified | "
 				else:
-					status = " (" + index[plugin]["type"] + ") | Damaged, should be reinstalled"
+					status = " (" + index[plugin]["type"] + ") Damaged, should be reinstalled | "
 			else:
-				status = " (" + index[plugin]["type"] + ") | Not installed"
+				status = " (" + index[plugin]["type"] + ") Not installed | "
 			#Print plugin info
 			if type == "all" or index[plugin]["type"] == type:
-				print(plugin + " - " + index[plugin]["summary"] + status)
+				print(status + plugin + " - " + index[plugin]["summary"])
 #Install a package from a file
 def installFromFile(file):
 	#Copy the file to an ini file so configparser doesn't get mad
