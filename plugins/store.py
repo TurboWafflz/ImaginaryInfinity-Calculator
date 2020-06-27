@@ -7,6 +7,7 @@ from plugins.core import clear
 from plugins import pm
 import sys
 import subprocess
+import json
 
 builtin=True
 
@@ -79,7 +80,7 @@ def uninstall(filename, plugin):
 def ratePlugin(plugin):
 	d = Dialog(dialog="dialog")
 	#define data
-	data = {"plugin":plugin, "rating":d.rangebox("Rate " + plugin, height=0, width=0, min=1, max=5, init=5)[1]}
+	data = json.dumps({"plugin":plugin, "rating":d.rangebox("Rate " + plugin, height=0, width=0, min=1, max=5, init=5)[1]})
 	#post data to form
 	resp = requests.post("https://turbowafflz.azurewebsites.net/iicalc/plugins/rate", data).status_code
 
