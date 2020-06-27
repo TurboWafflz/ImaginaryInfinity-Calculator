@@ -4,6 +4,7 @@ import os
 from plugins.core import *
 from colorama import Fore, Back
 from py_essentials import hashing as hs
+from dialog import Dialog
 import time
 def switchBranch(branch):
 	if branch != "master":
@@ -43,13 +44,14 @@ def showPallate():
 def generateStoreInfo(plugin):
 	if os.path.exists("plugins/" + plugin):
 		name = input("Plugin name (No spaces): ")
+		type = input("Plugin Type (plugin/theme): ").lower()
 		description = input("Plugin description: ")
 		version = input("Plugin version: ")
 		maintainer = input("Maintainer email address: ")
 		link = input("Direct download link (Please use GitHub or GitLab for hosting): ")
 		summary = input("Description summary: ")
 		lastUpdate=time.time()
-		hash = hs.fileChecksum("plugins/" + plugin, "sha256")
+		hash = hs.fileChecksum(type + "s/" + plugin, "sha256")
 		print()
 		print("Plugin listing information:")
 		print()
@@ -66,3 +68,61 @@ def generateStoreInfo(plugin):
 		print("ratings = 0")
 	else:
 		print("File not found: plugins/" + plugin)
+		
+		
+def guiStoreInfo():
+	d = Dialog()
+	d.add_persistent_args(["--title", "Generate Store Info"])
+	#Get plugin
+	choices = []
+	pluginlist = plugins(False)
+	for i in range(len(pluginlist)):
+		choices.append((pluginlist[i], ""))
+	if len(choices) == 0:
+		choices = [("No Plugins Are Installed", "")]
+	resp = d.menu("Choose plugin", choices=choices)
+	if resp[0] == d.OK:
+		if resp[1] == "No Plugins Are Installed":
+			clear()
+			return
+		else:
+			#Continue Asking
+			name = ""
+			while name == "":
+				name = d.inputbox("Plugin Name (No Spaces)")[1].replace(" ", "_")
+			
+			type = d.menu("What type is your plugin?", choices=[("Plugin", ".py File to add Extra Functionality"), ("Theme", ".iitheme file to change the theme")])[1]	
+				
+			description = ""
+			while description == "":
+				description = d.editbox_str("", title="Plugin Description")[1]
+			
+			version = ""
+			while version == "":
+				version = d.inputbox("Plugin Version")[1]
+			
+			maintainer = ""
+			while maintainer == "":
+				maintainer = d.inputbox("Maintainer Email Address")[1]
+					
+			link = ""
+			while link == "":
+				link = d.inputbox("Direct Download Link (Please use GitHub or GitLab for hosting)")[1]
+					
+			summary = ""
+			while summary == "":
+				summary = d.inputbox("Plugin Summary")[1]
+					
+			depends = d.editbox_str("", title="Dependancies separated by line breaks\nStart PiPI dependancies with \'pipy:\'")[1]
+			depends = depends.replace("\n", ",")[:-1]
+			
+			lastUpdate=time.time()
+			hash = hs.fileChecksum(type.lower() + "s/" + resp[1], "sha256")
+			
+			
+	else:
+		clear()
+		return
+			
+	
+	
