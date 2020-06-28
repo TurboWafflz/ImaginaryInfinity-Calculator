@@ -43,7 +43,7 @@ def showPallate():
 	print(theme["styles"]["answer"] + "Answer")
 	print(theme["styles"]["input"] + "Input")
 	print(theme["styles"]["output"] + "Output")
-	
+
 def getReqs(filename):
 	if not os.path.isdir("plugins/.reqs"):
 		os.mkdir("plugins/.reqs")
@@ -88,8 +88,8 @@ def generateStoreInfo(plugin):
 		print("ratings = 0")
 	else:
 		print("File not found: plugins/" + plugin)
-		
-		
+
+
 def guiStoreInfo():
 	d = Dialog()
 	d.add_persistent_args(["--title", "Generate Store Info"])
@@ -110,46 +110,41 @@ def guiStoreInfo():
 			name = ""
 			while name == "":
 				name = d.inputbox("Plugin Name (No Spaces)")[1].replace(" ", "_")
-				
+
 			if resp[1].endswith(".iitheme"):
 				type = "themes"
 			elif resp[1].endswith(".py"):
 				type = "plugins"
-				
+
 			description = "\n"
 			while description == "\n":
 				description = d.editbox_str("", title="Plugin Description")[1].rstrip()
-			
+
 			version = ""
 			while version == "":
 				version = d.inputbox("Plugin Version")[1]
-			
+
 			maintainer = ""
 			while maintainer == "":
 				maintainer = d.inputbox("Maintainer Email Address")[1]
-					
+
 			link = ""
 			while link == "":
 				link = d.inputbox("Direct Download Link (Please use GitHub or GitLab for hosting)")[1]
-					
+
 			summary = ""
 			while summary == "":
 				summary = d.inputbox("Plugin Summary")[1]
-			
+
 			if type == "plugins":
 				reqs = getReqs(resp[1])
 				depends = d.editbox_str(reqs, title="Dependancies separated by line breaks\nStart PiPI dependancies with \'pipy:\'")[1]
 			depends = depends.replace("\n", ",")
 			depends = depends.rstrip(",")
-			
+
 			lastUpdate=time.time()
-			hash = hs.fileChecksum(type + "/" + resp[1], "sha256")			
-			
+			hash = hs.fileChecksum(type + "/" + resp[1], "sha256")
+
 	else:
 		clear()
 		return
-			
-	
-	
-=======
-		print("File not found: " + plugin)
