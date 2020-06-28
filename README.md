@@ -93,6 +93,11 @@ starting number
 
 - `store.store()` - Runs the GUI version of the plugin store
 
+**Note:** In the GUI search box, you can specify `type:<type>` at the beginning of the query to search for types of plugins. You can add a subquery by specifying it after the type. Example: `type:plugins discord` to search for only plugins with the keyword of discord. Types of plugins include:
+
+- plugins
+- themes
+
 <hr style="border: 1px solid white">
 
 **The following commands accept a second argument to prevent the result from being

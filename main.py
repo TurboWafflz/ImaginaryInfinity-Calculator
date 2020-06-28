@@ -50,8 +50,9 @@ if config["startup"]["safemode"] == "false":
 				exec("from plugins import " + plugin[:-3])
 			except KeyboardInterrupt:
 				print("Cancelled loading of " + plugin )
-			except:
+			except Exception as e:
 				print("Error importing " + plugin + ", you might want to disable or remove it.")
+				print(e)
 				input("[Press enter to continue]")
 		elif plugin[-9:] == ".disabled":
 			print("Not loading " + plugin[:-9] + " as it has been disabled in settings.")
