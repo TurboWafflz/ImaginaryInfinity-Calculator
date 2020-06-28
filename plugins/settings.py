@@ -17,14 +17,22 @@ def editor():
 		from dialog import Dialog
 		d = Dialog(dialog="dialog")
 		while True:
-			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
-								choices=[("Theme", "The colors the calculator will use"),
+			choices = [("Theme", "The colors the calculator will use"),
 										("Prompt", "The prompt that will be displayed"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
-										("Safe mode", "Disable all plugins except core and settings"),
-										("Save and exit", "Exit the settings editor"),
-										("Exit without saving", "Exit the settings editor without saving your changes")], width=0, height=0)
+										("Safe mode", "Disable all plugins except core and settings")]
+										
+			for plugin in plugins(False):
+				try:
+					exec("from plugins import " + plugin[:-3])
+					exec("choices += " + plugin[:-3] + ".settings.choices")
+				except Exception as e:
+					pass
+					#print(e); import traceback; traceback.print_exc(); import sys; sys.exit(0)
+			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving your changes")]							
+			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
+								choices=choices, width=0, height=0)
 			if code == d.OK:
 				clear()
 				if tag == "Theme":
