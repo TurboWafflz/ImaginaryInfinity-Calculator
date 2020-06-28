@@ -62,7 +62,7 @@ def getReqs(filename):
 	return reqstr
 
 def generateStoreInfo(plugin):
-	if os.path.exists("plugins/" + plugin):
+	if os.path.exists(plugin):
 		name = input("Plugin name (No spaces): ")
 		type = input("Plugin Type (plugin/theme): ").lower()
 		description = input("Plugin description: ")
@@ -151,3 +151,5 @@ def guiStoreInfo():
 			
 	
 	
+=======
+		print("File not found: " + plugin)
