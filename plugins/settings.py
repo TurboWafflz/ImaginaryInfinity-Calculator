@@ -1,6 +1,8 @@
 from plugins.core import *
 import configparser
 import platform
+from plugins import *
+
 builtin=True
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -11,6 +13,17 @@ def configMod(section, key, value, config=config):
 		config.write(configFile)
 		configFile.close()
 	print("Config file updated. Some changes may require a restart to take effect.")
+	
+def signal(sig,args=""):
+	nonplugins = ["__init__.py", "__pycache__", "core.py"]
+	for plugin in os.listdir("plugins"):
+		try:
+			if not plugin in nonplugins:
+				plugin = plugin[:-3]
+				if sig in eval("dir(" + plugin + ")"):
+					exec(plugin + "." + sig + "(" + args + ")")
+		except Exception as e:
+			pass
 
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
@@ -102,6 +115,8 @@ def editor():
 					break
 				if tag == "Exit without saving":
 					break
+				else:
+					signal("settingsPopup", "\"" + tag + "\"")
 			else:
 				clear()
 		if tag != "Exit without saving":
