@@ -525,7 +525,7 @@ def doCmdUpdate(branch=0, theme=theme):
 		restart()
 
 def cmdUpdate(theme=theme, config=config):
-	if input("Would you like to update? [y/N] ").lower() == "y":
+	if input("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch. [y/N] ").lower() == "y":
 		branch = "master"
 		try:
 			branch = config["updates"]["branch"]
@@ -696,7 +696,7 @@ def doGuiUpdate(branch=0, theme=theme):
 		clear()
 
 def guiUpdate(theme=theme, config=config):
-	d = Dialog(dialog="dialog").yesno("Would you like to update?")
+	d = Dialog(dialog="dialog").yesno("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch.")
 	if d == "ok":
 		branch = "master"
 		try:
