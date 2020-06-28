@@ -63,7 +63,7 @@ def uninstall(filename, plugin):
 	d = Dialog(dialog="dialog")
 	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:
 		#Delete file
-		os.remove("plugins/" + filename)
+		os.remove(installed[plugin]["type"] + "/" + filename)
 		#Remove section in installed
 		installed.remove_section(plugin)
 		#write the updated install file to the install file
@@ -106,7 +106,7 @@ def ratePlugin(plugin):
 #download plugins
 def download(plugin_name, bulk=False):
 	link = index[plugin_name]["download"]
-	file_name = "plugins/" + index[plugin_name]["filename"]
+	file_name = index[plugin_name]["type"] + "/" + index[plugin_name]["filename"]
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Downloading " + file_name])
 	#Progress gauge
@@ -176,19 +176,19 @@ def pluginpage(plugin, cache=None):
 	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
 	x = []
 	#processing to detect what labels to put on the buttons
-	if os.path.isfile("plugins/" + index[plugin]["filename"]):
+	if os.path.isfile(index[plugin]["type"] + "/" + index[plugin]["filename"]):
 		try:
 			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
-				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
-			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
-		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5", height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
 
 	#processing to tell what to do when buttons are pressed
@@ -196,7 +196,7 @@ def pluginpage(plugin, cache=None):
 		if x[1] == "download" or x[1] == "update":
 			download(plugin)
 		elif x[1] == "uninstall":
-			uninstall(index[plugin]["filename"], plugin)
+			uninstall(installed[plugin]["filename"], plugin)
 	elif x[0] == d.EXTRA:
 		ratePlugin(plugin)
 	elif x[0] == d.HELP:
@@ -255,19 +255,40 @@ def updateMenu():
 def search(bypass=False, choices=[]):
 	text = "Results"
 	d = Dialog(dialog="dialog")
-	
+
 	if bypass == False:
 		#display search box
 		x = d.inputbox("Search", height=None, width=None, init="")
 		#fuzzy string searching
 		if x[0] == d.OK:
-			choices = []
-			for key in index.sections():
-				if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
-					choices.append((key, index[key]["summary"]))
-				if fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >= 70:
-					if not (key, index[key]["summary"]) in choices:
+			if "type:" in x[1].lower():
+				#using type:
+				if not " " in x[1].strip():
+					#only searching for type
+					for key in index.sections():
+						if index[key]["type"] == x[1].strip()[5:]:
+							choices.append((key, index[key]["summary"]))
+				else:
+					query = x[1].replace("type:", "").split(" ", 1)[1]
+					type = x[1].replace("type:", "").split(" ", 1)[0]
+					#searching for type with query
+					choices = []
+					for key in index.sections():
+						if index[key]["type"] == type:
+							if fuzz.partial_ratio(query.lower(), key.lower()) >= 70:
+								choices.append((key, index[key]["summary"]))
+								if fuzz.partial_ratio(query.lower(), index[key]["description"].lower()) >= 70:
+									if not (key, index[key]["summary"]) in choices:
+										choices.append((key, index[key]["summary"]))
+			else:
+				#not using type:
+				choices = []
+				for key in index.sections():
+					if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
 						choices.append((key, index[key]["summary"]))
+						if fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >= 70:
+							if not (key, index[key]["summary"]) in choices:
+								choices.append((key, index[key]["summary"]))
 			#detect if no results
 			if len(choices) == 0:
 				choices.append(("", ""))
@@ -277,7 +298,7 @@ def search(bypass=False, choices=[]):
 		pluginpage(x[1], (choices,))
 	elif x[0] == d.CANCEL:
 		try:
-			search()
+			search(False, [])
 		except:
 			pass
 
@@ -285,7 +306,12 @@ def search(bypass=False, choices=[]):
 def store():
 	#reload index
 	reloadPluginList()
-	index.read(".pluginstore/index.ini")
+	try:
+		index.read(".pluginstore/index.ini")
+	except configparser.MissingSectionHeaderError:
+		clear()
+		print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later.")
+		return
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
 	#default options
