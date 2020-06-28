@@ -20,7 +20,6 @@ def editor():
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
 								choices=[("Theme", "The colors the calculator will use"),
 										("Prompt", "The prompt that will be displayed"),
-										("Discord rich presence", "Display ImaginaryInfinity Calculator as your status in Discord"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
 										("Safe mode", "Disable all plugins except core and settings"),
