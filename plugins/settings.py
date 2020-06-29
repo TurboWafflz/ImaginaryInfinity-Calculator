@@ -99,7 +99,7 @@ def editor():
 							i += 1
 						pcode, ptags = d.checklist("Plugins", choices=pluginslist, height=0, width=0)
 						i=0
-						print(ptags)
+						#print(ptags)
 						for plugin in pluginslist:
 							if not plugin[0][-9:] == ".disabled" and not plugin[0] in ptags:
 								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0] + ".disabled")
