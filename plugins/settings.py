@@ -25,9 +25,7 @@ def signal(sig,config,args=""):
 					if type(resp) == configparser.ConfigParser:
 						return resp
 		except Exception as e:
-			print(plugin + "." + sig + "(" + args + ", config)")
-			import time
-			time.sleep(10)
+			pass
 			
 
 def editor():
