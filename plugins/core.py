@@ -737,5 +737,7 @@ def update():
 			pass
 	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 		guiUpdate()
+	elif platform.system() == "Windows":
+		print("Windows does not support the update wizard")
 	else:
 		cmdUpdate()
