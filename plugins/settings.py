@@ -14,18 +14,22 @@ def configMod(section, key, value, config=config):
 		configFile.close()
 	print("Config file updated. Some changes may require a restart to take effect.")
 	
-def signal(sig,args=""):
-	nonplugins = ["__init__.py", "__pycache__", "core.py"]
+def signal(sig,config,args=""):
+	nonplugins = getDefaults("plugins")
 	for plugin in os.listdir("plugins"):
 		try:
 			if not plugin in nonplugins:
 				plugin = plugin[:-3]
 				if sig in eval("dir(" + plugin + ")"):
-					exec(plugin + "." + sig + "(" + args + ")")
+					resp = eval(plugin + "." + sig + "(" + args + ", config)")
+					if type(resp) == configparser.ConfigParser:
+						return resp
 		except Exception as e:
 			pass
 
 def editor():
+	config = configparser.ConfigParser()
+	config.read("config.ini")
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
 		d = Dialog(dialog="dialog")
@@ -71,6 +75,9 @@ def editor():
 					else:
 						clear()
 				if tag == "Prompt":
+					#print(config)
+					#import sys
+					#sys.exit(0)
 					pcode, pstring = d.inputbox("ImaginaryInfinity Calculator Prompt Settings", init = config["appearance"]["prompt"])
 					if pcode == d.OK:
 						config["appearance"]["prompt"] = pstring
@@ -116,7 +123,8 @@ def editor():
 				if tag == "Exit without saving":
 					break
 				else:
-					signal("settingsPopup", "\"" + tag + "\"")
+					config = signal("settingsPopup", config, "\"" + tag + "\"")
+
 			else:
 				clear()
 		if tag != "Exit without saving":
