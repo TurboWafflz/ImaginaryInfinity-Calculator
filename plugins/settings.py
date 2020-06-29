@@ -20,12 +20,15 @@ def signal(sig,config,args=""):
 		try:
 			if not plugin in nonplugins:
 				plugin = plugin[:-3]
-				if sig in eval("dir(" + plugin + ")"):
-					resp = eval(plugin + "." + sig + "(" + args + ", config)")
+				if sig in eval("dir(" + plugin + ".settings)"):
+					resp = eval(plugin + ".settings." + sig + "(" + args + ", config)")
 					if type(resp) == configparser.ConfigParser:
 						return resp
 		except Exception as e:
-			pass
+			print(plugin + "." + sig + "(" + args + ", config)")
+			import time
+			time.sleep(10)
+			
 
 def editor():
 	config = configparser.ConfigParser()
