@@ -163,7 +163,15 @@ def download(plugin_name, bulk=False):
 		for i in range(len(depends)):
 			if depends[i].startswith("pypi:"):
 				d.gauge_update(100, text="Installing Dependancy " + depends[i][5:], update_text=True)
-				subprocess.check_call([sys.executable, "-m", "pip","install", "-q", depends[i][5:]])
+				process = subprocess.Popen([sys.executable, "-m", "pip","install", depends[i][5:]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+				text = ""
+				for c in iter(lambda: process.stdout.read(1), b''):
+					text += c.decode("utf-8")
+					if text.endswith("\n"):
+						d.gauge_update(100, text="Installing Dependancy " + depends[i][5:] + "\n" + text.strip(), update_text=True)
+						text = ""
+    
+    
 			else:
 				download(depends[i], True)
 	d.gauge_stop()
@@ -305,7 +313,7 @@ def search(bypass=False, choices=[]):
 #Main store function
 def store():
 	#reload index
-	reloadPluginList()
+	#reloadPluginList()
 	try:
 		index.read(".pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
