@@ -313,7 +313,7 @@ def search(bypass=False, choices=[]):
 #Main store function
 def store():
 	#reload index
-	#reloadPluginList()
+	reloadPluginList()
 	try:
 		index.read(".pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
