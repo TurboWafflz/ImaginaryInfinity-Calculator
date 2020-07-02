@@ -343,6 +343,3 @@ def store():
 			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
-#run store() if store.py is executed
-if __name__ == "__main__":
-	store()
