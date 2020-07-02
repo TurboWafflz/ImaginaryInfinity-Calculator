@@ -299,7 +299,7 @@ def plugins(printval=True):
 	nonplugins = getDefaults("plugins")
 	j = len(plugins) - 1
 	for i in range(j, 0, -1):
-		if plugins[i] in nonplugins:
+		if plugins[i] in nonplugins or plugins[i].endswith(".disabled"):
 
 			plugins.remove(plugins[i])
 	if plugins[0] in nonplugins:
