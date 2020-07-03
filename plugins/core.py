@@ -294,14 +294,18 @@ def isPrime(num, printResult=True):
 		return(False)
 
 #List Plugins
-def plugins(printval=True):
+def plugins(printval=True, showdisabled=False):
 	plugins = os.listdir('plugins/')
 	nonplugins = getDefaults("plugins")
 	j = len(plugins) - 1
-	for i in range(j, 0, -1):
-		if plugins[i] in nonplugins or plugins[i].endswith(".disabled"):
-
-			plugins.remove(plugins[i])
+	if showdisabled == False:
+		for i in range(j, 0, -1):
+			if plugins[i] in nonplugins or plugins[i].endswith(".disabled"):
+				plugins.remove(plugins[i])
+	else:
+		for i in range(j, 0, -1):
+			if plugins[i] in nonplugins:
+				plugins.remove(plugins[i])
 	if plugins[0] in nonplugins:
 		plugins.remove(plugins[0])
 
