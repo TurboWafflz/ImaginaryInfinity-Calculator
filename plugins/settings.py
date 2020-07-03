@@ -88,7 +88,7 @@ def editor():
 					update()
 					break
 				if tag=="Plugins":
-					pluginslist = plugins(False)
+					pluginslist = plugins(False, True)
 					i=0
 					if len(pluginslist) > 0:
 						for plugin in pluginslist:
