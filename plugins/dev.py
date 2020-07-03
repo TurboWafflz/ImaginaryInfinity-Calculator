@@ -95,7 +95,7 @@ def guiStoreInfo():
 	d.add_persistent_args(["--title", "Generate Store Info"])
 	#Get plugin
 	choices = []
-	pluginlist = plugins(False)
+	pluginlist = plugins(False, True)
 	for i in range(len(pluginlist)):
 		choices.append((pluginlist[i], ""))
 	if len(choices) == 0:
