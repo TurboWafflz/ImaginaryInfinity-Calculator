@@ -294,14 +294,18 @@ def isPrime(num, printResult=True):
 		return(False)
 
 #List Plugins
-def plugins(printval=True):
+def plugins(printval=True, hidedisabled=False):
 	plugins = os.listdir('plugins/')
 	nonplugins = getDefaults("plugins")
 	j = len(plugins) - 1
-	for i in range(j, 0, -1):
-		if plugins[i] in nonplugins:
-
-			plugins.remove(plugins[i])
+	if hidedisabled == True:
+		for i in range(j, 0, -1):
+			if plugins[i] in nonplugins or plugins[i].endswith(".disabled"):
+				plugins.remove(plugins[i])
+	else:
+		for i in range(j, 0, -1):
+			if plugins[i] in nonplugins:
+				plugins.remove(plugins[i])
 	if plugins[0] in nonplugins:
 		plugins.remove(plugins[0])
 
@@ -525,7 +529,7 @@ def doCmdUpdate(branch=0, theme=theme):
 		restart()
 
 def cmdUpdate(theme=theme, config=config):
-	if input("Would you like to update? [y/N] ").lower() == "y":
+	if input("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch. [y/N] ").lower() == "y":
 		branch = "master"
 		try:
 			branch = config["updates"]["branch"]
@@ -696,7 +700,7 @@ def doGuiUpdate(branch=0, theme=theme):
 		clear()
 
 def guiUpdate(theme=theme, config=config):
-	d = Dialog(dialog="dialog").yesno("Would you like to update?")
+	d = Dialog(dialog="dialog").yesno("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch.")
 	if d == "ok":
 		branch = "master"
 		try:
@@ -737,5 +741,7 @@ def update():
 			pass
 	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 		guiUpdate()
+	elif platform.system() == "Windows":
+		print("Windows does not support the update wizard")
 	else:
 		cmdUpdate()

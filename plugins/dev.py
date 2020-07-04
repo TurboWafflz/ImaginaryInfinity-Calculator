@@ -95,7 +95,7 @@ def guiStoreInfo():
 	d.add_persistent_args(["--title", "Generate Store Info"])
 	#Get plugin
 	choices = []
-	pluginlist = plugins(False)
+	pluginlist = plugins(False, True)
 	for i in range(len(pluginlist)):
 		choices.append((pluginlist[i], ""))
 	if len(choices) == 0:
@@ -138,12 +138,27 @@ def guiStoreInfo():
 
 			if type == "plugins":
 				reqs = getReqs(resp[1])
-				depends = d.editbox_str(reqs, title="Dependancies separated by line breaks\nStart PiPI dependancies with \'pipy:\'")[1]
+				depends = d.editbox_str(reqs, title="Dependancies separated by line breaks. Start PiPI dependancies with \'pipy:\'")[1]
 			depends = depends.replace("\n", ",")
 			depends = depends.rstrip(",")
 
 			lastUpdate=time.time()
 			hash = hs.fileChecksum(type + "/" + resp[1], "sha256")
+			
+			clear()
+			
+			print("[" + name + "]")
+			print("description = " + description)
+			print("maintainer = " + maintainer)
+			print("version = " + version)
+			print("download = " + link)
+			print("hash = " + hash)
+			print("lastupdate = " + str(time.time()))
+			print("summary = " + summary)
+			print("filename = " + resp[1])
+			print("depends = " + depends)
+			print("rating = 5")
+			print("ratings = 0")
 
 	else:
 		clear()

@@ -1,6 +1,8 @@
 from plugins.core import *
 import configparser
 import platform
+from plugins import *
+
 builtin=True
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -11,21 +13,44 @@ def configMod(section, key, value, config=config):
 		config.write(configFile)
 		configFile.close()
 	print("Config file updated. Some changes may require a restart to take effect.")
+	
+def signal(sig,config,args=""):
+	nonplugins = getDefaults("plugins")
+	for plugin in os.listdir("plugins"):
+		try:
+			if not plugin in nonplugins:
+				plugin = plugin[:-3]
+				if sig in eval("dir(" + plugin + ".settings)"):
+					resp = eval(plugin + ".settings." + sig + "(" + args + ", config)")
+					if type(resp) == configparser.ConfigParser:
+						return resp
+		except Exception as e:
+			pass
+			
 
 def editor():
+	config = configparser.ConfigParser()
+	config.read("config.ini")
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
 		d = Dialog(dialog="dialog")
 		while True:
-			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
-								choices=[("Theme", "The colors the calculator will use"),
+			choices = [("Theme", "The colors the calculator will use"),
 										("Prompt", "The prompt that will be displayed"),
-										("Discord rich presence", "Display ImaginaryInfinity Calculator as your status in Discord"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
-										("Safe mode", "Disable all plugins except core and settings"),
-										("Save and exit", "Exit the settings editor"),
-										("Exit without saving", "Exit the settings editor without saving your changes")], width=0, height=0)
+										("Safe mode", "Disable all plugins except core and settings")]
+										
+			for plugin in plugins(False):
+				try:
+					exec("from plugins import " + plugin[:-3])
+					exec("choices += " + plugin[:-3] + ".settings.choices")
+				except Exception as e:
+					pass
+					#print(e); import traceback; traceback.print_exc(); import sys; sys.exit(0)
+			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving your changes")]							
+			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
+								choices=choices, width=0, height=0)
 			if code == d.OK:
 				clear()
 				if tag == "Theme":
@@ -51,6 +76,9 @@ def editor():
 					else:
 						clear()
 				if tag == "Prompt":
+					#print(config)
+					#import sys
+					#sys.exit(0)
 					pcode, pstring = d.inputbox("ImaginaryInfinity Calculator Prompt Settings", init = config["appearance"]["prompt"])
 					if pcode == d.OK:
 						config["appearance"]["prompt"] = pstring
@@ -71,7 +99,7 @@ def editor():
 							i += 1
 						pcode, ptags = d.checklist("Plugins", choices=pluginslist, height=0, width=0)
 						i=0
-						print(ptags)
+						#print(ptags)
 						for plugin in pluginslist:
 							if not plugin[0][-9:] == ".disabled" and not plugin[0] in ptags:
 								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0] + ".disabled")
@@ -95,6 +123,9 @@ def editor():
 					break
 				if tag == "Exit without saving":
 					break
+				else:
+					config = signal("settingsPopup", config, "\"" + tag + "\"")
+
 			else:
 				clear()
 		if tag != "Exit without saving":
