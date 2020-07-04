@@ -163,7 +163,15 @@ def download(plugin_name, bulk=False):
 		for i in range(len(depends)):
 			if depends[i].startswith("pypi:"):
 				d.gauge_update(100, text="Installing Dependancy " + depends[i][5:], update_text=True)
-				subprocess.check_call([sys.executable, "-m", "pip","install", "-q", depends[i][5:]])
+				process = subprocess.Popen([sys.executable, "-m", "pip","install", depends[i][5:]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+				text = ""
+				for c in iter(lambda: process.stdout.read(1), b''):
+					text += c.decode("utf-8")
+					if text.endswith("\n"):
+						d.gauge_update(100, text="Installing Dependancy " + depends[i][5:] + "\n" + text.strip(), update_text=True)
+						text = ""
+    
+    
 			else:
 				download(depends[i], True)
 	d.gauge_stop()
@@ -179,16 +187,16 @@ def pluginpage(plugin, cache=None):
 	if os.path.isfile(index[plugin]["type"] + "/" + index[plugin]["filename"]):
 		try:
 			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
-				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
-			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back"))
+			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
-		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize(), height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
 
 	#processing to tell what to do when buttons are pressed
@@ -335,6 +343,3 @@ def store():
 			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
-#run store() if store.py is executed
-if __name__ == "__main__":
-	store()
