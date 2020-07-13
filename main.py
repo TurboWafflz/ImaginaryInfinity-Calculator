@@ -22,6 +22,12 @@ import requests
 import json
 import configparser
 import subprocess
+if not 1 == 1:
+	print("Mathmatical impossibility detected. Answers may not be correct")
+	input("[Press enter to continue]")
+if False:
+	print("There is literally no way for this message to appear unless someone tampered with the source code")
+	input("[Press enter to continue]")
 #from plugins import store
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
