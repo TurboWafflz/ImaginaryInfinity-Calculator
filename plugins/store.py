@@ -10,7 +10,7 @@ import subprocess
 
 builtin=True
 
-#init
+#init 
 if not os.path.isdir(".pluginstore"):
 	os.mkdir(".pluginstore")
 if not os.path.isfile(".pluginstore/installed.ini"):
