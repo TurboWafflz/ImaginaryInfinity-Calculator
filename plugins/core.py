@@ -19,7 +19,7 @@ import configparser
 import re
 
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
-	from dialog import Dialog
+	from dialog import Dialog, ExecutableNotFound
 config = configparser.ConfigParser()
 config.read("config.ini")
 try:
@@ -714,33 +714,14 @@ def guiUpdate(theme=theme, config=config):
 		return
 
 def update():
-	#Update configs
-	nonplugins = getDefaults("plugins")
-	nonthemes = getDefaults("themes")
-
-	if nonplugins != None:
-		listprogs = ""
-		for i in range(len(nonplugins)):
-			if i != len(nonplugins) - 1:
-				listprogs = listprogs + nonplugins[i] + ", "
-			else:
-				listprogs += nonplugins[i]
-	config["updates"]["nonplugins"] = listprogs
-	if nonthemes != None:
-		listprogs = ""
-	for i in range(len(nonthemes)):
-		if i != len(nonthemes) - 1:
-			listprogs = listprogs + nonthemes[i] + ", "
-		else:
-			listprogs += nonthemes[i]
-	config["updates"]["nonthemes"] = listprogs
-	with open("config.ini", "r+") as cf:
-		try:
-			config.write(cf)
-		except:
-			pass
 	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
-		guiUpdate()
+		try:
+			guiUpdate()
+		except ExecutableNotFound as e:
+			from getpass import getpass
+			print("Dialog Execeutable Not Found. (Try 'sudo apt install dialog')")
+			getpass("[Press Enter to use the CLI Updater]")
+			cmdUpdate()
 	elif platform.system() == "Windows":
 		print("Windows does not support the update wizard")
 	else:
