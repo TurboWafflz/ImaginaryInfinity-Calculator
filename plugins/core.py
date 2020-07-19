@@ -719,9 +719,19 @@ def update():
 			guiUpdate()
 		except ExecutableNotFound as e:
 			from getpass import getpass
-			print("Dialog Execeutable Not Found. (Try 'sudo apt install dialog')")
-			getpass("[Press Enter to use the CLI Updater]")
-			cmdUpdate()
+			if input("Dialog Execeutable Not Found. Would you like to install it? [Y/n]").lower() == "n":
+				print("To install dialog, try \'sudo apt install dialog\'")
+				getpass("[Press Enter to use the CLI Updater]")
+				cmdUpdate()
+			else:
+				try:
+					sh("sudo apt install dialog")
+					guiUpdate()
+				except Exception as e:
+					print("Dialog installation failed. To install dialog, try \'sudo apt install dialog\'")
+					print(e)
+					getpass("[Press Enter to use the CLI Updater]")
+					cmdUpdate()
 	elif platform.system() == "Windows":
 		print("Windows does not support the update wizard")
 	else:
