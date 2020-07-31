@@ -3,6 +3,7 @@ name = No
 description = No
 filename = No
 builtin=No
+eval=true
 [styles]
 normal=No
 error==No

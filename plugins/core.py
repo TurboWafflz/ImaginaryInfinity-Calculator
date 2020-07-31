@@ -26,21 +26,36 @@ try:
 	theme = configparser.ConfigParser()
 	theme.read("themes/" + config["appearance"]["theme"])
 	#Define style class for compatibility with legacy plugins
-	class style:
-		normal=str(eval(theme["styles"]["normal"]))
-		error=str(eval(theme["styles"]["error"]))
-		important=str(eval(theme["styles"]["important"]))
-		startupmessage=str(eval(theme["styles"]["startupmessage"]))
-		prompt=str(eval(theme["styles"]["prompt"]))
-		link=str(eval(theme["styles"]["link"]))
-		answer=str(eval(theme["styles"]["answer"]))
-		input=str(eval(theme["styles"]["input"]))
-		output=str(eval(theme["styles"]["output"]))
-	#Convert strings to the proper escape sequences
-	for s in theme["styles"]:
-		#print(theme["styles"][str(s)])
-		theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
-except:
+	if theme["theme"]["eval"] == "false":
+		class style:
+			normal=theme["styles"]["normal"].encode("utf-8").decode("unicode_escape")
+			error=theme["styles"]["error"].encode("utf-8").decode("unicode_escape")
+			important=theme["styles"]["important"].encode("utf-8").decode("unicode_escape")
+			startupmessage=theme["styles"]["startupmessage"].encode("utf-8").decode("unicode_escape")
+			prompt=theme["styles"]["prompt"].encode("utf-8").decode("unicode_escape")
+			link=theme["styles"]["link"].encode("utf-8").decode("unicode_escape")
+			answer=theme["styles"]["answer"].encode("utf-8").decode("unicode_escape")
+			input=theme["styles"]["input"].encode("utf-8").decode("unicode_escape")
+			output=theme["styles"]["output"].encode("utf-8").decode("unicode_escape")
+		#Convert strings to the proper escape sequences
+		for s in theme["styles"]:
+			theme["styles"][str(s)] = theme["styles"][str(s)].encode("utf-8").decode("unicode_escape")
+	else:
+		class style:
+			normal=str(eval(theme["styles"]["normal"]))
+			error=str(eval(theme["styles"]["error"]))
+			important=str(eval(theme["styles"]["important"]))
+			startupmessage=str(eval(theme["styles"]["startupmessage"]))
+			prompt=str(eval(theme["styles"]["prompt"]))
+			link=str(eval(theme["styles"]["link"]))
+			answer=str(eval(theme["styles"]["answer"]))
+			input=str(eval(theme["styles"]["input"]))
+			output=str(eval(theme["styles"]["output"]))
+		#Convert strings to the proper escape sequences
+		for s in theme["styles"]:
+			#print(theme["styles"][str(s)])
+			theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+except Exception as e:
 	theme = configparser.ConfigParser()
 	theme.read("themes/dark.iitheme")
 	#Define style class for compatibility with legacy plugins
@@ -719,19 +734,9 @@ def update():
 			guiUpdate()
 		except ExecutableNotFound as e:
 			from getpass import getpass
-			if input("Dialog Execeutable Not Found. Would you like to install it? [Y/n]").lower() == "n":
-				print("To install dialog, try \'sudo apt install dialog\'")
-				getpass("[Press Enter to use the CLI Updater]")
-				cmdUpdate()
-			else:
-				try:
-					sh("sudo apt install dialog")
-					guiUpdate()
-				except Exception as e:
-					print("Dialog installation failed. To install dialog, try \'sudo apt install dialog\'")
-					print(e)
-					getpass("[Press Enter to use the CLI Updater]")
-					cmdUpdate()
+			print("Dialog Execeutable Not Found. (Try 'sudo apt install dialog')")
+			getpass("[Press Enter to use the CLI Updater]")
+			cmdUpdate()
 	elif platform.system() == "Windows":
 		print("Windows does not support the update wizard")
 	else:
