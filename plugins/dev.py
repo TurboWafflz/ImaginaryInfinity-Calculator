@@ -57,9 +57,12 @@ def getReqs(filename):
 	with open("plugins/.reqs/requirements.txt") as f:
 		reqs = [line.rstrip().split("==")[0] for line in f.readlines()]
 	reqstr = ""
-	for i in range(len(reqs)):
-		reqstr += "pypi:" + reqs[i] + "\n"
-	return reqstr
+	if len(reqs) == 1 and reqs[0] == "":
+		return ""
+	else:
+		for i in range(len(reqs)):
+			reqstr += "pypi:" + reqs[i] + "\n"
+		return reqstr
 
 def generateStoreInfo(plugin):
 	if os.path.exists(plugin):
@@ -144,9 +147,9 @@ def guiStoreInfo():
 
 			lastUpdate=time.time()
 			hash = hs.fileChecksum(type + "/" + resp[1], "sha256")
-			
+
 			clear()
-			
+
 			print("[" + name + "]")
 			print("description = " + description)
 			print("maintainer = " + maintainer)
