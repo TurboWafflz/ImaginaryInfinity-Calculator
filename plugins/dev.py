@@ -159,9 +159,11 @@ def guiStoreInfo():
 			print("lastupdate = " + str(time.time()))
 			print("summary = " + summary)
 			print("filename = " + resp[1])
-			print("depends = " + depends)
+			if not depends == "":
+				print("depends = " + depends)
 			print("rating = 5")
 			print("ratings = 0")
+			print("type = " + type)
 
 	else:
 		clear()
