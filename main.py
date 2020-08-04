@@ -22,12 +22,17 @@ import requests
 import json
 import configparser
 import subprocess
+from threading import Thread
 if not 1 == 1:
 	print("Mathmatical impossibility detected. Answers may not be correct")
 	input("[Press enter to continue]")
 if False:
 	print("There is literally no way for this message to appear unless someone tampered with the source code")
 	input("[Press enter to continue]")
+	
+def pingServer():
+	requests.get("http://turbowafflz.azurewebsites.net")
+
 #from plugins import store
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
@@ -70,6 +75,21 @@ else:
 from plugins.core import *
 from plugins import settings
 signal("onPluginsLoaded")
+
+#Wake Server
+if config["startup"]["startserver"] == "ask":
+	if input("Would you like to ping the server at startup to have faster access times to the plugin store? [Y/n] ").lower() == "n":
+		config["startup"]["startserver"] = "no"
+	else:
+		config["startup"]["startserver"] = "yes"
+	with open("config.ini", "r+") as f:
+		config.write(f)
+	config.read("config.ini")
+	
+if config["startup"]["startserver"] == "yes":
+	thread = Thread(target=pingServer)
+	thread.start()
+
 # #Complex toggle
 # def complex(onOff):
 # 	global cplx
