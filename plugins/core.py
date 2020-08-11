@@ -462,14 +462,17 @@ def doCmdUpdate(branch=0, theme=theme):
 	#download files
 	try:
 		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
-	except:
-		print(theme["styles"]["error"] + "Fatal Error. No Connection, Restoring Backup")
+	except Exception as e:
+		print(e)
+		print(theme["styles"]["error"] + "Fatal Error, Restoring Backup")
 		#Restore Backup
 		for f in os.listdir(parent + ".iibackup/"):
 			shutil.move(os.path.join(parent + ".iibackup", f), root)
 		os.rmdir(parent + ".iibackup")
+		os.rmdir(parent + ".iipluginsbackup")
+		os.rmdir(parent + ".iithemesbackup")
 		shutil.rmtree(parent + tempDir)
-		sys.exit("No Connection")
+		sys.exit("Fatal Error")
 
 	#Unzip File
 	os.chdir(root)
