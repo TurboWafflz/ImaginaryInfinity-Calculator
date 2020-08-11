@@ -19,28 +19,43 @@ import configparser
 import re
 
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
-	from dialog import Dialog
+	from dialog import Dialog, ExecutableNotFound
 config = configparser.ConfigParser()
 config.read("config.ini")
 try:
 	theme = configparser.ConfigParser()
 	theme.read("themes/" + config["appearance"]["theme"])
 	#Define style class for compatibility with legacy plugins
-	class style:
-		normal=str(eval(theme["styles"]["normal"]))
-		error=str(eval(theme["styles"]["error"]))
-		important=str(eval(theme["styles"]["important"]))
-		startupmessage=str(eval(theme["styles"]["startupmessage"]))
-		prompt=str(eval(theme["styles"]["prompt"]))
-		link=str(eval(theme["styles"]["link"]))
-		answer=str(eval(theme["styles"]["answer"]))
-		input=str(eval(theme["styles"]["input"]))
-		output=str(eval(theme["styles"]["output"]))
-	#Convert strings to the proper escape sequences
-	for s in theme["styles"]:
-		#print(theme["styles"][str(s)])
-		theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
-except:
+	if theme["theme"]["eval"] == "false":
+		class style:
+			normal=theme["styles"]["normal"].encode("utf-8").decode("unicode_escape")
+			error=theme["styles"]["error"].encode("utf-8").decode("unicode_escape")
+			important=theme["styles"]["important"].encode("utf-8").decode("unicode_escape")
+			startupmessage=theme["styles"]["startupmessage"].encode("utf-8").decode("unicode_escape")
+			prompt=theme["styles"]["prompt"].encode("utf-8").decode("unicode_escape")
+			link=theme["styles"]["link"].encode("utf-8").decode("unicode_escape")
+			answer=theme["styles"]["answer"].encode("utf-8").decode("unicode_escape")
+			input=theme["styles"]["input"].encode("utf-8").decode("unicode_escape")
+			output=theme["styles"]["output"].encode("utf-8").decode("unicode_escape")
+		#Convert strings to the proper escape sequences
+		for s in theme["styles"]:
+			theme["styles"][str(s)] = theme["styles"][str(s)].encode("utf-8").decode("unicode_escape")
+	else:
+		class style:
+			normal=str(eval(theme["styles"]["normal"]))
+			error=str(eval(theme["styles"]["error"]))
+			important=str(eval(theme["styles"]["important"]))
+			startupmessage=str(eval(theme["styles"]["startupmessage"]))
+			prompt=str(eval(theme["styles"]["prompt"]))
+			link=str(eval(theme["styles"]["link"]))
+			answer=str(eval(theme["styles"]["answer"]))
+			input=str(eval(theme["styles"]["input"]))
+			output=str(eval(theme["styles"]["output"]))
+		#Convert strings to the proper escape sequences
+		for s in theme["styles"]:
+			#print(theme["styles"][str(s)])
+			theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+except Exception as e:
 	theme = configparser.ConfigParser()
 	theme.read("themes/dark.iitheme")
 	#Define style class for compatibility with legacy plugins
@@ -714,33 +729,14 @@ def guiUpdate(theme=theme, config=config):
 		return
 
 def update():
-	#Update configs
-	nonplugins = getDefaults("plugins")
-	nonthemes = getDefaults("themes")
-
-	if nonplugins != None:
-		listprogs = ""
-		for i in range(len(nonplugins)):
-			if i != len(nonplugins) - 1:
-				listprogs = listprogs + nonplugins[i] + ", "
-			else:
-				listprogs += nonplugins[i]
-	config["updates"]["nonplugins"] = listprogs
-	if nonthemes != None:
-		listprogs = ""
-	for i in range(len(nonthemes)):
-		if i != len(nonthemes) - 1:
-			listprogs = listprogs + nonthemes[i] + ", "
-		else:
-			listprogs += nonthemes[i]
-	config["updates"]["nonthemes"] = listprogs
-	with open("config.ini", "r+") as cf:
-		try:
-			config.write(cf)
-		except:
-			pass
 	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
-		guiUpdate()
+		try:
+			guiUpdate()
+		except ExecutableNotFound as e:
+			from getpass import getpass
+			print("Dialog Execeutable Not Found. (Try 'sudo apt install dialog')")
+			getpass("[Press Enter to use the CLI Updater]")
+			cmdUpdate()
 	elif platform.system() == "Windows":
 		print("Windows does not support the update wizard")
 	else:
