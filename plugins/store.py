@@ -36,7 +36,14 @@ def reloadPluginList():
 
 	#download actual index from site
 	with open(file_name, "wb") as f:
-		response = requests.get(link, stream=True)
+		try:
+			response = requests.get(link, stream=True)
+		except requests.exceptions.ConnectionError:
+			d.gauge_stop()
+			if d.yesno("No Connection. Would you like to continue without a connection?") == d.OK:
+				store(False)
+			else:
+				raise ValueError("Exited")
 		total_length = response.headers.get('content-length')
 
 		if total_length is None: # no content length header
@@ -218,7 +225,7 @@ def pluginmenu():
 		d = Dialog()
 		#append installed plugins to list
 		for key in installed.sections():
-			choices.append((key, index[key]["summary"]))
+			choices.append((key, installed[key]["summary"]))
 		if len(choices) == 0:
 			choices.append(("No Installed Plugins", ""))
 		else:
@@ -231,6 +238,9 @@ def pluginmenu():
 #Menu to show all available updates
 def updateMenu():
 	d = Dialog(dialog="dialog")
+	if len(index.sections()) == 0:
+		d.msgbox("Index not available. Please connect to the internet and restart the store")
+		store(False)
 	updates = []
 	updatenum = 0
 	#append all plugins with available updates to list
@@ -311,9 +321,10 @@ def search(bypass=False, choices=[]):
 			pass
 
 #Main store function
-def store():
+def store(reload=True):
 	#reload index
-	reloadPluginList()
+	if reload == True:
+		reloadPluginList()
 	try:
 		index.read(".pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
