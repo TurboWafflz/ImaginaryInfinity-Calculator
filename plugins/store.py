@@ -188,6 +188,9 @@ def download(plugin_name, bulk=False):
 #Plugin page
 def pluginpage(plugin, cache=None):
 	d = Dialog(dialog="dialog")
+	if len(index.sections()) == 0:
+		d.msgbox("Index not available. Please connect to the internet and restart the store")
+		store(False)
 	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
 	x = []
 	#processing to detect what labels to put on the buttons
