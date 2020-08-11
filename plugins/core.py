@@ -400,7 +400,7 @@ def loadConfig():
 			items.append((each_section, each_key, each_val))
 	return items
 
-def doCmdUpdate(branch=0, theme=theme):
+def doCmdUpdate(branch="master", theme=theme):
 	nonplugins = getDefaults("plugins")
 	nonthemes = getDefaults("themes")
 
@@ -418,6 +418,10 @@ def doCmdUpdate(branch=0, theme=theme):
 	#Backup
 	if os.path.isdir(parent + ".iibackup"):
 		shutil.rmtree(parent + ".iibackup")
+	if os.path.isdir(parent + ".iipluginsbackup"):
+		shutil.rmtree(parent + ".iipluginsbackup")
+	if os.path.isdir(parent + ".iithemesbackup"):
+		shutil.rmtree(parent + ".iithemesbackup")
 	shutil.copytree(root, parent + ".iibackup/")
 
 	#Move Plugins out of Plugins
@@ -461,8 +465,9 @@ def doCmdUpdate(branch=0, theme=theme):
 
 	#download files
 	try:
-		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
+		urllib.request.urlretrieve("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
 	except Exception as e:
+		clear()
 		print(e)
 		print(theme["styles"]["error"] + "Fatal Error, Restoring Backup")
 		#Restore Backup
@@ -558,7 +563,7 @@ def cmdUpdate(theme=theme, config=config):
 
 
 #Update wizard by tabulate
-def doGuiUpdate(branch=0, theme=theme):
+def doGuiUpdate(branch="master", theme=theme):
 	nonplugins = getDefaults("plugins")
 	nonthemes = getDefaults("themes")
 
@@ -579,6 +584,10 @@ def doGuiUpdate(branch=0, theme=theme):
 	#Backup
 	if os.path.isdir(parent + ".iibackup"):
 		shutil.rmtree(parent + ".iibackup")
+	if os.path.isdir(parent + ".iipluginsbackup"):
+		shutil.rmtree(parent + ".iipluginsbackup")
+	if os.path.isdir(parent + ".iithemesbackup"):
+		shutil.rmtree(parent + ".iithemesbackup")
 	shutil.copytree(root, parent + ".iibackup/")
 	d.gauge_update(25, "Updating...\nMoving Plugins...", update_text=True)
 
@@ -625,9 +634,11 @@ def doGuiUpdate(branch=0, theme=theme):
 
 	#download files
 	try:
-		urllib.request.urlretrieve("https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
-	except:
-		print(theme["styles"]["error"] + "Fatal Error. No Connection, Restoring Backup")
+		urllib.request.urlretrieve("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
+	except Exception as e:
+		clear()
+		print(e)
+		print(theme["styles"]["error"] + "Fatal Error, Restoring Backup")
 		#Restore Backup
 		for f in os.listdir(parent + ".iibackup/"):
 			shutil.move(os.path.join(parent + ".iibackup", f), root)
