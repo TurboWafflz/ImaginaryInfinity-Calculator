@@ -170,8 +170,8 @@ def download(plugin_name, bulk=False):
 					if text.endswith("\n"):
 						d.gauge_update(100, text="Installing Dependancy " + depends[i][5:] + "\n" + text.strip(), update_text=True)
 						text = ""
-    
-    
+
+
 			else:
 				download(depends[i], True)
 	d.gauge_stop()
@@ -294,9 +294,9 @@ def search(bypass=False, choices=[]):
 				for key in index.sections():
 					if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
 						choices.append((key, index[key]["summary"]))
-						if fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >= 70:
-							if not (key, index[key]["summary"]) in choices:
-								choices.append((key, index[key]["summary"]))
+					if fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >= 70:
+						if not (key, index[key]["summary"]) in choices:
+							choices.append((key, index[key]["summary"]))
 			#detect if no results
 			if len(choices) == 0:
 				choices.append(("", ""))
