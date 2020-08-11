@@ -98,6 +98,9 @@ starting number
 - plugins
 - themes
 
+#### Submitting a plugin
+You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth)
+
 <hr style="border: 1px solid white">
 
 **The following commands accept a second argument to prevent the result from being
@@ -109,3 +112,5 @@ all get shown to the user:**
 - `isPerfect(<number>, [printResult])`
 
 printResult can be set to `True` or `False`, and defaults to `True` if not specified
+
+
