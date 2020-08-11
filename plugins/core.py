@@ -11,6 +11,7 @@ import sys
 import json
 import zipfile
 import urllib.request
+import requests
 import shutil
 from pathlib import Path
 import time
@@ -465,7 +466,8 @@ def doCmdUpdate(branch="master", theme=theme):
 
 	#download files
 	try:
-		urllib.request.urlretrieve("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
+		with open(root + "newcalc.zip", "wb") as f:
+			f.write(requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip").content)
 	except Exception as e:
 		clear()
 		print(e)
@@ -634,7 +636,8 @@ def doGuiUpdate(branch="master", theme=theme):
 
 	#download files
 	try:
-		urllib.request.urlretrieve("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", root + "newcalc.zip")
+		with open(root + "newcalc.zip", "wb") as f:
+			f.write(requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip").content)
 	except Exception as e:
 		clear()
 		print(e)
