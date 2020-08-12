@@ -31,7 +31,10 @@ if False:
 	input("[Press enter to continue]")
 
 def pingServer():
-	requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
+	try:
+		requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
+	except requests.ConnectionError:
+		pass
 #from plugins import store
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
