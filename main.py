@@ -29,22 +29,22 @@ if not 1 == 1:
 if False:
 	print("There is literally no way for this message to appear unless someone tampered with the source code")
 	input("[Press enter to continue]")
-	
+
 def pingServer():
 	try:
-		requests.get("http://turbowafflz.azurewebsites.net")
+		requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
 	except requests.ConnectionError:
 		pass
-
 #from plugins import store
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 config = configparser.ConfigParser()
 config.read("config.ini")
+pluginPath=config["plugins"]["path"]
 def signal(sig,args=""):
 	try:
 		nonplugins = ["__init__.py", "__pycache__", "core.py"]
-		for plugin in os.listdir("plugins"):
+		for plugin in os.listdir(pluginPath):
 			if not plugin in nonplugins:
 				plugin = plugin[:-3]
 				if sig in eval("dir(" + plugin + ")"):
@@ -53,7 +53,7 @@ def signal(sig,args=""):
 		pass
 #Load plugins
 if config["startup"]["safemode"] == "false":
-	plugins = os.listdir('plugins/')
+	plugins = os.listdir(pluginPath)
 	plugins.remove("core.py")
 	plugins.remove("settings.py")
 	plugins.remove("__init__.py")
@@ -88,10 +88,10 @@ if config["startup"]["startserver"] == "ask":
 	with open("config.ini", "r+") as f:
 		config.write(f)
 	config.read("config.ini")
-	
+
 if config["startup"]["startserver"] == "yes":
-	thread = Thread(target=pingServer)
-	thread.start()
+	warmupThread = Thread(target=pingServer)
+	warmupThread.start()
 
 # #Complex toggle
 # def complex(onOff):
@@ -142,7 +142,7 @@ def getDebt():
 	data = data[:0] + "$" + data[0:]
 	return data
 
-def main(config=config):
+def main(config=config, warmupThread=warmupThread):
 	if config["startup"]["firststart"] == "true":
 		clear()
 		try:
