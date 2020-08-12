@@ -36,7 +36,14 @@ def reloadPluginList():
 
 	#download actual index from site
 	with open(file_name, "wb") as f:
-		response = requests.get(link, stream=True)
+		try:
+			response = requests.get(link, stream=True)
+		except requests.exceptions.ConnectionError:
+			d.gauge_stop()
+			if d.yesno("No Connection. Would you like to continue without a connection?") == d.OK:
+				store(False)
+			else:
+				raise ValueError("Exited")
 		total_length = response.headers.get('content-length')
 
 		if total_length is None: # no content length header
@@ -181,22 +188,25 @@ def download(plugin_name, bulk=False):
 #Plugin page
 def pluginpage(plugin, cache=None):
 	d = Dialog(dialog="dialog")
+	if len(index.sections()) == 0:
+		d.msgbox("Index not available. Please connect to the internet and restart the store")
+		store(False)
 	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
 	x = []
 	#processing to detect what labels to put on the buttons
 	if os.path.isfile(index[plugin]["type"] + "/" + index[plugin]["filename"]):
 		try:
 			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
-				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
-			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
+			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
-		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
 
 	#processing to tell what to do when buttons are pressed
@@ -218,7 +228,7 @@ def pluginmenu():
 		d = Dialog()
 		#append installed plugins to list
 		for key in installed.sections():
-			choices.append((key, index[key]["summary"]))
+			choices.append((key, installed[key]["summary"]))
 		if len(choices) == 0:
 			choices.append(("No Installed Plugins", ""))
 		else:
@@ -231,6 +241,9 @@ def pluginmenu():
 #Menu to show all available updates
 def updateMenu():
 	d = Dialog(dialog="dialog")
+	if len(index.sections()) == 0:
+		d.msgbox("Index not available. Please connect to the internet and restart the store")
+		store(False)
 	updates = []
 	updatenum = 0
 	#append all plugins with available updates to list
@@ -311,9 +324,10 @@ def search(bypass=False, choices=[]):
 			pass
 
 #Main store function
-def store():
+def store(reload=True):
 	#reload index
-	reloadPluginList()
+	if reload == True:
+		reloadPluginList()
 	try:
 		index.read(".pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
