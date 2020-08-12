@@ -23,9 +23,11 @@ if platform.system() == "Linux" or platform.system() == "Darwin" or platform.sys
 	from dialog import Dialog, ExecutableNotFound
 config = configparser.ConfigParser()
 config.read("config.ini")
+themePath = config["themes"]["path"]
+pluginPath = config["plugins"]["path"]
 try:
 	theme = configparser.ConfigParser()
-	theme.read("themes/" + config["appearance"]["theme"])
+	theme.read(themePath + config["appearance"]["theme"])
 	#Define style class for compatibility with legacy plugins
 	if theme["theme"]["eval"] == "false":
 		class style:
@@ -58,7 +60,7 @@ try:
 			theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
 except Exception as e:
 	theme = configparser.ConfigParser()
-	theme.read("themes/dark.iitheme")
+	theme.read(themePath + "/dark.iitheme")
 	#Define style class for compatibility with legacy plugins
 	class style:
 		normal=str(eval(theme["styles"]["normal"]))
@@ -79,9 +81,9 @@ except Exception as e:
 
 cur_builtin = None
 #Not Sure how to explain this
-def getDefaults(folder):
-	if folder == "plugins":
-		files = os.listdir("plugins")
+def getDefaults(folder, pluginPath=pluginPath, themePath=themePath):
+	if folder == pluginPath:
+		files = os.listdir(pluginPath)
 		defaults = []
 		for file in files:
 			try:
@@ -94,12 +96,12 @@ def getDefaults(folder):
 		defaults.append("__pycache__")
 		defaults.append(".reqs")
 		return defaults
-	elif folder == "themes":
-		themelist = os.listdir("themes")
+	elif folder == themePath:
+		themelist = os.listdir(themePath)
 		defaults = []
 		for i in range(len(themelist)):
 			cur_theme = configparser.ConfigParser()
-			cur_theme.read("themes/" + themelist[i])
+			cur_theme.read(themePath + "/" + themelist[i])
 			try:
 				if cur_theme["theme"]["builtin"] == "true":
 					defaults.append(themelist[i])
@@ -402,13 +404,13 @@ def loadConfig():
 	return items
 
 def doCmdUpdate(branch="master", theme=theme):
-	nonplugins = getDefaults("plugins")
-	nonthemes = getDefaults("themes")
+	nonplugins = getDefaults(config["plugins"]["path"])
+	nonthemes = getDefaults(config["themes"]["path"])
 
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
-	themes = os.path.join(root, "themes")
+	themes = os.path.join(root, config["themes"]["path"])
 	parent = str(Path(root).parent) + "/"
 	confVals = loadConfig()
 	try:
@@ -567,14 +569,14 @@ def cmdUpdate(theme=theme, config=config):
 #Update wizard by tabulate
 def doGuiUpdate(branch="master", theme=theme):
 	nonplugins = getDefaults("plugins")
-	nonthemes = getDefaults("themes")
+	nonthemes = getDefaults(config["themes"]["path"])
 
 	d = Dialog(dialog="dialog")
 	d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
-	themes = os.path.join(root, "themes")
+	themes = os.path.join(root, config["themes"]["path"])
 	parent = str(Path(root).parent) + "/"
 	confVals = loadConfig()
 	try:
