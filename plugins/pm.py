@@ -127,6 +127,8 @@ def update(silent=False, theme=theme):
 	done = True
 #Install a plugin
 def install(plugin):
+	config = configparser.ConfigParser()
+	config.read("config.ini")
 	#update(silent=True)
 	#Load index, if available
 	try:
@@ -189,7 +191,14 @@ def install(plugin):
 					else:
 						pass
 				installed.read(".pluginstore/installed.ini")
-				download(index[plugin]["download"], index[plugin]["type"] + "/" + index[plugin]["filename"])
+				if index[plugin]["type"] == "plugins":
+					location = config["plugins"]["path"]
+				elif index[plugin]["type"] == "themes":
+					location = config["themes"]["path"]
+				else:
+					print("Error installing plugin: Invalid type")
+					return "error"
+				download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
 				installed[plugin] = index[plugin]
 				installed[plugin]["source"] = "index"
 				with open(".pluginstore/installed.ini", "w+") as f:
@@ -241,7 +250,14 @@ def install(plugin):
 				else:
 					pass
 			#Download plugin
-			download(index[plugin]["download"], index[plugin]["type"] + "/" + index[plugin]["filename"])
+			if index[plugin]["type"] == "plugins":
+				location = config["plugins"]["path"]
+			elif index[plugin]["type"] == "themes":
+				location = config["themes"]["path"]
+			else:
+				print("Error installing plugin: Invalid type")
+				return "error"
+			download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
 			#Mark plugin as installed from index
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
@@ -292,7 +308,14 @@ def install(plugin):
 				else:
 					pass
 			#Download plugin
-			download(index[plugin]["download"], index[plugin]["type"] + "/" + index[plugin]["filename"])
+			if index[plugin]["type"] == "plugins":
+				location = config["plugins"]["path"]
+			elif index[plugin]["type"] == "themes":
+				location = config["themes"]["path"]
+			else:
+				print("Error installing plugin: Invalid type")
+				return "error"
+			download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
 			#Mark plugin as installed
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
@@ -322,6 +345,8 @@ def install(plugin):
 		installed.write(f)
 #Remove a plugin
 def remove(plugin):
+	config = configparser.ConfigParser()
+	config.read("config.ini")
 	#Check if installed list exists
 	if os.path.exists(".pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
@@ -336,8 +361,15 @@ def remove(plugin):
 	if installed.has_section(plugin):
 		print("Removing packages...")
 		#Remove plugin from plugins
+		if installed[plugin]["type"] == "plugins":
+			location = config["plugins"]["path"]
+		elif installed[plugin]["type"] == "themes":
+			location = config["themes"]["path"]
+		else:
+			print("Error installing plugin: Invalid type")
+			return "error"
 		try:
-			os.remove(installed[plugin]["type"] + "/" + installed[plugin]["filename"])
+			os.remove(location + "/" + installed[plugin]["filename"])
 		except:
 			pass
 		#Remove plugin from installed list
@@ -532,7 +564,14 @@ def installFromFile(file):
 				pass
 		print("Installing " + plugin + "...")
 		try:
-			download(icpk[plugin]["download"], index[plugin]["type"] + "/" + icpk[plugin]["filename"])
+			if icpk[plugin]["type"] == "plugins":
+				location = config["plugins"]["path"]
+			elif icpk[plugin]["type"] == "themes":
+				location = config["themes"]["path"]
+			else:
+				print("Error installing plugin: Invalid type")
+				return "error"
+			download(icpk[plugin]["download"], location + "/" + icpk[plugin]["filename"])
 			installed[plugin] = icpk[plugin]
 			installed[plugin]["source"] = "icpk"
 			print("Verifying...")
