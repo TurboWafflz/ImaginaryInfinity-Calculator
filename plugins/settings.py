@@ -39,7 +39,9 @@ def editor():
 										("Prompt", "The prompt that will be displayed"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
-										("Safe mode", "Disable all plugins except core and settings")]
+										("Safe mode", "Disable all plugins except core and settings"),
+										("Start Server", "Start the index server on start")
+										]
 										
 			for plugin in plugins(False):
 				try:
@@ -116,6 +118,12 @@ def editor():
 							config["startup"]["safemode"] = "true"
 						if stag == "Off":
 							config["startup"]["safemode"] = "false"
+				if tag == "Start Server":
+					startserver = d.menu("ImaginaryInfinity Calculator Server Start", choices=[("On", "Enable starting server on start"), ("Off", "Disable starting server on start")])
+					if startserver[0] == "On":
+						config["startup"]["startserver"] = "true
+					else:
+						config["startup"]["startserver"] = "true"
 				if tag == "Save and exit":
 					with open("config.ini", "w") as configFile:
 						config.write(configFile)
