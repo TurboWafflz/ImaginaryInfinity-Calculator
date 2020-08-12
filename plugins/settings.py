@@ -123,7 +123,7 @@ def editor():
 					if startserver[0] == "On":
 						config["startup"]["startserver"] = "true
 					else:
-						config["startup"]["startserver"] = "true"
+						config["startup"]["startserver"] = "false"
 				if tag == "Save and exit":
 					with open("config.ini", "w") as configFile:
 						config.write(configFile)
