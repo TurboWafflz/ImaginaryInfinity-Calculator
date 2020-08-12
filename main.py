@@ -35,6 +35,8 @@ def pingServer():
 		requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
 	except requests.ConnectionError:
 		pass
+	except requests.exceptions.ReadTimeout:
+		pass
 #from plugins import store
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
@@ -248,7 +250,9 @@ def main(config=config, warmupThread=warmupThread):
 				ans=eval(str(eqn))
 			except Exception as e:
 				try:
-					print(theme["styles"]["output"] + exec(str(calc)))
+					#changing it to not print exec as it returns None
+					#print(theme["styles"]["output"] + exec(str(calc)))
+					exec(str(calc))
 					pr=0
 				except:
 					signal("onError", str(e))
