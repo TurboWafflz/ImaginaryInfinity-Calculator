@@ -121,7 +121,7 @@ def editor():
 				if tag == "Start Server":
 					startserver = d.menu("ImaginaryInfinity Calculator Server Start", choices=[("On", "Enable starting server on start"), ("Off", "Disable starting server on start")])
 					if startserver[0] == "On":
-						config["startup"]["startserver"] = "true
+						config["startup"]["startserver"] = "true"
 					else:
 						config["startup"]["startserver"] = "false"
 				if tag == "Save and exit":

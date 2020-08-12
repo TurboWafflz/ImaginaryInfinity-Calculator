@@ -82,16 +82,29 @@ from plugins import settings
 signal("onPluginsLoaded")
 
 #Wake Server
+#transition old 'yes' and 'no' to 'true' and 'false'
+if config["startup"]["startserver"] == "no":
+	config["startup"]["startserver"] = "false"
+	with open("config.ini", "r+") as f:
+		config.write(f)
+	config.read("config.ini")
+elif config["startup"]["startserver"] == "yes":
+	config["startup"]["startserver"] = "true"
+	with open("config.ini", "r+") as f:
+		config.write(f)
+	config.read("config.ini")
+	
+#ask to start server
 if config["startup"]["startserver"] == "ask":
 	if input("Would you like to ping the server at startup to have faster access times to the plugin store? [Y/n] ").lower() == "n":
-		config["startup"]["startserver"] = "no"
+		config["startup"]["startserver"] = "false"
 	else:
-		config["startup"]["startserver"] = "yes"
+		config["startup"]["startserver"] = "true"
 	with open("config.ini", "r+") as f:
 		config.write(f)
 	config.read("config.ini")
 
-if config["startup"]["startserver"] == "yes":
+if config["startup"]["startserver"] == "true":
 	warmupThread = Thread(target=pingServer)
 	warmupThread.start()
 
