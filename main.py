@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator v2.2
+##ImaginaryInfinity Calculator v2.2 
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
