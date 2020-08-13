@@ -12,7 +12,7 @@ config.read("config.ini")
 #Modify Configuration file
 def configMod(section, key, value, config=config):
 	config[section][key] = value
-	with open("config.ini", "w") as configFile:
+	with open(configPath, "w") as configFile:
 		config.write(configFile)
 		configFile.close()
 	print("Config file updated. Some changes may require a restart to take effect.")
@@ -128,7 +128,7 @@ def editor():
 					else:
 						config["startup"]["startserver"] = "false"
 				elif tag == "Save and exit":
-					with open("config.ini", "w") as configFile:
+					with open(configPath, "w") as configFile:
 						config.write(configFile)
 						configFile.close()
 					break
