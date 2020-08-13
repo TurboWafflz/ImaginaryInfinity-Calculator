@@ -3,7 +3,7 @@ from dialog import Dialog
 import configparser
 from fuzzywuzzy import fuzz
 import os
-from plugins.core import clear
+from plugins.core import clear, config
 from plugins import pm
 import sys
 import subprocess
@@ -11,23 +11,23 @@ import subprocess
 builtin=True
 
 #init
-if not os.path.isdir(".pluginstore"):
-	os.mkdir(".pluginstore")
-if not os.path.isfile(".pluginstore/installed.ini"):
-	with open(".pluginstore/installed.ini", "w+") as f:
+if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
+	os.mkdir(config["paths"]["userPath"] + "/.pluginstore")
+if not os.path.isfile(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
+	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 		f.write("#")
-if not os.path.isfile(".pluginstore/index.ini"):
-	with open(".pluginstore/index.ini", "w+") as f:
+if not os.path.isfile(config["paths"]["userPath"] + "/.pluginstore/index.ini"):
+	with open(config["paths"]["userPath"] + "/.pluginstore/index.ini", "w+") as f:
 		f.write("#")
 
 #set configs
 index = configparser.ConfigParser()
 installed = configparser.ConfigParser()
-installed.read(".pluginstore/installed.ini")
+installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 
 #reload index
 def reloadPluginList():
-	file_name = ".pluginstore/index.ini"
+	file_name = config["paths"]["userPath"] + "/.pluginstore/index.ini"
 	link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
 	#display progress box of updating index
 	d = Dialog(dialog="dialog")
@@ -74,7 +74,7 @@ def uninstall(filename, plugin):
 		#Remove section in installed
 		installed.remove_section(plugin)
 		#write the updated install file to the install file
-		with open(".pluginstore/installed.ini", "r+") as f:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "r+") as f:
 			f.seek(0)
 			installed.write(f)
 			f.truncate()
@@ -157,7 +157,7 @@ def download(plugin_name, bulk=False):
 		installed[plugin_name]["verified"] = "true"
 
 	#write to installed file
-	with open(".pluginstore/installed.ini", "r+") as f:
+	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "r+") as f:
 		installed.write(f)
 
 	dependencies = True
@@ -329,7 +329,7 @@ def store(reload=True):
 	if reload == True:
 		reloadPluginList()
 	try:
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
 		clear()
 		print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later.")

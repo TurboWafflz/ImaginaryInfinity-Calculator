@@ -1,8 +1,11 @@
-from plugins.core import *
 import configparser
+import sys
+config = configparser.ConfigParser()
+config.read("config.ini")
+sys.path.insert(1, config["paths"]["userPath"])
+from plugins.core import *
 import platform
 from plugins import *
-
 builtin=True
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -15,8 +18,8 @@ def configMod(section, key, value, config=config):
 	print("Config file updated. Some changes may require a restart to take effect.")
 
 def signal(sig,config,args=""):
-	nonplugins = getDefaults("plugins")
-	for plugin in os.listdir("plugins"):
+	nonplugins = getDefaults(config["paths"]["userPath"] + "/plugins/")
+	for plugin in os.listdir(config["paths"]["userPath"] + "/plugins/"):
 		try:
 			if not plugin in nonplugins:
 				plugin = plugin[:-3]
@@ -104,9 +107,9 @@ def editor():
 						#print(ptags)
 						for plugin in pluginslist:
 							if not plugin[0][-9:] == ".disabled" and not plugin[0] in ptags:
-								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0] + ".disabled")
+								os.rename(config["paths"]["userPath"] + "/plugins/" + plugin[0], config["paths"]["userPath"] + "/plugins/" + plugin[0] + ".disabled")
 							if plugin[0][-9:] == ".disabled" and plugin[0] in ptags:
-								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0][:-9])
+								os.rename(config["paths"]["userPath"] + "/plugins/" + plugin[0], config["paths"]["userPath"] + "/plugins/" + plugin[0][:-9])
 					else:
 						d.msgbox("You have not installed any plugins.")
 				elif tag=="Safe mode":

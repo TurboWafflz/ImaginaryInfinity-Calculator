@@ -23,8 +23,9 @@ if platform.system() == "Linux" or platform.system() == "Darwin" or platform.sys
 	from dialog import Dialog, ExecutableNotFound
 config = configparser.ConfigParser()
 config.read("config.ini")
-themePath = config["themes"]["path"]
-pluginPath = config["plugins"]["path"]
+themePath = config["paths"]["userPath"] + "/themes/"
+pluginPath = config["paths"]["userPath"] + "/plugins/"
+sys.path.insert(1, config["paths"]["userPath"])
 try:
 	theme = configparser.ConfigParser()
 	theme.read(themePath + config["appearance"]["theme"])
@@ -58,27 +59,79 @@ try:
 		for s in theme["styles"]:
 			#print(theme["styles"][str(s)])
 			theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
-except Exception as e:
-	theme = configparser.ConfigParser()
-	theme.read(themePath + "/dark.iitheme")
-	#Define style class for compatibility with legacy plugins
-	class style:
-		normal=str(eval(theme["styles"]["normal"]))
-		error=str(eval(theme["styles"]["error"]))
-		important=str(eval(theme["styles"]["important"]))
-		startupmessage=str(eval(theme["styles"]["startupmessage"]))
-		prompt=str(eval(theme["styles"]["prompt"]))
-		link=str(eval(theme["styles"]["link"]))
-		answer=str(eval(theme["styles"]["answer"]))
-		input=str(eval(theme["styles"]["input"]))
-		output=str(eval(theme["styles"]["output"]))
-	#Convert strings to the proper escape sequences
-	for s in theme["styles"]:
-		print(theme["styles"][str(s)])
-		theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
-	print(theme["styles"]["error"] + "Unable to load the specified theme" + theme["styles"]["normal"])
-	input("[Press enter to continue]")
-
+except:
+	try:
+		theme = configparser.ConfigParser()
+		theme.read(config["paths"]["systemPath"] + "/themes/" + config["appearance"]["theme"])
+		#Define style class for compatibility with legacy plugins
+		if theme["theme"]["eval"] == "false":
+			class style:
+				normal=theme["styles"]["normal"].encode("utf-8").decode("unicode_escape")
+				error=theme["styles"]["error"].encode("utf-8").decode("unicode_escape")
+				important=theme["styles"]["important"].encode("utf-8").decode("unicode_escape")
+				startupmessage=theme["styles"]["startupmessage"].encode("utf-8").decode("unicode_escape")
+				prompt=theme["styles"]["prompt"].encode("utf-8").decode("unicode_escape")
+				link=theme["styles"]["link"].encode("utf-8").decode("unicode_escape")
+				answer=theme["styles"]["answer"].encode("utf-8").decode("unicode_escape")
+				input=theme["styles"]["input"].encode("utf-8").decode("unicode_escape")
+				output=theme["styles"]["output"].encode("utf-8").decode("unicode_escape")
+			#Convert strings to the proper escape sequences
+			for s in theme["styles"]:
+				theme["styles"][str(s)] = theme["styles"][str(s)].encode("utf-8").decode("unicode_escape")
+		else:
+			class style:
+				normal=str(eval(theme["styles"]["normal"]))
+				error=str(eval(theme["styles"]["error"]))
+				important=str(eval(theme["styles"]["important"]))
+				startupmessage=str(eval(theme["styles"]["startupmessage"]))
+				prompt=str(eval(theme["styles"]["prompt"]))
+				link=str(eval(theme["styles"]["link"]))
+				answer=str(eval(theme["styles"]["answer"]))
+				input=str(eval(theme["styles"]["input"]))
+				output=str(eval(theme["styles"]["output"]))
+			#Convert strings to the proper escape sequences
+			for s in theme["styles"]:
+				#print(theme["styles"][str(s)])
+				theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+	except:
+		try:
+			theme = configparser.ConfigParser()
+			theme.read(themePath + "/dark.iitheme")
+			class style:
+				normal=str(eval(theme["styles"]["normal"]))
+				error=str(eval(theme["styles"]["error"]))
+				important=str(eval(theme["styles"]["important"]))
+				startupmessage=str(eval(theme["styles"]["startupmessage"]))
+				prompt=str(eval(theme["styles"]["prompt"]))
+				link=str(eval(theme["styles"]["link"]))
+				answer=str(eval(theme["styles"]["answer"]))
+				input=str(eval(theme["styles"]["input"]))
+				output=str(eval(theme["styles"]["output"]))
+			#Convert strings to the proper escape sequences
+			for s in theme["styles"]:
+				print(theme["styles"][str(s)])
+				theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+		except:
+			try:
+				theme = configparser.ConfigParser()
+				theme.read(config["paths"]["systemPath"] + "/themes/dark.iitheme")
+				class style:
+					normal=str(eval(theme["styles"]["normal"]))
+					error=str(eval(theme["styles"]["error"]))
+					important=str(eval(theme["styles"]["important"]))
+					startupmessage=str(eval(theme["styles"]["startupmessage"]))
+					prompt=str(eval(theme["styles"]["prompt"]))
+					link=str(eval(theme["styles"]["link"]))
+					answer=str(eval(theme["styles"]["answer"]))
+					input=str(eval(theme["styles"]["input"]))
+					output=str(eval(theme["styles"]["output"]))
+				#Convert strings to the proper escape sequences
+				for s in theme["styles"]:
+					print(theme["styles"][str(s)])
+					theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+			except:
+				print("Fatal error: unable to find a useable theme")
+				exit()
 cur_builtin = None
 #Not Sure how to explain this
 def getDefaults(folder, pluginPath=pluginPath, themePath=themePath):
@@ -404,13 +457,13 @@ def loadConfig():
 	return items
 
 def doCmdUpdate(branch="master", theme=theme):
-	nonplugins = getDefaults(config["plugins"]["path"])
-	nonthemes = getDefaults(config["themes"]["path"])
+	nonplugins = getDefaults(config["paths"]["userPath"] + "/plugins/")
+	nonthemes = getDefaults(config["paths"]["userPath"] + "/themes/")
 
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
-	themes = os.path.join(root, config["themes"]["path"])
+	themes = os.path.join(root, config["paths"]["userPath"] + "/themes/")
 	parent = str(Path(root).parent) + "/"
 	confVals = loadConfig()
 	try:
@@ -568,15 +621,15 @@ def cmdUpdate(theme=theme, config=config):
 
 #Update wizard by tabulate
 def doGuiUpdate(branch="master", theme=theme):
-	nonplugins = getDefaults(config["plugins"]["path"])
-	nonthemes = getDefaults(config["themes"]["path"])
+	nonplugins = getDefaults(config["paths"]["userPath"] + "/plugins/")
+	nonthemes = getDefaults(config["paths"]["userPath"] + "/themes/")
 
 	d = Dialog(dialog="dialog")
 	d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
 	#Establish directories
 	plugins = str(Path(__file__).parent) + "/"
 	root = str(Path(plugins).parent) + "/"
-	themes = os.path.join(root, config["themes"]["path"])
+	themes = os.path.join(root, config["paths"]["userPath"] + "/themes/")
 	parent = str(Path(root).parent) + "/"
 	confVals = loadConfig()
 	try:
