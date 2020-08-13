@@ -1,4 +1,6 @@
 #!/bin/bash
+clear
+echo "ImaginaryInfinity Calculator Installer"
 DIR=`dirname $0`
 if [ `uname` == "Linux" ]
 then
