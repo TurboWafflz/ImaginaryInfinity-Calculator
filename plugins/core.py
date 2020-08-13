@@ -21,8 +21,25 @@ import re
 
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 	from dialog import Dialog, ExecutableNotFound
-config = configparser.ConfigParser()
-config.read("config.ini")
+try:
+	home = os.path.expanduser("~")
+	print("Loading config...")
+	config = configparser.ConfigParser()
+	config.read(home + "/.iicalc/config.ini")
+	config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+	configPath = home + "/.iicalc/config.ini"
+	with open(configPath, "w") as configFile:
+		config.write(configFile)
+		configFile.close()
+except:
+	try:
+		print("Loading portable config...")
+		config = configparser.ConfigParser()
+		config.read("config.ini")
+		configPath = "config.ini"
+	except:
+		print("Fatal error: Cannot load config")
+		exit()
 themePath = config["paths"]["userPath"] + "/themes/"
 pluginPath = config["paths"]["userPath"] + "/plugins/"
 sys.path.insert(1, config["paths"]["userPath"])
@@ -366,8 +383,8 @@ def isPrime(num, printResult=True):
 
 #List Plugins
 def plugins(printval=True, hidedisabled=False):
-	plugins = os.listdir('plugins/')
-	nonplugins = getDefaults("plugins/")
+	plugins = os.listdir(config["paths"]["userPath"] + "/plugins/")
+	nonplugins = getDefaults(config["paths"]["userPath"] + "/plugins/")
 	j = len(plugins) - 1
 	if hidedisabled == True:
 		for i in range(j, 0, -1):
