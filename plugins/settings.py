@@ -1,14 +1,9 @@
 import configparser
 import sys
-config = configparser.ConfigParser()
-config.read("config.ini")
-sys.path.insert(1, config["paths"]["userPath"])
 from plugins.core import *
 import platform
 from plugins import *
 builtin=True
-config = configparser.ConfigParser()
-config.read("config.ini")
 #Modify Configuration file
 def configMod(section, key, value, config=config):
 	config[section][key] = value
@@ -32,8 +27,6 @@ def signal(sig,config,args=""):
 
 
 def editor():
-	config = configparser.ConfigParser()
-	config.read("config.ini")
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
 		d = Dialog(dialog="dialog")
