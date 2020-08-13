@@ -43,7 +43,14 @@ def cmdEditor():
 			except:
 				print("weird")
 	openTheme = configparser.ConfigParser()
-	openTheme.read("templates/.emptytheme.iitheme")
+	try:
+		openTheme.read(config["paths"]["systemPath"] + "/templates/.emptytheme.iitheme")
+	except:
+		try:
+			openTheme.read(config["paths"]["userPath"] + "/templates/.emptytheme.iitheme")
+		except:
+			print("Could not find theme template")
+			return
 	themeName = input("Theme file: ")
 	clear()
 	print("Editing: " + themeName)
@@ -92,9 +99,9 @@ def cmdEditor():
 	print("Saving theme...")
 	if themeName[-8:] != ".iitheme":
 		themeName += ".iitheme"
-	with open("themes/" + themeName, "w") as themeFile:
+	with open(config["paths"]["userPath"] +"/themes/" + themeName, "w") as themeFile:
 		openTheme.write(themeFile)
-		
+
 def dialogEditor():
 	foreColors = dir(colorama.Fore)
 	backColors = dir(colorama.Back)
@@ -133,7 +140,14 @@ def dialogEditor():
 			except:
 				print("weird")
 	openTheme = configparser.ConfigParser()
-	openTheme.read("templates/.emptytheme.iitheme")
+	try:
+		openTheme.read(config["paths"]["systemPath"] + "/templates/.emptytheme.iitheme")
+	except:
+		try:
+			openTheme.read(config["paths"]["userPath"] + "/templates/.emptytheme.iitheme")
+		except:
+			print("Could not find theme template")
+			return
 	d = Dialog(dialog="dialog")
 	d.set_background_title('ImaginaryInfinity Calculator Theme Editor')
 	themeName = d.inputbox("Theme File:", height=None, width=None, init="")
@@ -144,25 +158,25 @@ def dialogEditor():
 	d.add_persistent_args(["--title", "Editing " + themeName])
 	answers = []
 	answers.append(d.form("Basic Information", [("Theme Name:", 1, 1, "", 1, 13, 255, 255), ("Theme Description:", 2, 1, "", 2, 20, 255, 255)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Normal Foreground:", 1, 1, "", 1, 21, 15, 15), ("Normal Background:", 2, 1, "", 2, 20, 15, 15), ("Normal Style:", 3, 1, "", 3, 15, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Error Foreground:", 1, 1, "", 1, 20, 15, 15), ("Error Background:", 2, 1, "", 2, 19, 15, 15), ("Error Style:", 3, 1, "", 3, 14, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Important Foreground:", 1, 1, "", 1, 24, 15, 15), ("Important Background:", 2, 1, "", 2, 23, 15, 15), ("Important Style:", 3, 1, "", 3, 18, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Startup Foreground:", 1, 1, "", 1, 22, 15, 15), ("Startup Background:", 2, 1, "", 2, 21, 15, 15), ("Startup Style:", 3, 1, "", 3, 16, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Prompt Foreground:", 1, 1, "", 1, 21, 15, 15), ("Prompt Background:", 2, 1, "", 2, 20, 15, 15), ("Prompt Style:", 3, 1, "", 3, 15, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Link Foreground:", 1, 1, "", 1, 19, 15, 15), ("Link Background:", 2, 1, "", 2, 18, 15, 15), ("Link Style:", 3, 1, "", 3, 13, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Answer Foreground:", 1, 1, "", 1, 21, 15, 15), ("Answer Background:", 2, 1, "", 2, 20, 15, 15), ("Answer Style:", 3, 1, "", 3, 15, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Input Foreground:", 1, 1, "", 1, 20, 15, 15), ("Input Background:", 2, 1, "", 2, 19, 15, 15), ("Input Style:", 3, 1, "", 3, 14, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Output Foreground:", 1, 1, "", 1, 21, 15, 15), ("Output Background:", 2, 1, "", 2, 20, 15, 15), ("Output Style:", 3, 1, "", 3, 15, 9, 9)], height=0, width=0, form_height=0))
-	
+
 	#format time
 	for i in range(len(answers)):
 		if answers[i][0] != "ok":
@@ -181,12 +195,12 @@ def dialogEditor():
 					answers[i][1][j] = "RESET"
 			if answers[i][1][2] == "":
 				answers[i][1][2] = "NORMAL"
-				
+
 	#add to file
 	print(answers)
 	openTheme["theme"]["name"] = answers[0][1][0]
 	openTheme["theme"]["description"] = answers[0][1][1]
-	
+
 	openTheme["styles"]["normal"] = "colorama.Fore." + answers[1][1][0].upper() + " + colorama.Back." + answers[1][1][1].upper() + " + colorama.Style." + answers[1][1][2].upper()
 	openTheme["styles"]["error"] = "colorama.Fore." + answers[2][1][0].upper() + " + colorama.Back." + answers[2][1][1].upper() + " + colorama.Style." + answers[2][1][2].upper()
 	openTheme["styles"]["important"] = "colorama.Fore." + answers[3][1][0].upper() + " + colorama.Back." + answers[3][1][1].upper() + " + colorama.Style." + answers[3][1][2].upper()
@@ -195,14 +209,14 @@ def dialogEditor():
 	openTheme["styles"]["link"] = "colorama.Fore." + answers[6][1][0].upper() + " + colorama.Back." + answers[6][1][1].upper() + " + colorama.Style." + answers[6][1][2].upper()
 	openTheme["styles"]["answer"] = "colorama.Fore." + answers[7][1][0].upper() + " + colorama.Back." + answers[7][1][1].upper() + " + colorama.Style." + answers[7][1][2].upper()
 	openTheme["styles"]["output"] = "colorama.Fore." + answers[8][1][0].upper() + " + colorama.Back." + answers[8][1][1].upper() + " + colorama.Style." + answers[8][1][2].upper()
-	
+
 	if themeName[-8:] != ".iitheme":
 		themeName += ".iitheme"
-	with open("themes/" + themeName, "w") as themeFile:
+	with open(config["paths"]["userPath"] + "/themes/" + themeName, "w") as themeFile:
 		openTheme.write(themeFile)
 		d.msgbox("Saved theme", height=None, width=None)
 	clear()
-		
+
 def editor():
 	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 		dialogEditor()
