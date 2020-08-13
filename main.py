@@ -207,15 +207,21 @@ def main(config=config, warmupThread=warmupThread):
 	if config["startup"]["firststart"] == "true":
 		clear()
 		try:
-			print(theme["styles"]["important"] + "Downloading libraries...")
-			subprocess.check_call([sys.executable, "-m", "pip","install", "-rrequirements.txt"])
 			config["startup"]["firststart"] = "false"
 			with open("config.ini", "w+") as f:
 				config.write(f)
+			if config["installation"]["installType"] == "portable":
+				requirementsPath="requirements.txt"
+				yn = input("Would you like to attempt to install the required libraries?")
+				if yn != "n":
+					print(theme["styles"]["important"] + "Downloading libraries..." + theme["styles"]["normal"])
+					subprocess.check_call([sys.executable, "-m", "pip","install", "-r" + requirementsPath])
 		except Exception as e:
-			print("Failed to install required libraries. Make sure you have an internet connecion and can access PyPi.")
-			print(theme["styles"]["error"] + "Error: " + str(e))
-			return
+			print("Failed to install required libraries. Make sure you have an internet connecion and can access PyPi. If you have already installed the required Python modules, you can run the calculator anyway.")
+			yn = input("Would you like to continue? (y/N)")
+			if yn != "y":
+				return
+
 	oldcalc=" "
 	try:
 		global debugMode
