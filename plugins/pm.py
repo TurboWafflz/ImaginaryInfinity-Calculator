@@ -192,9 +192,9 @@ def install(plugin):
 						pass
 				installed.read(".pluginstore/installed.ini")
 				if index[plugin]["type"] == "plugins":
-					location = config["plugins"]["path"]
+					location = config["paths"]["userPath"] + "/plugins/"
 				elif index[plugin]["type"] == "themes":
-					location = config["themes"]["path"]
+					location = config["paths"]["userPath"] + "/themes/"
 				else:
 					print("Error installing plugin: Invalid type")
 					return "error"
@@ -251,9 +251,9 @@ def install(plugin):
 					pass
 			#Download plugin
 			if index[plugin]["type"] == "plugins":
-				location = config["plugins"]["path"]
+				location = config["paths"]["userPath"] + "/plugins/"
 			elif index[plugin]["type"] == "themes":
-				location = config["themes"]["path"]
+				location = config["paths"]["userPath"] + "/themes/"
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"
@@ -309,9 +309,9 @@ def install(plugin):
 					pass
 			#Download plugin
 			if index[plugin]["type"] == "plugins":
-				location = config["plugins"]["path"]
+				location = config["paths"]["userPath"] + "/plugins/"
 			elif index[plugin]["type"] == "themes":
-				location = config["themes"]["path"]
+				location = config["paths"]["userPath"] + "/themes/"
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"
@@ -362,9 +362,9 @@ def remove(plugin):
 		print("Removing packages...")
 		#Remove plugin from plugins
 		if installed[plugin]["type"] == "plugins":
-			location = config["plugins"]["path"]
+			location = config["paths"]["userPath"] + "/plugins/"
 		elif installed[plugin]["type"] == "themes":
-			location = config["themes"]["path"]
+			location = config["paths"]["userPath"] + "/themes/"
 		else:
 			print("Error installing plugin: Invalid type")
 			return "error"
@@ -565,9 +565,9 @@ def installFromFile(file):
 		print("Installing " + plugin + "...")
 		try:
 			if icpk[plugin]["type"] == "plugins":
-				location = config["plugins"]["path"]
+				location = config["paths"]["userPath"] + "/plugins/"
 			elif icpk[plugin]["type"] == "themes":
-				location = config["themes"]["path"]
+				location = config["paths"]["userPath"] + "/themes/"
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"

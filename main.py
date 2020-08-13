@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator v2.2 
+##ImaginaryInfinity Calculator v2.2
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
@@ -42,7 +42,8 @@ print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 config = configparser.ConfigParser()
 config.read("config.ini")
-pluginPath=config["plugins"]["path"]
+pluginPath=config["paths"]["userPath"] + "/plugins/"
+sys.path.insert(1, config["paths"]["userPath"])
 def signal(sig,args=""):
 	try:
 		nonplugins = ["__init__.py", "__pycache__", "core.py"]
@@ -53,12 +54,40 @@ def signal(sig,args=""):
 					exec(plugin + "." + sig + "(" + args + ")")
 	except:
 		pass
+#Load system plugins
+if config["paths"]["systemPath"] != "none":
+	sys.path.insert(2, config["paths"]["systemPath"])
+	plugins = os.listdir(config["paths"]["systemPath"] + "/plugins")
+	try:
+		plugins.remove("core.py")
+		plugins.remove("settings.py")
+		plugins.remove("__init__.py")
+	except:
+		pass
+	for plugin in plugins:
+		if plugin[-3:] == ".py":
+			print(plugin)
+			try:
+				exec("from plugins import " + plugin[:-3])
+			except KeyboardInterrupt:
+				print("Cancelled loading of " + plugin )
+			except Exception as e:
+				print("Error importing " + plugin + ", you might want to disable or remove it.")
+				print(e)
+				input("[Press enter to continue]")
+		elif plugin[-9:] == ".disabled":
+			print("Not loading " + plugin[:-9] + " as it has been disabled in settings.")
+		else:
+			print("Not loading " + plugin + " as it is not a valid plugin.")
 #Load plugins
 if config["startup"]["safemode"] == "false":
 	plugins = os.listdir(pluginPath)
-	plugins.remove("core.py")
-	plugins.remove("settings.py")
-	plugins.remove("__init__.py")
+	try:
+		plugins.remove("core.py")
+		plugins.remove("settings.py")
+		plugins.remove("__init__.py")
+	except:
+		pass
 	for plugin in plugins:
 		if plugin[-3:] == ".py":
 			print(plugin)
@@ -93,7 +122,7 @@ elif config["startup"]["startserver"] == "yes":
 	with open("config.ini", "r+") as f:
 		config.write(f)
 	config.read("config.ini")
-	
+
 #ask to start server
 if config["startup"]["startserver"] == "ask":
 	if input("Would you like to ping the server at startup to have faster access times to the plugin store? [Y/n] ").lower() == "n":
