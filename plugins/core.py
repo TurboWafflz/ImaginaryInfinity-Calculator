@@ -688,12 +688,6 @@ def doGuiUpdate(branch="master", theme=theme):
 	os.rmdir(tempThemeDir)
 	os.chdir(root)
 
-	#move uninstall script back into root if windows installer was used
-	if os.path.isfile(parent + ".iibackup/unins000.exe"):
-		shutil.copyfile(parent + ".iibackup/unins000.exe", root + "unins000.exe")
-	if os.path.isfile(parent + ".iibackup/unins000.dat"):
-		shutil.copyfile(parent + ".iibackup/unins000.dat", root + "unins000.dat")
-
 	d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
 
 	#check if all is fine
