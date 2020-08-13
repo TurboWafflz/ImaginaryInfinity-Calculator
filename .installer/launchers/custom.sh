@@ -6,4 +6,4 @@ mkdir $userPath
 mkdir "$userPath/plugins"
 mkdir "$userPath/themes"
 cp "$systemPath/config.ini" "$userPath/config.ini"
-python3 -B /usr/bin/iicalc.py
+python3 /usr/bin/iicalc.py
