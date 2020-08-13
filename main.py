@@ -40,22 +40,21 @@ def pingServer():
 #from plugins import store
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
-
 try:
-	print("Loading portable config...")
+	home = os.path.expanduser("~")
+	print("Loading config...")
 	config = configparser.ConfigParser()
-	config.read("config.ini")
+	config.read(home + "/.iicalc/config.ini")
+	config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+	configPath = home + "/.iicalc/config.ini"
+	with open(configPath, "w") as configFile:
+		config.write(configFile)
+		configFile.close()
 except:
 	try:
-		home = os.path.expanduser("~")
-		print("Loading config...")
+		print("Loading portable config...")
 		config = configparser.ConfigParser()
-		config.read(home + "/.iicalc/config.ini")
-		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-		configPath = home + "/.iicalc/config.ini"
-		with open(configPath, "w") as configFile:
-			config.write(configFile)
-			configFile.close()
+		config.read("config.ini")
 	except:
 		print("Fatal error: Cannot load config")
 		exit()
