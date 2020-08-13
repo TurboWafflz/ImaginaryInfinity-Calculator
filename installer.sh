@@ -80,6 +80,7 @@ echo "Installing builtin plugins..."
 mkdir $systemPath
 cp -r "plugins" "$systemPath"
 cp -r "themes" "$systemPath"
+cp -r "templates" "$systemPath"
 cp requirements.txt "$systemPath"
 cp $config "$systemPath/config.ini"
 echo "Installing icons..."
