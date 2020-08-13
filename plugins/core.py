@@ -314,7 +314,7 @@ def isPrime(num, printResult=True):
 #List Plugins
 def plugins(printval=True, hidedisabled=False):
 	plugins = os.listdir('plugins/')
-	nonplugins = getDefaults("plugins")
+	nonplugins = getDefaults("plugins/")
 	j = len(plugins) - 1
 	if hidedisabled == True:
 		for i in range(j, 0, -1):
@@ -568,7 +568,7 @@ def cmdUpdate(theme=theme, config=config):
 
 #Update wizard by tabulate
 def doGuiUpdate(branch="master", theme=theme):
-	nonplugins = getDefaults("plugins")
+	nonplugins = getDefaults(config["plugins"]["path"])
 	nonthemes = getDefaults(config["themes"]["path"])
 
 	d = Dialog(dialog="dialog")
@@ -687,12 +687,11 @@ def doGuiUpdate(branch="master", theme=theme):
 	os.chdir("..")
 	os.rmdir(tempThemeDir)
 	os.chdir(root)
+
 	d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
 
 	#check if all is fine
-	if os.path.isfile("main.py"):
-		pass
-	elif os.path.exists("plugins"):
+	if os.path.isfile("main.py") and os.path.exists("plugins"):
 		pass
 	else:
 		#VERY BAD THINGS HAVE HAPPENED

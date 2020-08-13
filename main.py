@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator v2.2
+##ImaginaryInfinity Calculator v2.2 
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.github.io/iicalc.html
 print("Loading...")
@@ -34,6 +34,8 @@ def pingServer():
 	try:
 		requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
 	except requests.ConnectionError:
+		pass
+	except requests.exceptions.ReadTimeout:
 		pass
 #from plugins import store
 print("Importing plugins...")
@@ -80,16 +82,29 @@ from plugins import settings
 signal("onPluginsLoaded")
 
 #Wake Server
+#transition old 'yes' and 'no' to 'true' and 'false'
+if config["startup"]["startserver"] == "no":
+	config["startup"]["startserver"] = "false"
+	with open("config.ini", "r+") as f:
+		config.write(f)
+	config.read("config.ini")
+elif config["startup"]["startserver"] == "yes":
+	config["startup"]["startserver"] = "true"
+	with open("config.ini", "r+") as f:
+		config.write(f)
+	config.read("config.ini")
+	
+#ask to start server
 if config["startup"]["startserver"] == "ask":
 	if input("Would you like to ping the server at startup to have faster access times to the plugin store? [Y/n] ").lower() == "n":
-		config["startup"]["startserver"] = "no"
+		config["startup"]["startserver"] = "false"
 	else:
-		config["startup"]["startserver"] = "yes"
+		config["startup"]["startserver"] = "true"
 	with open("config.ini", "r+") as f:
 		config.write(f)
 	config.read("config.ini")
 
-if config["startup"]["startserver"] == "yes":
+if config["startup"]["startserver"] == "true":
 	warmupThread = Thread(target=pingServer)
 	warmupThread.start()
 
@@ -248,7 +263,9 @@ def main(config=config, warmupThread=warmupThread):
 				ans=eval(str(eqn))
 			except Exception as e:
 				try:
-					print(theme["styles"]["output"] + exec(str(calc)))
+					#changing it to not print exec as it returns None
+					#print(theme["styles"]["output"] + exec(str(calc)))
+					exec(str(calc))
 					pr=0
 				except:
 					signal("onError", str(e))

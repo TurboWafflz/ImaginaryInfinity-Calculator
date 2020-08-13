@@ -13,7 +13,7 @@ def configMod(section, key, value, config=config):
 		config.write(configFile)
 		configFile.close()
 	print("Config file updated. Some changes may require a restart to take effect.")
-	
+
 def signal(sig,config,args=""):
 	nonplugins = getDefaults("plugins")
 	for plugin in os.listdir("plugins"):
@@ -26,7 +26,7 @@ def signal(sig,config,args=""):
 						return resp
 		except Exception as e:
 			pass
-			
+
 
 def editor():
 	config = configparser.ConfigParser()
@@ -39,8 +39,10 @@ def editor():
 										("Prompt", "The prompt that will be displayed"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
-										("Safe mode", "Disable all plugins except core and settings")]
-										
+										("Safe mode", "Disable all plugins except core and settings"),
+										("Start Server", "Start the index server on start")
+										]
+
 			for plugin in plugins(False):
 				try:
 					exec("from plugins import " + plugin[:-3])
@@ -48,7 +50,7 @@ def editor():
 				except Exception as e:
 					pass
 					#print(e); import traceback; traceback.print_exc(); import sys; sys.exit(0)
-			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving your changes")]							
+			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving your changes")]
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
 								choices=choices, width=0, height=0)
 			if code == d.OK:
@@ -75,7 +77,7 @@ def editor():
 								config["appearance"]["theme"] = themeFile
 					else:
 						clear()
-				if tag == "Prompt":
+				elif tag == "Prompt":
 					#print(config)
 					#import sys
 					#sys.exit(0)
@@ -84,10 +86,10 @@ def editor():
 						config["appearance"]["prompt"] = pstring
 					else:
 						clear()
-				if tag=="Update":
+				elif tag=="Update":
 					update()
 					break
-				if tag=="Plugins":
+				elif tag=="Plugins":
 					pluginslist = plugins(False)
 					i=0
 					if len(pluginslist) > 0:
@@ -107,7 +109,7 @@ def editor():
 								os.rename("plugins/" + plugin[0], "plugins/" + plugin[0][:-9])
 					else:
 						d.msgbox("You have not installed any plugins.")
-				if tag=="Safe mode":
+				elif tag=="Safe mode":
 					scode, stag = d.menu("ImaginaryInfinity Calculator Safe Mode Settings",
 										choices=[("On", "Enable safe mode"),
 												("Off", "Disable safe mode")], width=0, height=0)
@@ -116,12 +118,18 @@ def editor():
 							config["startup"]["safemode"] = "true"
 						if stag == "Off":
 							config["startup"]["safemode"] = "false"
-				if tag == "Save and exit":
+				elif tag == "Start Server":
+					startserver = d.menu("ImaginaryInfinity Calculator Server Start", choices=[("On", "Enable starting server on start"), ("Off", "Disable starting server on start")])
+					if startserver[0] == "On":
+						config["startup"]["startserver"] = "true"
+					else:
+						config["startup"]["startserver"] = "false"
+				elif tag == "Save and exit":
 					with open("config.ini", "w") as configFile:
 						config.write(configFile)
 						configFile.close()
 					break
-				if tag == "Exit without saving":
+				elif tag == "Exit without saving":
 					break
 				else:
 					config = signal("settingsPopup", config, "\"" + tag + "\"")
