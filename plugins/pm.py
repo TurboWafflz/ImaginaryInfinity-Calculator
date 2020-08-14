@@ -9,7 +9,7 @@ import threading
 import sys
 import time
 import subprocess
-from plugins.core import theme
+from systemPlugins.core import theme,config
 builtin = True
 
 def loading(text):
@@ -29,26 +29,33 @@ def download(url, localFilename):
 				f.write(chunk)
 	return localFilename
 def verify(plugin):
+	if index[plugin]["type"] == "plugins":
+		location = config["paths"]["userPath"] + "/plugins/"
+	elif index[plugin]["type"] == "themes":
+		location = config["paths"]["userPath"] + "/themes/"
+	else:
+		print("Error installing plugin: Invalid type")
+		return "error"
 	#Load index, if available
 	try:
 		index = configparser.ConfigParser()
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#If not, suggest running pm.update()
 	except:
 		print("\nCould not find package list, maybe run pm.update()")
 	#Load installed list if available
-	if os.path.exists(".pluginstore/installed.ini"):
+	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
-		installed.read(".pluginstore/installed.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create it
 	else:
-		with open(".pluginstore/installed.ini", "w+") as installedFile:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
-			installed.read(".pluginstore/installed.ini")
-	if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+	if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 		return False
-	if not os.path.exists(index[plugin]["type"] + "/" + index[plugin]["filename"]):
+	if not os.path.exists(config["paths"]["userPath"] + "/" + index[plugin]["type"] + "/" + index[plugin]["filename"]):
 		return False
 	else:
 		return True
@@ -58,34 +65,34 @@ def update(silent=False, theme=theme):
 	done = False
 	t = threading.Thread(target=loading, args=("Updating package list...",))
 	t.start()
-	if not os.path.isdir(".pluginstore"):
-		os.makedirs(".pluginstore")
-	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", ".pluginstore/tmp.ini")
-	with open(".pluginstore/tmp.ini") as f:
+	if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
+		os.makedirs(config["paths"]["userPath"] + "/.pluginstore")
+	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", config["paths"]["userPath"] + "/.pluginstore/tmp.ini")
+	with open(config["paths"]["userPath"] + "/.pluginstore/tmp.ini") as f:
 		tmp = f.readlines()
 	if "The service is unavailable." in tmp:
 		print(theme["styles"]["error"] + "\nThe index is currently unavailable due to a temporary Microsoft Azure outage. Please try again later.")
 		done=True
 		return
 	else:
-		copyfile(".pluginstore/tmp.ini", ".pluginstore/index.ini")
+		copyfile(config["paths"]["userPath"] + "/.pluginstore/tmp.ini", config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#Load index, if available
 	try:
 		index = configparser.ConfigParser()
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#If not, suggest running pm.update()
 	except:
 		print("\nCould not find package list, maybe run pm.update()")
 	#Load installed list if available
-	if os.path.exists(".pluginstore/installed.ini"):
+	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
-		installed.read(".pluginstore/installed.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create it
 	else:
-		with open(".pluginstore/installed.ini", "w+") as installedFile:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
-			installed.read(".pluginstore/installed.ini")
+			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#Set verified to none if it is not set in installed list
 	try:
 		verified = installed[plugin]["verified"]
@@ -95,27 +102,35 @@ def update(silent=False, theme=theme):
 	reinstall = 0
 	#Iterate through installed plugins
 	for plugin in installed.sections():
+		if index[plugin]["type"] == "plugins":
+			location = config["paths"]["userPath"] + "/plugins/"
+		elif index[plugin]["type"] == "themes":
+			location = config["paths"]["userPath"] + "/themes/"
+		else:
+			print("Error installing plugin: Invalid type")
+			return "error"
 		#Make sure plugin file exists
-		if os.path.exists(index[plugin]["type"] + "/" + installed[plugin]["filename"]):
+		if os.path.exists(location +  "/" + installed[plugin]["filename"]):
 			#Check if an update is available
 			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]) and not silent:
 				updates = updates + 1
 				print("\nAn update is available for " + plugin)
 			#Verify plugin against the hash stored in the index
-			elif not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-				installed[plugin]["verified"] = "false"
-				with open(".pluginstore/installed.ini", "w+") as f:
-					installed.write(f)
+		elif not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			installed[plugin]["verified"] = "false"
+			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+				installed.write(f)
 			#Warn if plugin is marked as damaged
 			if installed[plugin]["verified"] != "true" and not silent:
 				reinstall = reinstall + 1
 				print("\n" + plugin + " is damaged and should be reinstalled")
 		#Plugin missing, mark as unverified
 		else:
+			print("File not found: " + location +  "/" + installed[plugin]["filename"])
 			print("\n" + plugin + " is missing and needs to be reinstalled")
 			reinstall = reinstall + 1
 			installed[plugin]["verified"] = "false"
-			with open(".pluginstore/installed.ini", "w+") as f:
+			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 	#Print summary for user
 	if not silent:
@@ -133,20 +148,20 @@ def install(plugin):
 	#Load index, if available
 	try:
 		index = configparser.ConfigParser()
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#If not, suggest running pm.update()
 	except:
 		print("Could not find package list, maybe run pm.update()")
 	#Load installed list if available
-	if os.path.exists(".pluginstore/installed.ini"):
+	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
-		installed.read(".pluginstore/installed.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create it
 	else:
-		with open(".pluginstore/installed.ini", "w+") as installedFile:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
-			installed.read(".pluginstore/installed.ini")
+			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#Set verified to none if it is not set in the installed list
 	try:
 		verified = installed[plugin]["verified"]
@@ -167,15 +182,15 @@ def install(plugin):
 				dependencies = index[plugin]["depends"].split(",")
 				#Iterate through dependencies
 				for dependency in dependencies:
-					with open(".pluginstore/installed.ini", "w+") as f:
+					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 						installed.write(f)
-					installed.read(".pluginstore/installed.ini")
+					installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 					#Install from index if available
 					if index.has_section(dependency):
-						with open(".pluginstore/installed.ini", "w+") as f:
+						with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 							installed.write(f)
 						install(dependency)
-						installed.read(".pluginstore/installed.ini")
+						installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 					#Dependancy already installed, do nothing
 					elif installed.has_section(dependency):
 						print("Dependancy already satisfied")
@@ -190,7 +205,7 @@ def install(plugin):
 						return
 					else:
 						pass
-				installed.read(".pluginstore/installed.ini")
+				installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 				if index[plugin]["type"] == "plugins":
 					location = config["paths"]["userPath"] + "/plugins/"
 				elif index[plugin]["type"] == "themes":
@@ -201,22 +216,22 @@ def install(plugin):
 				download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
 				installed[plugin] = index[plugin]
 				installed[plugin]["source"] = "index"
-				with open(".pluginstore/installed.ini", "w+") as f:
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
 			except Exception as e:
 				print("Could not download file: " + str(e))
 				pass
 			#Verify plugin against hash in index
 			print("Verifying...")
-			if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 				print("Package verification failed, the package should be reinstalled.")
 				installed[plugin]["verified"] = "false"
-				with open(".pluginstore/installed.ini", "w+") as f:
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
 			else:
 				print("Package verification passed")
 				installed[plugin]["verified"] = "true"
-				with open(".pluginstore/installed.ini", "w+") as f:
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
 		#No updates available, nothing to do
 		else:
@@ -231,10 +246,10 @@ def install(plugin):
 			for dependency in dependencies:
 				#Install from index if available
 				if index.has_section(dependency):
-					with open(".pluginstore/installed.ini", "w+") as f:
+					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 						installed.write(f)
 					install(dependency)
-					installed.read(".pluginstore/installed.ini")
+					installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 				#Dependancy already installed, do nothing
 				elif installed.has_section(dependency):
 					print("Dependancy already satisfied")
@@ -261,19 +276,19 @@ def install(plugin):
 			#Mark plugin as installed from index
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
-			with open(".pluginstore/installed.ini", "w+") as f:
+			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 		except Exception as e:
 			print("Could not download file: " + str(e))
 			pass
 		#Verify plugin against hash stored in index
 		print("Verifying...")
-		if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-			print("File hash: " + hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256"))
+		if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			print("File hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
 			print("Expected: " + index[plugin]["hash"])
 			print("Package verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
-			with open(".pluginstore/installed.ini", "w+") as f:
+			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 		else:
 			print("Package verification passed")
@@ -288,10 +303,10 @@ def install(plugin):
 			for dependency in dependencies:
 				#Install dependency from index if available
 				if index.has_section(dependency):
-					with open(".pluginstore/installed.ini", "w+") as f:
+					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 						installed.write(f)
 					install(dependency)
-					installed.read(".pluginstore/installed.ini")
+					installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 				#Dependancy already installed, do nothing
 				elif installed.has_section(dependency):
 					print("Dependancy already satisfied")
@@ -319,44 +334,44 @@ def install(plugin):
 			#Mark plugin as installed
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
-			with open(".pluginstore/installed.ini", "w+") as f:
+			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 		except Exception as e:
 			print("Could not download file: " + str(e))
 			pass
 		#Check plugin against hash in index
 		print("Verifying...")
-		if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-			print("File hash: " + hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256"))
+		if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			print("File hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
 			print("Expected: " + index[plugin]["hash"])
 			print("Packages verification failed, the plugin should be reinstalled.")
 			installed[plugin]["verified"] = "false"
-			with open(".pluginstore/installed.ini", "w+") as f:
+			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 		else:
 			print("Package verification passed")
 			installed[plugin]["verified"] = "true"
-			with open(".pluginstore/installed.ini", "w+") as f:
+			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 				installed.write(f)
 	#Plugin could not be found
 	else:
 		print("Packages " + plugin + " not found.")
-	with open(".pluginstore/installed.ini", "w+") as f:
+	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 		installed.write(f)
 #Remove a plugin
 def remove(plugin):
 	config = configparser.ConfigParser()
 	config.read("config.ini")
 	#Check if installed list exists
-	if os.path.exists(".pluginstore/installed.ini"):
+	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
-		installed.read(".pluginstore/installed.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create it
 	else:
-		with open(".pluginstore/installed.ini", "w+") as installedFile:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
-			installed.read(".pluginstore/installed.ini")
+			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#Check if plugin is marked as installed
 	if installed.has_section(plugin):
 		print("Removing packages...")
@@ -379,40 +394,49 @@ def remove(plugin):
 		#Plugin is not installed, no need to do anything
 		print(plugin + " is not installed.")
 	#Write installed list to disk
-	with open(".pluginstore/installed.ini", "w+") as f:
+	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 		installed.write(f)
 #Upgrade all plugins
 def upgrade():
 	#Read index, if available
 	try:
 		index = configparser.ConfigParser()
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#Index not found, suggest running pm.update()
 	except:
 		print("Could not find packages list, maybe run pm.update()")
 	#Check if installed list exists, if so, load it
-	if os.path.exists(".pluginstore/installed.ini"):
+	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
-		installed.read(".pluginstore/installed.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create it
 	else:
-		with open(".pluginstore/installed.ini", "w+") as installedFile:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
-			installed.read(".pluginstore/installed.ini")
+			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	updates = 0
 	reinstall = 0
 	#Iterate through installed plugins
 	for plugin in installed.sections():
 		#Read installed list
-		installed.read(".pluginstore/installed.ini")
-		index.read(".pluginstore/index.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
+		if index[plugin]["type"] == "plugins":
+			location = config["paths"]["userPath"] + "/plugins/"
+		elif index[plugin]["type"] == "themes":
+			location = config["paths"]["userPath"] + "/themes/"
+		else:
+			print("Error installing plugin: Invalid type")
+			return "error"
 		#Make sure plugin's file exists
-		if os.path.exists(index[plugin]["type"] + "/" + installed[plugin]["filename"]):
+		if os.path.exists(location + "/" + installed[plugin]["filename"]):
 			#Check plugin against hash
-			if not hs.fileChecksum(index[plugin]["type"] + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+				print("Hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
+				print("Expected: " + index[plugin]["hash"])
 				installed[plugin]["verified"] = "false"
-				with open(".pluginstore/installed.ini", "w+") as f:
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
 			#Check plugin update time against the latest version
 			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
@@ -421,11 +445,14 @@ def upgrade():
 				updates = updates + 1
 			#Plugin is marked as unverified, offer to reinstall it
 			elif installed[plugin]["verified"] == "false":
+				print("Hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
+				print("Expected: " + index[plugin]["hash"])
 				if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
 					install(plugin)
 					reinstall = reinstall + 1
 		else:
 			#Plugin file is missing, offer to reinstall it
+			print("File not found: " + location + "/" + installed[plugin]["filename"])
 			if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
 				install(plugin)
 				reinstall = reinstall + 1
@@ -437,20 +464,20 @@ def search(term, type="all"):
 	#Read index, if available
 	try:
 		index = configparser.ConfigParser()
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#Index not found, suggest running pm.update()
 	except:
 		print("Could not find plugin list, maybe run pm.update()")
 	#Check if installed list exists, if so, load it
-	if os.path.exists(".pluginstore/installed.ini"):
+	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
-		installed.read(".pluginstore/installed.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create it
 	else:
-		with open(".pluginstore/installed.ini", "w+") as installedFile:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
-			installed.read(".pluginstore/installed.ini")
+			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#Set verified to none if it is not set in the
 	try:
 		verified = installed[plugin]["verified"]
@@ -460,27 +487,27 @@ def search(term, type="all"):
 	for plugin in index.sections():
 		#Show plugin if search term is included in the name or description
 		if term in plugin or term in index[plugin]["description"]:
-			if type=="all" or type == index[plugin]["type"]:
-				print(plugin + " - " + index[plugin]["description"] + " (" + index[plugin]["type"] + ")")
+			if type=="all" or type == config["paths"]["userPath"] + index[plugin]["type"]:
+				print(plugin + " - " + index[plugin]["description"] + " (" + config["paths"]["userPath"] + index[plugin]["type"] + ")")
 #List packages
 def list(scope="available", type="all"):
 	#Read index, if available
 	try:
 		index = configparser.ConfigParser()
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#Index not found, suggest running pm.update()
 	except:
 		print("Could not find packages list, maybe run pm.update()")
 	#Load installed list if possible
-	if os.path.exists(".pluginstore/installed.ini"):
+	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
-		installed.read(".pluginstore/installed.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create one
 	else:
-		with open(".pluginstore/installed.ini", "w+") as installedFile:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
-			installed.read(".pluginstore/installed.ini")
+			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#Set verified to none if it is not set in the installed list
 	try:
 		verified = installed[plugin]["verified"]
@@ -492,9 +519,9 @@ def list(scope="available", type="all"):
 		for plugin in installed.sections():
 			#Check if plugin has passed hash verification
 			if installed[plugin]["verified"] == "true":
-				verified = " (" + index[plugin]["type"] + ") Verified | "
+				verified = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Verified | "
 			else:
-				verified = " (" + index[plugin]["type"] + ") Damaged, should be reinstalled | "
+				verified = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Damaged, should be reinstalled | "
 			#Print plugin info
 			if type == "all" or installed[plugin]["type"] == type:
 				print(verified + plugin + " - " + installed[plugin]["summary"])
@@ -506,44 +533,44 @@ def list(scope="available", type="all"):
 			if installed.has_section(plugin):
 				#Check if plugin has passed hash verification
 				if installed[plugin]["verified"] == "true":
-					status = " (" + index[plugin]["type"] + ") Installed & verified | "
+					status = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Installed & verified | "
 				else:
-					status = " (" + index[plugin]["type"] + ") Damaged, should be reinstalled | "
+					status = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Damaged, should be reinstalled | "
 			else:
-				status = " (" + index[plugin]["type"] + ") Not installed | "
+				status = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Not installed | "
 			#Print plugin info
-			if type == "all" or index[plugin]["type"] == type:
+			if type == "all" or config["paths"]["userPath"] + index[plugin]["type"] == type:
 				print(status + plugin + " - " + index[plugin]["summary"])
 #Install a package from a file
 def installFromFile(file):
 	#Copy the file to an ini file so configparser doesn't get mad
-	copyfile(file, ".pluginstore/installer.ini")
+	copyfile(file, config["paths"]["userPath"] + "/.pluginstore/installer.ini")
 	#Read index
 	try:
 		index = configparser.ConfigParser()
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#Index not found, suggest running pm.update()
 	except:
 		print("Could not find package list, maybe run pm.update()")
 		return
 	#Load locak file
 	icpk = configparser.ConfigParser()
-	icpk.read(".pluginstore/installer.ini")
+	icpk.read(config["paths"]["userPath"] + "/.pluginstore/installer.ini")
 	#Set dependencies to none if dependencies is not set in the file
 	try:
 		dependencies = icpk[plugin]["depends"]
 	except:
 		icpk[plugin]["depends"] = "none"
 	#Check if installed list exists
-	if os.path.exists(".pluginstore/installed.ini"):
+	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
-		installed.read(".pluginstore/installed.ini")
+		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create it
 	else:
-		with open(".pluginstore/installed.ini", "w+") as installedFile:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
-			installed.read(".pluginstore/installed.ini")
+			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#Iterate through all plugins in the file
 	for plugin in icpk.sections():
 		print("Installing dependencies...")
@@ -575,13 +602,13 @@ def installFromFile(file):
 			installed[plugin] = icpk[plugin]
 			installed[plugin]["source"] = "icpk"
 			print("Verifying...")
-			if not hs.fileChecksum(index[plugin]["type"] + "/" + icpk[plugin]["filename"], "sha256") == icpk[plugin]["hash"]:
+			if not hs.fileChecksum(location + "/" + icpk[plugin]["filename"], "sha256") == icpk[plugin]["hash"]:
 				installed[plugin]["verified"] = "false"
-				with open(".pluginstore/installed.ini", "w+") as f:
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
 			else:
 				installed[plugin]["verified"] = "true"
-				with open(".pluginstore/installed.ini", "w+") as f:
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
 		except Exception as e:
 			print("Unable to download " + plugin +  ": " + str(e))
@@ -589,7 +616,7 @@ def installFromFile(file):
 def info(plugin):
 	try:
 		index = configparser.ConfigParser()
-		index.read(".pluginstore/index.ini")
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	except:
 		print("Could not find packages list, maybe run pm.update()")
 		return

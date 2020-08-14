@@ -1,6 +1,6 @@
 import configparser
 import colorama
-from plugins.core import *
+from systemPlugins.core import *
 import sys
 import platform
 builtin=True
