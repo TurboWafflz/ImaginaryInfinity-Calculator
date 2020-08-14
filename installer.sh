@@ -77,7 +77,7 @@ chmod +x "$binPath/iicalc"
 echo "Installing builtin plugins..."
 mkdir $systemPath
 mkdir "$systemPath/systemPlugins"
-cp -r plugins/* "$systemPath/systemPlugins"
+cp -r system/systemPlugins/* "$systemPath/systemPlugins"
 cp -r "themes" "$systemPath"
 cp -r "templates" "$systemPath"
 echo "Installing main Python script.."
