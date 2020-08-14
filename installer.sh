@@ -74,13 +74,13 @@ then
 	cp -r $desktopFile $desktopFilePath
 fi
 chmod +x "$binPath/iicalc"
-echo "Installing main Python script.."
-cp main.py "$binPath/iicalc.py"
 echo "Installing builtin plugins..."
 mkdir $systemPath
 cp -r "plugins" "$systemPath"
 cp -r "themes" "$systemPath"
 cp -r "templates" "$systemPath"
+echo "Installing main Python script.."
+cp main.py "$systemPath/iicalc.py"
 cp requirements.txt "$systemPath"
 cp $config "$systemPath/config.ini"
 echo "Installing icons..."
