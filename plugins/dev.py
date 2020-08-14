@@ -1,7 +1,7 @@
 #The dev plugin contains advanced functions not intended for most users
 builtin=True
 import os
-from plugins.core import *
+from systemPlugins.core import *
 from colorama import Fore, Back
 from py_essentials import hashing as hs
 from dialog import Dialog

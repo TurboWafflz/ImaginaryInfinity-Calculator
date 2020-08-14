@@ -1,6 +1,6 @@
 import configparser
 import sys
-from plugins.core import *
+from systemPlugins.core import *
 import platform
 from plugins import *
 builtin=True

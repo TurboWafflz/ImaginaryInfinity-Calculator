@@ -3,8 +3,8 @@ from dialog import Dialog
 import configparser
 from fuzzywuzzy import fuzz
 import os
-from plugins.core import clear, config
-from plugins import pm
+from systemPlugins.core import clear, config
+from systemPlugins import pm
 import sys
 import subprocess
 

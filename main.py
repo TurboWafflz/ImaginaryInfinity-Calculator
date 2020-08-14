@@ -73,7 +73,7 @@ def signal(sig,args=""):
 #Load system plugins
 if config["paths"]["systemPath"] != "none":
 	sys.path.insert(2, config["paths"]["systemPath"])
-	plugins = os.listdir(config["paths"]["systemPath"] + "/plugins")
+	plugins = os.listdir(config["paths"]["systemPath"] + "/systemPlugins")
 	try:
 		plugins.remove("core.py")
 		plugins.remove("settings.py")
@@ -84,7 +84,7 @@ if config["paths"]["systemPath"] != "none":
 		if plugin[-3:] == ".py":
 			print(plugin)
 			try:
-				exec("from plugins import " + plugin[:-3])
+				exec("from systemPlugins import " + plugin[:-3])
 			except KeyboardInterrupt:
 				print("Cancelled loading of " + plugin )
 			except Exception as e:
@@ -122,8 +122,8 @@ if config["startup"]["safemode"] == "false":
 else:
 	print("Safe mode, only loading core and settings plugin.")
 # from plugins import *
-from plugins.core import *
-from plugins import settings
+from systemPlugins.core import *
+from systemPlugins import settings
 signal("onPluginsLoaded")
 
 #Wake Server
