@@ -87,7 +87,7 @@ then
 	rm -rf "$desktopFilePath/$desktopFile"
 fi
 echo "Removing main Python script.."
-rm "$binPath/iicalc.py"
+rm "$systemPath/iicalc.py"
 echo "Removing builtin plugins..."
 rm -rf $systemPath
 echo "Removing icons..."
