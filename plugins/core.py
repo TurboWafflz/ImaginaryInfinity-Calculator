@@ -608,14 +608,14 @@ def doCmdUpdate(branch="master", theme=theme):
 		os.system("chmod +x launcher.sh")
 
 	#Load old conf vals
-	config.read("config.ini")
+	config.read(configPath)
 	for i in range(len(confVals)):
 		try:
 			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
 		except:
 			pass
 	try:
-		with open("config.ini", "r+") as cf:
+		with open(configPath, "r+") as cf:
 			config.write(cf)
 	except:
 		pass
@@ -779,7 +779,7 @@ def doGuiUpdate(branch="master", theme=theme):
 		os.system("chmod +x launcher.sh")
 
 	#Load old conf vals
-	config.read("config.ini")
+	config.read(configPath)
 	for i in range(len(confVals)):
 		try:
 			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
@@ -787,7 +787,7 @@ def doGuiUpdate(branch="master", theme=theme):
 		except Exception as e:
 			pass
 	try:
-		with open("config.ini", "r+") as cf:
+		with open(configPath, "r+") as cf:
 			config.write(cf)
 	except:
 		pass
