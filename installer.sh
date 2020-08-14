@@ -6,7 +6,7 @@ if [ `uname` == "Linux" ]
 then
 	if [ `whoami` != "root" ]
 	then
-		echo "Restarting the installer as root"
+		echo "Root access is required to install ImaginaryInfinity Calculator."
 		sudo $DIR/installer.sh
 		exit
 	fi
@@ -28,7 +28,7 @@ elif [ `uname` == "Darwin" ]
 then
 	if [ `whoami` != "root" ]
 	then
-		echo "Restarting the installer as root"
+		echo "Root access is required to install ImaginaryInfinity Calculator."
 		sudo $DIR/installer.sh
 		exit
 	fi
