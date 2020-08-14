@@ -130,14 +130,14 @@ signal("onPluginsLoaded")
 #transition old 'yes' and 'no' to 'true' and 'false'
 if config["startup"]["startserver"] == "no":
 	config["startup"]["startserver"] = "false"
-	with open("config.ini", "r+") as f:
+	with open(configPath, "r+") as f:
 		config.write(f)
-	config.read("config.ini")
+	config.read(configPath)
 elif config["startup"]["startserver"] == "yes":
 	config["startup"]["startserver"] = "true"
-	with open("config.ini", "r+") as f:
+	with open(configPath, "r+") as f:
 		config.write(f)
-	config.read("config.ini")
+	config.read(configPath)
 
 #ask to start server
 if config["startup"]["startserver"] == "ask":
@@ -145,9 +145,9 @@ if config["startup"]["startserver"] == "ask":
 		config["startup"]["startserver"] = "false"
 	else:
 		config["startup"]["startserver"] = "true"
-	with open("config.ini", "r+") as f:
+	with open(configPath, "r+") as f:
 		config.write(f)
-	config.read("config.ini")
+	config.read(configPath)
 
 if config["startup"]["startserver"] == "true":
 	warmupThread = Thread(target=pingServer)
@@ -207,7 +207,7 @@ def main(config=config, warmupThread=warmupThread):
 		clear()
 		try:
 			config["startup"]["firststart"] = "false"
-			with open("config.ini", "w+") as f:
+			with open(configPath, "w+") as f:
 				config.write(f)
 			if config["installation"]["installType"] == "portable":
 				requirementsPath="requirements.txt"
