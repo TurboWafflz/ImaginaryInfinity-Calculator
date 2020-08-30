@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=2.3
 Type=Application
-Name=Imaginary Infinity Calculator
+Name=ImaginaryInfinity Calculator
 Comment=Expandable calculator
 Exec=iicalc
 Terminal=true
