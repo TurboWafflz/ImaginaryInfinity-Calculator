@@ -29,6 +29,25 @@ def signal(sig,config,args=""):
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
+		try:
+			home = os.path.expanduser("~")
+			print("Loading config...")
+			config = configparser.ConfigParser()
+			config.read(home + "/.iicalc/config.ini")
+			config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+			configPath = home + "/.iicalc/config.ini"
+			with open(configPath, "w") as configFile:
+				config.write(configFile)
+				configFile.close()
+		except:
+			try:
+				print("Loading portable config...")
+				config = configparser.ConfigParser()
+				config.read("config.ini")
+				configPath = "config.ini"
+			except:
+				print("Fatal error: Cannot load config")
+				exit()
 		d = Dialog(dialog="dialog")
 		while True:
 			choices = [("Theme", "The colors the calculator will use"),
