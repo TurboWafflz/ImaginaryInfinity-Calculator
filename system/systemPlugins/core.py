@@ -435,7 +435,7 @@ def doCmdUpdate(branch="master", theme=theme):
 		os.chdir(plugins)
 		files = os.listdir(".")
 		for file in files:
-			if not file is "\_\_init\_\_.py":
+			if not "__init__.py" in file:
 				source = os.path.join(plugins, file)
 				dest = os.path.join(parent, tempDir)
 				shutil.move(source, dest)
@@ -506,6 +506,8 @@ def doCmdUpdate(branch="master", theme=theme):
 		os.chdir("..")
 		os.rmdir(tempDir)
 		os.chdir(root)
+		if not os.path.exists(root + "themes"):
+			os.mkdir(root + "themes")
 
 		#move themes back into /themes
 		os.chdir(parent)
