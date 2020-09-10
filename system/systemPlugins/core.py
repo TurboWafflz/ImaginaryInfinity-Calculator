@@ -526,7 +526,7 @@ def doCmdUpdate(branch="master", theme=theme):
 		sys.exit(1)
 
 	#make launcher.sh executable
-	if platform.system() == "Linux" or platform.system()S == "Darwin" or platform.system() == "Haiku":
+	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 		os.system("chmod +x launcher.sh")
 
 	#Load old conf vals
