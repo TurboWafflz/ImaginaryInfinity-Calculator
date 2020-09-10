@@ -186,22 +186,6 @@ def hasInternet():
 		conn.close()
 		return False
 
-#Get National Debt
-def getDebt():
-	soup = requests.get("https://www.treasurydirect.gov/NP_WS/debt/current?format=json").text
-	data = json.loads(soup)
-	index = str(data["totalDebt"]).find(".") - 1
-	data = str(data["totalDebt"])
-	j = 0
-	for i in range(index, -1, -1):
-		if j == 2:
-			data = data[:i] + "," + data[i:]
-			j = 0
-		else:
-			j += 1
-	data = data[:0] + "$" + data[0:]
-	return data
-
 def main(config=config, warmupThread=warmupThread):
 	if config["startup"]["firststart"] == "true":
 		clear()
@@ -288,7 +272,11 @@ def main(config=config, warmupThread=warmupThread):
 			pr=True
 			print('')
 			signal("onReady")
-			calc=input(theme["styles"]["prompt"] + config["appearance"]["prompt"] + theme["styles"]["input"] + " ")
+			try:
+				calc=input(theme["styles"]["prompt"] + config["appearance"]["prompt"] + theme["styles"]["input"] + " ")
+			except KeyboardInterrupt:
+				calc=""
+				pass
 			signal("onInput", "'" + calc + "'")
 			print('')
 			print(theme["styles"]["output"])
@@ -311,12 +299,18 @@ def main(config=config, warmupThread=warmupThread):
 				# if pr:
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
-				ans=eval(str(eqn))
+				try:
+					ans=eval(str(eqn))
+				except KeyboardInterrupt:
+					ans=None
 			except Exception as e:
 				try:
 					#changing it to not print exec as it returns None
 					#print(theme["styles"]["output"] + exec(str(calc)))
-					exec(str(calc))
+					try:
+						exec(str(calc))
+					except KeyboardInterrupt:
+						pass
 					pr=0
 				except:
 					signal("onError", str(e))
@@ -348,11 +342,11 @@ def main(config=config, warmupThread=warmupThread):
 						print()
 			#if ans==None and pr==1:
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
-	except KeyboardInterrupt:
-		signal("onKeyboardInterrupt")
-		print(theme["styles"]["important"] + "\nKeyboard Interrupt, exiting...")
-		print(Fore.RESET + Back.RESET + Style.NORMAL)
-		exit()
+	# except KeyboardInterrupt:
+	# 	signal("onKeyboardInterrupt")
+	# 	print(theme["styles"]["important"] + "\nKeyboard Interrupt, exiting...")
+	# 	print(Fore.RESET + Back.RESET + Style.NORMAL)
+	# 	exit()
 	except EOFError:
 		signal("onEofExit")
 		print(theme["styles"]["important"] + "\nEOF, exiting...")
