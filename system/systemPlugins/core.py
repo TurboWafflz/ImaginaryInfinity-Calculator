@@ -409,7 +409,7 @@ def loadConfig():
 def doCmdUpdate(branch="master", theme=theme):
 	#Establish directories
 	root = os.path.abspath(config["paths"]["userpath"])
-	plugins = root + "plugins/"
+	plugins = root + "/plugins/"
 	parent = str(Path(root).parent) + "/"
 	confVals = loadConfig()
 	try:
