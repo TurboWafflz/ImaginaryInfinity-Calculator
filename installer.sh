@@ -24,6 +24,7 @@ then
 	desktopFilePath="/usr/share/applications"
 	desktopFile=".installer/desktopFiles/iicalc.desktop"
 	installDesktopFile="true"
+	pythonCommand="python3"
 elif [ `uname` == "Darwin" ]
 then
 	if [ `whoami` != "root" ]
@@ -46,6 +47,7 @@ then
 	desktopFilePath="/Applications/"
 	desktopFile=".installer/desktopFiles/ImaginaryInfinity_Calculator"
 	installDesktopFile="true"
+	pythonCommand="python3"
 else
 	echo "The installer does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual installation (y/N)?"
@@ -60,6 +62,8 @@ else
 	read binPath
 	echo "Where should icons be stored?"
 	read iconPath
+	echo "What command do you use to start Python 3?"
+	read pythonCommand
 	installDesktopFile="false"
 	cp .installer/launchers/unix.sh .installer/launchers/custom.sh
 	launcher=".installer/launchers/custom.sh"
@@ -72,6 +76,13 @@ cp $launcher "$binPath/iicalc"
 if [ $installDesktopFile == "true" ]
 then
 	cp -r $desktopFile $desktopFilePath
+fi
+if ! type "$pythonCommand" > /dev/null; then
+	echo "Python 3 not found. You must install Python 3 before attempting to install the calculator."
+	echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3"
+	echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3"
+	echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add python3"
+	echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python"
 fi
 chmod +x "$binPath/iicalc"
 echo "Installing builtin plugins..."
