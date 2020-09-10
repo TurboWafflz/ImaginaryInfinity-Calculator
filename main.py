@@ -275,7 +275,8 @@ def main(config=config, warmupThread=warmupThread):
 			try:
 				calc=input(theme["styles"]["prompt"] + config["appearance"]["prompt"] + theme["styles"]["input"] + " ")
 			except KeyboardInterrupt:
-				calc=""
+				calc=' '
+				print(theme["styles"]["normal"] + "\nPress Ctrl + D or type quit() or exit() to exit")
 				pass
 			signal("onInput", "'" + calc + "'")
 			print('')
