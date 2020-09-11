@@ -144,8 +144,7 @@ def update(silent=False, theme=theme):
 	done = True
 #Install a plugin
 def install(plugin):
-	config = configparser.ConfigParser()
-	config.read("config.ini")
+
 	#update(silent=True)
 	#Load index, if available
 	try:
@@ -155,6 +154,7 @@ def install(plugin):
 	except:
 		print("Could not find package list, maybe run pm.update()")
 	#Load installed list if available
+	print(config.sections())
 	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
 		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
@@ -362,8 +362,7 @@ def install(plugin):
 		installed.write(f)
 #Remove a plugin
 def remove(plugin):
-	config = configparser.ConfigParser()
-	config.read("config.ini")
+
 	#Check if installed list exists
 	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()

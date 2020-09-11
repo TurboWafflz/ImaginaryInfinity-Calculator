@@ -1,4 +1,4 @@
 #!/bin/sh
 
 cd "$(dirname "$0")"
-exec /usr/bin/iicalc
+exec ./usr/bin/iicalc
