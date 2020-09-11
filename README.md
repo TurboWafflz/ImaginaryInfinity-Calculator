@@ -5,9 +5,15 @@ calculators.
 
 ![Screenshot](iicalc.png)
 ## Packages
+We provide a packaged version of ImaginaryInfinity calculator for some Linux distributions. They can be found below.
+
 ![Pipeline](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/badges/development/pipeline.svg)
 
-[Debian/Ubuntu](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager) (iicalc.deb)
+#### Debian/Ubuntu
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager) (iicalc.deb)
+
+This package can be installed with apt, gdebi, qapt, etc.
+
 
 ## Supported platforms
 **ImaginaryInfinity Calculator fully supports the following platforms:**
