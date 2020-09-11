@@ -1,3 +1,4 @@
+image: ubuntu:latest
 debian packager:
     stage: build
     script:
