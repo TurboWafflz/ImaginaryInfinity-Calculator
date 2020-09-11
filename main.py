@@ -243,7 +243,7 @@ def main(config=config, warmupThread=warmupThread):
 					except:
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
-		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "version.txt").read())
+		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read())
 		print(theme["styles"]["normal"] + "Copyright 2020 Finian Wright")
 		print(theme["styles"]["link"] + "https://turbowafflz.gitlab.io/iicalc.html" + theme["styles"]["normal"])
 		print("Type 'chelp()' for a list of commands")
