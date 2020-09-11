@@ -361,6 +361,14 @@ def plugins(printval=True, hidedisabled=False):
 		for i in range(j, 0, -1):
 			if plugins[i].endswith(".disabled"):
 				plugins.remove(plugins[i])
+	try:
+		plugins.remove("__pycache__")
+	except ValueError:
+		pass
+	try:
+		plugins.remove("__init__.py")
+	except ValueError:
+		pass
 	i = 0
 	if printval == True:
 		while i < len(plugins):
