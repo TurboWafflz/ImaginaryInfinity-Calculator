@@ -21,7 +21,7 @@ then
 	chmod +x "iicalc-deb/DEBIAN/prerm"
 	systemPath="iicalc-deb/usr/share/iicalc/"
 	binPath="iicalc-deb/usr/bin"
-	config=".installer/configDefaults/unix.ini"
+	config=".installer/configDefaults/deb.ini"
 	launcher=".installer/launchers/unix.sh"
 	iconPath="iicalc-deb/usr/share/icons"
 	desktopFilePath="iicalc-deb/usr/share/applications"
