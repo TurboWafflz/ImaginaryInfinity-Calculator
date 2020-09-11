@@ -29,13 +29,6 @@ def download(url, localFilename):
 				f.write(chunk)
 	return localFilename
 def verify(plugin):
-	if index[plugin]["type"] == "plugins":
-		location = config["paths"]["userPath"] + "/plugins/"
-	elif index[plugin]["type"] == "themes":
-		location = config["paths"]["userPath"] + "/themes/"
-	else:
-		print("Error installing plugin: Invalid type")
-		return "error"
 	#Load index, if available
 	try:
 		index = configparser.ConfigParser()
@@ -43,6 +36,15 @@ def verify(plugin):
 	#If not, suggest running pm.update()
 	except:
 		print("\nCould not find package list, maybe run pm.update()")
+		
+	if index[plugin]["type"] == "plugins":
+		location = config["paths"]["userPath"] + "/plugins/"
+	elif index[plugin]["type"] == "themes":
+		location = config["paths"]["userPath"] + "/themes/"
+	else:
+		
+		print("Error installing plugin: Invalid type")
+		return "error"
 	#Load installed list if available
 	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()

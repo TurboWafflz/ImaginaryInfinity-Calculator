@@ -13,15 +13,13 @@ def configMod(section, key, value, config=config):
 	print("Config file updated. Some changes may require a restart to take effect.")
 
 def signal(sig,config,args=""):
-	nonplugins = getDefaults(config["paths"]["userPath"] + "/plugins/")
 	for plugin in os.listdir(config["paths"]["userPath"] + "/plugins/"):
 		try:
-			if not plugin in nonplugins:
-				plugin = plugin[:-3]
-				if sig in eval("dir(" + plugin + ".settings)"):
-					resp = eval(plugin + ".settings." + sig + "(" + args + ", config)")
-					if type(resp) == configparser.ConfigParser:
-						return resp
+			plugin = plugin[:-3]
+			if sig in eval("dir(" + plugin + ".settings)"):
+				resp = eval(plugin + ".settings." + sig + "(" + args + ", config)")
+				if type(resp) == configparser.ConfigParser:
+					return resp
 		except Exception as e:
 			pass
 
@@ -29,6 +27,25 @@ def signal(sig,config,args=""):
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
+		try:
+			home = os.path.expanduser("~")
+			print("Loading config...")
+			config = configparser.ConfigParser()
+			config.read(home + "/.iicalc/config.ini")
+			config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+			configPath = home + "/.iicalc/config.ini"
+			with open(configPath, "w") as configFile:
+				config.write(configFile)
+				configFile.close()
+		except:
+			try:
+				print("Loading portable config...")
+				config = configparser.ConfigParser()
+				config.read("config.ini")
+				configPath = "config.ini"
+			except:
+				print("Fatal error: Cannot load config")
+				exit()
 		d = Dialog(dialog="dialog")
 		while True:
 			choices = [("Theme", "The colors the calculator will use"),
