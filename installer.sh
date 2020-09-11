@@ -2,6 +2,8 @@
 clear
 echo "ImaginaryInfinity Calculator Installer"
 DIR=`dirname $0`
+
+#Build deb
 if [ "$1" == "--make-deb" ]
 then
 	rm -rf "iicalc-deb"
@@ -26,6 +28,8 @@ then
 	desktopFile=".installer/desktopFiles/iicalc.desktop"
 	installDesktopFile="true"
 	buildOnly="true"
+
+#Build AppImage
 elif [ "$1" == "--make-appImage" ]
 	then
 		rm -rf "iicalc-appImage"
@@ -37,14 +41,16 @@ elif [ "$1" == "--make-appImage" ]
 		chmod +x "iicalc-appImage/AppRun"
 		systemPath="iicalc-appImage/usr/share/iicalc/"
 		binPath="iicalc-appImage/usr/bin"
-		config=".installer/configDefaults/unix.ini"
-		launcher=".installer/launchers/unix.sh"
+		config=".installer/configDefaults/appImage.ini"
+		launcher=".installer/launchers/appImage.sh"
 		iconPath="iicalc-appImage/"
 		desktopFilePath="iicalc-appImage"
 		desktopFile=".installer/desktopFiles/iicalc-appImage.desktop"
 		cp "iicalc.png" "iicalc-appImage"
 		installDesktopFile="true"
 		buildOnly="true"
+
+#Install for Linux
 elif [ `uname` == "Linux" ]
 then
 	if [ `whoami` != "root" ]
@@ -69,6 +75,7 @@ then
 	installDesktopFile="true"
 	pythonCommand="python3"
 
+#Install for MacOS
 elif [ `uname` == "Darwin" ]
 then
 	if [ `whoami` != "root" ]
@@ -117,10 +124,12 @@ fi
 cd $DIR
 echo "Installing launcher..."
 cp -v $launcher "$binPath/iicalc"
+#Install desktop file if requested
 if [ $installDesktopFile == "true" ]
 then
 	cp -r $desktopFile $desktopFilePath
 fi
+#Warn about missing Python if installing
 if [ "$buildOnly" != "true" ]
 then
 	if ! type "$pythonCommand" > /dev/null; then
@@ -131,6 +140,7 @@ then
 		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python"
 	fi
 fi
+#Copy files
 chmod +x "$binPath/iicalc"
 echo "Installing builtin plugins..."
 mkdir $systemPath
@@ -147,11 +157,13 @@ cp system/version.txt "$systemPath"
 cp $config "$systemPath/config.ini"
 echo "Installing icons..."
 cp iicalc.tiff "$iconPath"
+#Install Python modules if installing
 if [ "$buildOnly" != "true" ]
 then
 	echo "Installing Python modules..."
 	python3 -m pip install -r requirements.txt
 fi
+#Finish building deb
 if [ "$1" == "--make-deb" ]
 then
 	#Calculate MD5 Sums
@@ -162,6 +174,7 @@ then
 	#Build DEB
 	dpkg -b iicalc-deb iicalc.deb
 fi
+#Finish building AppImage
 if [ "$1" == "--make-appImage" ]
 then
 	# if [ -f appimagetool-x86_64.AppImage ]
