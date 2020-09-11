@@ -44,6 +44,7 @@ themePath = config["paths"]["userPath"] + "/themes/"
 pluginPath = config["paths"]["userPath"] + "/plugins/"
 sys.path.insert(1, config["paths"]["userPath"])
 try:
+	print("Attempting to load user theme...")
 	theme = configparser.ConfigParser()
 	theme.read(themePath + config["appearance"]["theme"])
 	#Define style class for compatibility with legacy plugins
@@ -77,6 +78,7 @@ try:
 			#print(theme["styles"][str(s)])
 			theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
 except:
+	print("Attempting to load system theme...")
 	try:
 		theme = configparser.ConfigParser()
 		theme.read(config["paths"]["systemPath"] + "/themes/" + config["appearance"]["theme"])
@@ -110,7 +112,7 @@ except:
 			for s in theme["styles"]:
 				#print(theme["styles"][str(s)])
 				theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
-	except:
+	except Exception as e:
 		try:
 			theme = configparser.ConfigParser()
 			theme.read(themePath + "/dark.iitheme")
@@ -128,7 +130,10 @@ except:
 			for s in theme["styles"]:
 				print(theme["styles"][str(s)])
 				theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
-		except:
+			print("Failed to load selected theme. Loading dark instead.")
+			print("Error: " + str(e))
+			input("[Press enter to continue]")
+		except Exception as e:
 			try:
 				theme = configparser.ConfigParser()
 				theme.read(config["paths"]["systemPath"] + "/themes/dark.iitheme")
@@ -146,6 +151,9 @@ except:
 				for s in theme["styles"]:
 					print(theme["styles"][str(s)])
 					theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+				print("Failed to load selected theme. Loading dark instead.")
+				print("Error: " + str(e))
+				input("[Press enter to continue]")
 			except:
 				print("Fatal error: unable to find a useable theme")
 				exit()
