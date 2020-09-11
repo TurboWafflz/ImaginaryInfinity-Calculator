@@ -4,6 +4,11 @@ command line interface is designed to resemble that of some graphing
 calculators.
 
 ![Screenshot](iicalc.png)
+## Packages
+![Pipeline](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/badges/development/pipeline.svg)
+
+[Debian/Ubuntu](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager) (iicalc.deb)
+
 ## Supported platforms
 **ImaginaryInfinity Calculator fully supports the following platforms:**
 - **Linux**
