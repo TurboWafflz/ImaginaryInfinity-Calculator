@@ -13,15 +13,13 @@ def configMod(section, key, value, config=config):
 	print("Config file updated. Some changes may require a restart to take effect.")
 
 def signal(sig,config,args=""):
-	nonplugins = getDefaults(config["paths"]["userPath"] + "/plugins/")
 	for plugin in os.listdir(config["paths"]["userPath"] + "/plugins/"):
 		try:
-			if not plugin in nonplugins:
-				plugin = plugin[:-3]
-				if sig in eval("dir(" + plugin + ".settings)"):
-					resp = eval(plugin + ".settings." + sig + "(" + args + ", config)")
-					if type(resp) == configparser.ConfigParser:
-						return resp
+			plugin = plugin[:-3]
+			if sig in eval("dir(" + plugin + ".settings)"):
+				resp = eval(plugin + ".settings." + sig + "(" + args + ", config)")
+				if type(resp) == configparser.ConfigParser:
+					return resp
 		except Exception as e:
 			pass
 
