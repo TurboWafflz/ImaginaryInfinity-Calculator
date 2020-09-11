@@ -123,6 +123,7 @@ echo "Installing main Python script.."
 cp main.py "$systemPath/iicalc.py"
 cp requirements.txt "$systemPath"
 cp messages.txt "$systemPath"
+cp system/version.txt "$systemPath"
 cp $config "$systemPath/config.ini"
 echo "Installing icons..."
 cp iicalc.tiff "$iconPath"
@@ -137,7 +138,7 @@ then
 	find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > "iicalc-deb/DEBIAN/md5sums"
 	#Calculate Size
 	cat "iicalc-deb/DEBIAN/control" | sed "s'Installed-Size: 0'Installed-Size: `du -s iicalc-deb/ | awk '{print $1}'`'" > "iicalc-deb/DEBIAN/control"
-	cat "iicalc-deb/DEBIAN/control" | sed "s'Version: 0'Version: `cat version.txt`'" > "iicalc-deb/DEBIAN/control"
+	cat "iicalc-deb/DEBIAN/control" | sed "s'Version: 0'Version: `cat system/version.txt`'" > "iicalc-deb/DEBIAN/control"
 	#Build DEB
 	dpkg -b iicalc-deb iicalc.deb
 fi
