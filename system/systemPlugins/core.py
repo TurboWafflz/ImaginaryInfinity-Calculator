@@ -406,7 +406,10 @@ def loadConfig():
 			items.append((each_section, each_key, each_val))
 	return items
 
-def doCmdUpdate(branch="master", theme=theme):
+def doUpdate(branch="master", theme=theme, gui=False):
+	if gui == True:
+		d = Dialog(dialog="dialog")
+		d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
 	#Establish directories
 	root = os.path.abspath(config["paths"]["userpath"]) + "/"
 	plugins = root + "plugins/"
@@ -417,6 +420,8 @@ def doCmdUpdate(branch="master", theme=theme):
 		shutil.rmtree(parent + ".iibackup")
 	except:
 		pass
+	if gui == True:
+		d.gauge_update(13, "Updating...\nBacking Up...", update_text=True)
 
 	#Backup
 	if os.path.isdir(parent + ".iibackup"):
@@ -426,6 +431,9 @@ def doCmdUpdate(branch="master", theme=theme):
 	if os.path.isdir(parent + ".iithemesbackup"):
 		shutil.rmtree(parent + ".iithemesbackup")
 	shutil.copytree(root, parent + ".iibackup/")
+
+	if gui == True:
+		d.gauge_update(25, "Updating...\nMoving Plugins...", update_text=True)
 
 	if config["installation"]["installtype"] == "portable":
 		#Move Plugins out of Plugins
@@ -450,6 +458,8 @@ def doCmdUpdate(branch="master", theme=theme):
 			source = os.path.join(themes, file)
 			dest = os.path.join(parent, tempThemeDir)
 			shutil.move(source, dest)
+	if gui == True:
+		d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
 
 	#Delete contents of calculator
 	for filename in os.listdir(root):
@@ -461,6 +471,9 @@ def doCmdUpdate(branch="master", theme=theme):
 				shutil.rmtree(file_path)
 		except Exception as e:
 			print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+	if gui == True:
+		d.gauge_update(51, "Updating...\nDownloading Update...", update_text=True)
 
 	#download files
 	try:
@@ -481,6 +494,9 @@ def doCmdUpdate(branch="master", theme=theme):
 		shutil.rmtree(parent + tempDir)
 		sys.exit("Fatal Error")
 
+	if gui == True:
+		d.gauge_update(64, "Updating...\nUnzipping...", update_text=True)
+
 	#Unzip File
 	os.chdir(root)
 	with zipfile.ZipFile("newcalc.zip", 'r') as z:
@@ -495,6 +511,9 @@ def doCmdUpdate(branch="master", theme=theme):
 	os.chdir("..")
 	os.rmdir("ImaginaryInfinity-Calculator-" + branch)
 	os.remove("newcalc.zip")
+
+	if gui == True:
+		d.gauge_update(77, "Updating...\nRestoring Plugins...", update_text=True)
 
 	if config["installation"]["installtype"] == "portable":
 		#move plugins back into /plugins
@@ -519,6 +538,9 @@ def doCmdUpdate(branch="master", theme=theme):
 		os.rmdir(tempThemeDir)
 		os.chdir(root)
 
+	if gui == True:
+		d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
+
 	#check if all is fine
 	if not os.path.isfile("main.py") or not os.path.exists(config["paths"]["userpath"] + "/plugins"):
 		#VERY BAD THINGS HAVE HAPPENED
@@ -528,6 +550,9 @@ def doCmdUpdate(branch="master", theme=theme):
 			shutil.move(os.path.join(parent + ".iibackup", f), root)
 		os.rmdir(parent + ".iibackup")
 		sys.exit(1)
+
+	if gui == True:
+		d.gauge_update(100, "Updating...\nFinishing Up...", update_text=True)
 
 	#make launcher.sh executable
 	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
@@ -547,9 +572,18 @@ def doCmdUpdate(branch="master", theme=theme):
 		pass
 
 	#yay, nothing terrible has happened
-	x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
-	if x != "n":
-		restart()
+	if gui == True:
+		d.gauge_stop()
+		d = Dialog(dialog="dialog").yesno("Update Complete. Would you like to restart?")
+		if d == "ok":
+			clear()
+			restart()
+		else:
+			clear()
+	else:
+		x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+		if x != "n":
+			restart()
 
 def cmdUpdate(theme=theme, config=config):
 	if input("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch. [y/N] ").lower() == "y":
@@ -558,175 +592,7 @@ def cmdUpdate(theme=theme, config=config):
 			branch = config["updates"]["branch"]
 		except Exception as e:
 			print(theme["styles"]["error"] + "Could not read config file\n" + e)
-
-		doCmdUpdate(branch)
-
-
-#Update wizard by tabulate
-def doGuiUpdate(branch="master", theme=theme):
-	nonplugins = getDefaults(config["paths"]["userPath"] + "/plugins/")
-	nonthemes = getDefaults(config["paths"]["userPath"] + "/themes/")
-
-	d = Dialog(dialog="dialog")
-	d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
-	#Establish directories
-	plugins = str(Path(__file__).parent) + "/"
-	root = str(Path(plugins).parent) + "/"
-	themes = os.path.join(root, config["paths"]["userPath"] + "/themes/")
-	parent = str(Path(root).parent) + "/"
-	confVals = loadConfig()
-	try:
-		shutil.rmtree(parent + ".iibackup")
-	except:
-		pass
-	d.gauge_update(13, "Updating...\nBacking Up...", update_text=True)
-
-	#Backup
-	if os.path.isdir(parent + ".iibackup"):
-		shutil.rmtree(parent + ".iibackup")
-	if os.path.isdir(parent + ".iipluginsbackup"):
-		shutil.rmtree(parent + ".iipluginsbackup")
-	if os.path.isdir(parent + ".iithemesbackup"):
-		shutil.rmtree(parent + ".iithemesbackup")
-	shutil.copytree(root, parent + ".iibackup/")
-	d.gauge_update(25, "Updating...\nMoving Plugins...", update_text=True)
-
-	#Move Plugins out of Plugins
-	os.chdir(parent)
-	tempDir = ".iipluginsbackup"
-	os.mkdir(tempDir)
-	os.chdir(plugins)
-	files = os.listdir(".")
-	for file in files:
-		if file in nonplugins:
-			continue
-		else:
-			source = os.path.join(plugins, file)
-			dest = os.path.join(parent, tempDir)
-			shutil.move(source, dest)
-
-	#Move Themes out of Themes
-	os.chdir(parent)
-	tempThemeDir = ".iithemesbackup"
-	os.mkdir(tempThemeDir)
-	os.chdir(themes)
-	files = os.listdir(".")
-	for file in files:
-		if file in nonthemes:
-			continue
-		else:
-			source = os.path.join(themes, file)
-			dest = os.path.join(parent, tempThemeDir)
-			shutil.move(source, dest)
-	d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
-
-	#Delete contents of calculator
-	for filename in os.listdir(root):
-		file_path = os.path.join(root, filename)
-		try:
-			if os.path.isfile(file_path) or os.path.islink(file_path):
-				os.unlink(file_path)
-			elif os.path.isdir(file_path):
-				shutil.rmtree(file_path)
-		except Exception as e:
-			print('Failed to delete %s. Reason: %s' % (file_path, e))
-	d.gauge_update(51, "Updating...\nDownloading Update...", update_text=True)
-
-	#download files
-	try:
-		with open(root + "newcalc.zip", "wb") as f:
-			f.write(requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip").content)
-	except Exception as e:
-		clear()
-		print(e)
-		print(theme["styles"]["error"] + "Fatal Error, Restoring Backup")
-		#Restore Backup
-		for f in os.listdir(parent + ".iibackup/"):
-			shutil.move(os.path.join(parent + ".iibackup", f), root)
-		os.rmdir(parent + ".iibackup")
-		shutil.rmtree(parent + tempDir)
-		sys.exit("No Connection")
-	d.gauge_update(64, "Updating...\nUnzipping...", update_text=True)
-
-	#Unzip File
-	os.chdir(root)
-	with zipfile.ZipFile("newcalc.zip", 'r') as z:
-		z.extractall()
-
-	os.chdir("ImaginaryInfinity-Calculator-" + branch)
-
-	files = os.listdir(".")
-	source = root + "ImaginaryInfinity-Calculator-" + branch + "/"
-	for file in files:
-		shutil.move(source+file, root)
-	os.chdir("..")
-	os.rmdir("ImaginaryInfinity-Calculator-" + branch)
-	os.remove("newcalc.zip")
-	d.gauge_update(77, "Updating...\nRestoring Plugins...", update_text=True)
-
-	#move plugins back into /plugins
-	os.chdir(parent)
-	os.chdir(tempDir)
-	files = os.listdir(".")
-	for file in files:
-		shutil.move(parent + tempDir + "/" + file, plugins)
-	os.chdir("..")
-	os.rmdir(tempDir)
-	os.chdir(root)
-
-	#move themes back into /themes
-	os.chdir(parent)
-	os.chdir(tempThemeDir)
-	files = os.listdir(".")
-	for file in files:
-		shutil.move(parent + tempThemeDir + "/" + file, themes)
-	os.chdir("..")
-	os.rmdir(tempThemeDir)
-	os.chdir(root)
-
-	d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
-
-	#check if all is fine
-	if os.path.isfile("main.py") and os.path.exists("plugins"):
-		pass
-	else:
-		#VERY BAD THINGS HAVE HAPPENED
-		print(theme["styles"]["error"] + "Fatal Error. Files not Found")
-		#Restore Backup
-		for f in os.listdir(parent + ".iibackup/"):
-			shutil.move(os.path.join(parent + ".iibackup", f), root)
-		os.rmdir(parent + ".iibackup")
-		sys.exit(1)
-	d.gauge_update(100, "Updating...\nFinishing Up...", update_text=True)
-
-	#make launcher.sh executable
-	OS = platform.system()
-	if OS == "Linux" or OS == "Darwin" or OS == "Haiku":
-		os.system("chmod +x launcher.sh")
-
-	#Load old conf vals
-	config.read(configPath)
-	for i in range(len(confVals)):
-		try:
-			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
-
-		except Exception as e:
-			pass
-	try:
-		with open(configPath, "r+") as cf:
-			config.write(cf)
-	except:
-		pass
-
-	d.gauge_stop()
-
-	#yay, nothing terrible has happened
-	d = Dialog(dialog="dialog").yesno("Update Complete. Would you like to restart?")
-	if d == "ok":
-		clear()
-		restart()
-	else:
-		clear()
+		doUpdate(branch)
 
 def guiUpdate(theme=theme, config=config):
 	d = Dialog(dialog="dialog").yesno("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch.")
@@ -736,8 +602,7 @@ def guiUpdate(theme=theme, config=config):
 			branch = config["updates"]["branch"]
 		except Exception as e:
 			print(theme["styles"]["important"] + "Could not read config file\n" + e)
-
-		doGuiUpdate(branch)
+		doUpdate(branch=branch, gui=True)
 	else:
 		clear()
 		return
