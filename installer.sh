@@ -162,12 +162,12 @@ then
 fi
 if [ "$1" == "--make-appImage" ]
 then
-	if [ -f appimagetool-x86_64.AppImage ]
-	then
-		echo "Found appimagetool"
-	else
-		./wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-	fi
-	chmod +x ./appimagetool-x86_64.AppImage
+	# if [ -f appimagetool-x86_64.AppImage ]
+	# then
+	# 	echo "Found appimagetool"
+	# else
+	# 	./wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+	# fi
+	# chmod +x ./appimagetool-x86_64.AppImage
 	ARCH=x86_64 ./appimagetool-x86_64.AppImage iicalc-appImage
 fi
