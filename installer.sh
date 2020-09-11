@@ -2,7 +2,30 @@
 clear
 echo "ImaginaryInfinity Calculator Installer"
 DIR=`dirname $0`
-if [ `uname` == "Linux" ]
+if [ "$1" == "--make-deb" ]
+then
+	rm -rf "iicalc-deb"
+	mkdir "iicalc-deb"
+	mkdir "iicalc-deb/DEBIAN"
+	mkdir "iicalc-deb/usr"
+	mkdir "iicalc-deb/usr/bin"
+	mkdir "iicalc-deb/usr/share"
+	mkdir "iicalc-deb/usr/share/applications"
+	mkdir "iicalc-deb/usr/share/icons"
+	cp ".installer/deb/control" "iicalc-deb/DEBIAN"
+	cp ".installer/deb/postinst" "iicalc-deb/DEBIAN"
+	chmod +x "iicalc-deb/DEBIAN/postinst"
+	systemPath="iicalc-deb/usr/share/iicalc/"
+	binPath="iicalc-deb/usr/bin"
+	config=".installer/configDefaults/unix.ini"
+	launcher=".installer/launchers/unix.sh"
+	iconPath="iicalc-deb/usr/share/icons"
+	desktopFilePath="iicalc-deb/usr/share/applications"
+	desktopFile=".installer/desktopFiles/iicalc.desktop"
+	installDesktopFile="true"
+	buildOnly="true"
+
+elif [ `uname` == "Linux" ]
 then
 	if [ `whoami` != "root" ]
 	then
@@ -25,6 +48,7 @@ then
 	desktopFile=".installer/desktopFiles/iicalc.desktop"
 	installDesktopFile="true"
 	pythonCommand="python3"
+
 elif [ `uname` == "Darwin" ]
 then
 	if [ `whoami` != "root" ]
@@ -77,19 +101,22 @@ if [ $installDesktopFile == "true" ]
 then
 	cp -r $desktopFile $desktopFilePath
 fi
-if ! type "$pythonCommand" > /dev/null; then
-	echo "Python 3 not found. You must install Python 3 before attempting to install the calculator."
-	echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3"
-	echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3"
-	echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add python3"
-	echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python"
+if [ "$buildOnly" != "true" ]
+then
+	if ! type "$pythonCommand" > /dev/null; then
+		echo "Python 3 not found. You must install Python 3 before attempting to install the calculator."
+		echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3"
+		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3"
+		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add python3"
+		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python"
+	fi
 fi
 chmod +x "$binPath/iicalc"
 echo "Installing builtin plugins..."
 mkdir $systemPath
 mkdir "$systemPath/systemPlugins"
-mkdir "$systemPath/systemPlugins"
 cp -r system/systemPlugins/* "$systemPath/systemPlugins"
+mkdir "$systemPath/themes"
 cp -r system/themes/* "$systemPath/themes"
 cp -r "templates" "$systemPath"
 echo "Installing main Python script.."
@@ -99,5 +126,17 @@ cp messages.txt "$systemPath"
 cp $config "$systemPath/config.ini"
 echo "Installing icons..."
 cp iicalc.tiff "$iconPath"
-echo "Installing Python modules..."
-python3 -m pip install -r requirements.txt
+if [ "$buildOnly" != "true" ]
+then
+	echo "Installing Python modules..."
+	python3 -m pip install -r requirements.txt
+fi
+if [ "$1" == "--make-deb" ]
+then
+	#Calculate MD5 Sums
+	find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > "iicalc-deb/DEBIAN/md5sums"
+	#Calculate Size
+	cat "iicalc-deb/DEBIAN/control" | sed "s'Installed-Size: 0'Installed-Size: `du -s iicalc-deb/ | awk '{print $1}'`'" > "iicalc-deb/DEBIAN/control"
+	#Build DEB
+	dpkg -b iicalc-deb iicalc.deb
+fi
