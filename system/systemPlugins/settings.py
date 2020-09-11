@@ -69,27 +69,37 @@ def editor():
 			if code == d.OK:
 				clear()
 				if tag == "Theme":
-					themeFiles = os.listdir("themes/")
-					choices = []
-					for themeFile in themeFiles:
-						themeInfo = configparser.ConfigParser()
-						themeInfo.read("themes/" + themeFile)
-						try:
-							print(themeInfo["theme"]["name"])
-							choices.append((themeInfo["theme"]["name"], themeInfo["theme"]["description"]))
-						except:
-							print("Invalid theme")
-					tcode, ttag = d.menu("ImaginaryInfinity Calculator Theme Settings",
-										choices=choices, width=0, height=0)
-					if tcode == d.OK:
-						themeFiles = os.listdir("themes/")
+					themeFiles = os.listdir(config["paths"]["userPath"] + "/themes/") + os.listdir(config["paths"]["systemPath"] + "/themes/")
+					if len(themeFiles) == 0:
+						d.msgbox("No themes installed")
+						pass
+					else:
+						choices = []
 						for themeFile in themeFiles:
 							themeInfo = configparser.ConfigParser()
-							themeInfo.read("themes/" + themeFile)
-							if themeInfo["theme"]["name"] == ttag:
-								config["appearance"]["theme"] = themeFile
-					else:
-						clear()
+							if os.path.exists(config["paths"]["userPath"] + "/themes/" + themeFile):
+								themeInfo.read(config["paths"]["userPath"] + "/themes/" + themeFile)
+							else:
+								themeInfo.read(config["paths"]["systemPath"] + "/themes/" + themeFile)
+							try:
+								print(themeInfo["theme"]["name"])
+								choices.append((themeInfo["theme"]["name"], themeInfo["theme"]["description"]))
+							except:
+								print("Invalid theme")
+						tcode, ttag = d.menu("ImaginaryInfinity Calculator Theme Settings",
+											choices=choices, width=0, height=0)
+						if tcode == d.OK:
+							themeFiles = os.listdir(config["paths"]["userPath"] + "/themes/") + os.listdir(config["paths"]["systemPath"] + "/themes/")
+							for themeFile in themeFiles:
+								themeInfo = configparser.ConfigParser()
+								if os.path.exists(config["paths"]["userPath"] + "/themes/" + themeFile):
+									themeInfo.read(config["paths"]["userPath"] + "/themes/" + themeFile)
+								else:
+									themeInfo.read(config["paths"]["systemPath"] + "/themes/" + themeFile)
+								if themeInfo["theme"]["name"] == ttag:
+									config["appearance"]["theme"] = themeFile
+						else:
+							clear()
 				elif tag == "Prompt":
 					#print(config)
 					#import sys
