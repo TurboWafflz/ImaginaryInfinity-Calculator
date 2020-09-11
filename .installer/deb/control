@@ -1,0 +1,10 @@
+Package: iicalc
+Version: 2.3.3
+Architecture: all
+Essential: no
+Section: math
+Priority: optional
+Depends: python3 (>=3.6), python3-pip  (>=20.0.0)
+Maintainer: Finian Wright
+Installed-Size: 0
+Description: An extensible calculator written in Python.

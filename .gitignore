@@ -3,3 +3,5 @@ plugins/__pycache__
 plugins/tw.py
 .update.log
 .pluginstore
+iicalc-deb
+iicalc.deb
