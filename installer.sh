@@ -16,6 +16,7 @@ then
 	cp ".installer/deb/postinst" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/prerm" "iicalc-deb/DEBIAN"
 	chmod +x "iicalc-deb/DEBIAN/postinst"
+	chmod +x "iicalc-deb/DEBIAN/prerm"
 	systemPath="iicalc-deb/usr/share/iicalc/"
 	binPath="iicalc-deb/usr/bin"
 	config=".installer/configDefaults/unix.ini"
