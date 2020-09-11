@@ -1,0 +1,9 @@
+debian packager:
+    stage: build
+    script:
+        - ./installer.sh --make-deb
+    artifacts:
+        paths:
+            - iicalc.deb
+    only:
+        - development
