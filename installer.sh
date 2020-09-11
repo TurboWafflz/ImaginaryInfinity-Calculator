@@ -14,6 +14,7 @@ then
 	mkdir "iicalc-deb/usr/share/icons"
 	cp ".installer/deb/control" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/postinst" "iicalc-deb/DEBIAN"
+	cp ".installer/deb/prerm" "iicalc-deb/DEBIAN"
 	chmod +x "iicalc-deb/DEBIAN/postinst"
 	systemPath="iicalc-deb/usr/share/iicalc/"
 	binPath="iicalc-deb/usr/bin"

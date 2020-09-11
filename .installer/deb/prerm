@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "Removing ImaginaryInfinity Calculator does not remove the .iicalc folder in your home directory. If you want to run the portable version of ImaginaryInfinity Calculator again, you will have to delete it."

@@ -36,13 +36,13 @@ def verify(plugin):
 	#If not, suggest running pm.update()
 	except:
 		print("\nCould not find package list, maybe run pm.update()")
-		
+
 	if index[plugin]["type"] == "plugins":
 		location = config["paths"]["userPath"] + "/plugins/"
 	elif index[plugin]["type"] == "themes":
 		location = config["paths"]["userPath"] + "/themes/"
 	else:
-		
+
 		print("Error installing plugin: Invalid type")
 		return "error"
 	#Load installed list if available
@@ -490,7 +490,7 @@ def search(term, type="all"):
 		#Show plugin if search term is included in the name or description
 		if term in plugin or term in index[plugin]["description"]:
 			if type=="all" or type == config["paths"]["userPath"] + index[plugin]["type"]:
-				print(plugin + " - " + index[plugin]["description"] + " (" + config["paths"]["userPath"] + index[plugin]["type"] + ")")
+				print(plugin + " - " + index[plugin]["description"] + " (" + index[plugin]["type"] + ")")
 #List packages
 def list(scope="available", type="all"):
 	#Read index, if available
@@ -521,9 +521,9 @@ def list(scope="available", type="all"):
 		for plugin in installed.sections():
 			#Check if plugin has passed hash verification
 			if installed[plugin]["verified"] == "true":
-				verified = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Verified | "
+				verified = " (" + index[plugin]["type"] + ") Verified | "
 			else:
-				verified = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Damaged, should be reinstalled | "
+				verified = " (" + index[plugin]["type"] + ") Damaged, should be reinstalled | "
 			#Print plugin info
 			if type == "all" or installed[plugin]["type"] == type:
 				print(verified + plugin + " - " + installed[plugin]["summary"])
@@ -535,11 +535,11 @@ def list(scope="available", type="all"):
 			if installed.has_section(plugin):
 				#Check if plugin has passed hash verification
 				if installed[plugin]["verified"] == "true":
-					status = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Installed & verified | "
+					status = " (" + index[plugin]["type"] + ") Installed & verified | "
 				else:
-					status = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Damaged, should be reinstalled | "
+					status = " (" + index[plugin]["type"] + ") Damaged, should be reinstalled | "
 			else:
-				status = " (" + config["paths"]["userPath"] + index[plugin]["type"] + ") Not installed | "
+				status = " (" + index[plugin]["type"] + ") Not installed | "
 			#Print plugin info
 			if type == "all" or config["paths"]["userPath"] + index[plugin]["type"] == type:
 				print(status + plugin + " - " + index[plugin]["summary"])
