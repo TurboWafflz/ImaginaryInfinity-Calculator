@@ -24,7 +24,25 @@ then
 	desktopFile=".installer/desktopFiles/iicalc.desktop"
 	installDesktopFile="true"
 	buildOnly="true"
-
+elif [ "$1" == "--make-appImage" ]
+	then
+		rm -rf "iicalc-appImage"
+		mkdir "iicalc-appImage"
+		mkdir "iicalc-appImage/usr"
+		mkdir "iicalc-appImage/usr/bin"
+		mkdir "iicalc-appImage/usr/share"
+		cp ".installer/appImage/AppRun" "iicalc-appImage"
+		chmod +x "iicalc-appImage/AppRun"
+		systemPath="iicalc-appImage/usr/share/iicalc/"
+		binPath="iicalc-appImage/usr/bin"
+		config=".installer/configDefaults/unix.ini"
+		launcher=".installer/launchers/unix.sh"
+		iconPath="iicalc-appImage/"
+		desktopFilePath="iicalc-appImage"
+		desktopFile=".installer/desktopFiles/iicalc-appImage.desktop"
+		cp "iicalc.png" "iicalc-appImage"
+		installDesktopFile="true"
+		buildOnly="true"
 elif [ `uname` == "Linux" ]
 then
 	if [ `whoami` != "root" ]
@@ -96,7 +114,7 @@ else
 fi
 cd $DIR
 echo "Installing launcher..."
-cp $launcher "$binPath/iicalc"
+cp -v $launcher "$binPath/iicalc"
 if [ $installDesktopFile == "true" ]
 then
 	cp -r $desktopFile $desktopFilePath
@@ -141,4 +159,15 @@ then
 	cat "iicalc-deb/DEBIAN/control" | sed "s'Version: 0'Version: `cat system/version.txt`'" > "iicalc-deb/DEBIAN/control"
 	#Build DEB
 	dpkg -b iicalc-deb iicalc.deb
+fi
+if [ "$1" == "--make-appImage" ]
+then
+	if [ -f appimagetool-x86_64.AppImage ]
+	then
+		echo "Found appimagetool"
+	else
+		wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+	fi
+	chmod +x ./appimagetool-x86_64.AppImage
+	ARCH=x86_64 ./appimagetool-x86_64.AppImage iicalc-appImage
 fi
