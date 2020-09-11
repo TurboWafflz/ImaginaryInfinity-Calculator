@@ -23,6 +23,8 @@ import json
 import configparser
 import subprocess
 from threading import Thread
+from packaging import version
+
 if not 1 == 1:
 	print("Mathmatical impossibility detected. Answers may not be correct")
 	input("[Press enter to continue]")
@@ -185,7 +187,18 @@ def hasInternet():
 	except:
 		conn.close()
 		return False
-
+if hasInternet():
+	versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt")
+	if versionnum.status_code == 404:
+		print("Not on branch with version.txt")
+		upToDate = True
+	else:
+		versionnum = versionnum.text
+		with open(config["paths"]["systemPath"] + "/version.txt") as f:
+			if version.parse(versionnum) > version.parse(f.read()):
+				upToDate = False
+			else:
+				upToDate = True
 def main(config=config, warmupThread=warmupThread):
 	if config["startup"]["firststart"] == "true":
 		clear()
@@ -244,6 +257,8 @@ def main(config=config, warmupThread=warmupThread):
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read())
+		if not upToDate:
+			print(Fore.WHITE + Back.MAGENTA + "Update available!")
 		print(theme["styles"]["normal"] + "Copyright 2020 Finian Wright")
 		print(theme["styles"]["link"] + "https://turbowafflz.gitlab.io/iicalc.html" + theme["styles"]["normal"])
 		print("Type 'chelp()' for a list of commands")
