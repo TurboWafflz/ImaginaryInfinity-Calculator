@@ -36,8 +36,8 @@ This package can be installed with apt, gdebi, qapt, etc.
 New functionality can easily be added by placing Python files with additional functions in the plugins directory or by downloading plugins from the store. To access a function added by a plugin, type `[plugin].[function]()`. For example, if you wanted to run the function `egg` from the plugin `food`, you would type `food.egg()`. Arguments placed in the parentheses will be passed to the function.
 
 **Note:**
-Functions in the "core" plugin can be accessed without specifying "core".
-ex. "factor(7)" instead of "core.factor(7)"
+Functions in the `core` plugin can be accessed without specifying `core`.
+ex. `factor(7)` instead of `core.factor(7)`
 
 <hr style="border: 1px solid white">
 
