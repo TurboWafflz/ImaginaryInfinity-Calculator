@@ -25,6 +25,7 @@ import subprocess
 from threading import Thread
 from packaging import version
 
+#Make sure math is real and Python is not completely insane
 if not 1 == 1:
 	print("Mathmatical impossibility detected. Answers may not be correct")
 	input("[Press enter to continue]")
@@ -32,6 +33,7 @@ if False:
 	print("There is literally no way for this message to appear unless someone tampered with the source code")
 	input("[Press enter to continue]")
 
+#Wake up server to decrease wait times when accessing store
 def pingServer():
 	try:
 		requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
@@ -39,9 +41,9 @@ def pingServer():
 		pass
 	except requests.exceptions.ReadTimeout:
 		pass
-#from plugins import store
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
+#Load config from ~/.iicalc
 try:
 	home = os.path.expanduser("~")
 	print("Loading config...")
@@ -52,6 +54,7 @@ try:
 	with open(configPath, "w") as configFile:
 		config.write(configFile)
 		configFile.close()
+#Load config from current directory
 except:
 	try:
 		print("Loading portable config...")
@@ -61,7 +64,9 @@ except:
 		print("Fatal error: Cannot load config")
 		exit()
 pluginPath=config["paths"]["userPath"] + "/plugins/"
+#Add system path to path to load built in plugins
 sys.path.insert(1, config["paths"]["userPath"])
+#Signals to trigger functions in plugins
 def signal(sig,args=""):
 	try:
 		nonplugins = ["__init__.py", "__pycache__", "core.py"]
@@ -189,36 +194,44 @@ def hasInternet():
 	except:
 		conn.close()
 		return False
+
+#Check if up to date
 if hasInternet():
-	versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt")
-	if versionnum.status_code == 404:
-		print("Not on branch with version.txt")
+	try:
+		print("Checking for update... (Press Ctrl + C to cancel)")
+		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt")
+		if versionnum.status_code == 404:
+			print("Not on branch with version.txt")
+			upToDate = True
+		else:
+			versionnum = versionnum.text
+			with open(config["paths"]["systemPath"] + "/version.txt") as f:
+				if version.parse(versionnum) > version.parse(f.read()):
+					upToDate = False
+				else:
+					upToDate = True
+	except KeyboardInterrupt:
 		upToDate = True
-	else:
-		versionnum = versionnum.text
-		with open(config["paths"]["systemPath"] + "/version.txt") as f:
-			if version.parse(versionnum) > version.parse(f.read()):
-				upToDate = False
-			else:
-				upToDate = True
+		print("Cancelled")
+#Calculator itself
 def main(config=config, warmupThread=warmupThread):
-	if config["startup"]["firststart"] == "true":
-		clear()
-		try:
-			config["startup"]["firststart"] = "false"
-			with open(configPath, "w+") as f:
-				config.write(f)
-			if config["installation"]["installType"] == "portable":
-				requirementsPath="requirements.txt"
-				yn = input("Would you like to attempt to install the required libraries?")
-				if yn != "n":
-					print(theme["styles"]["important"] + "Downloading libraries..." + theme["styles"]["normal"])
-					subprocess.check_call([sys.executable, "-m", "pip","install", "-r" + requirementsPath])
-		except Exception as e:
-			print("Failed to install required libraries. Make sure you have an internet connecion and can access PyPi. If you have already installed the required Python modules, you can run the calculator anyway.")
-			yn = input("Would you like to continue? (y/N)")
-			if yn != "y":
-				return
+	# if config["startup"]["firststart"] == "true":
+	# 	clear()
+	# 	try:
+	# 		config["startup"]["firststart"] = "false"
+	# 		with open(configPath, "w+") as f:
+	# 			config.write(f)
+	# 		if config["installation"]["installType"] == "portable":
+	# 			requirementsPath="requirements.txt"
+	# 			yn = input("Would you like to attempt to install the required libraries?")
+	# 			if yn != "n":
+	# 				print(theme["styles"]["important"] + "Downloading libraries..." + theme["styles"]["normal"])
+	# 				subprocess.check_call([sys.executable, "-m", "pip","install", "-r" + requirementsPath])
+	# 	except Exception as e:
+	# 		print("Failed to install required libraries. Make sure you have an internet connecion and can access PyPi. If you have already installed the required Python modules, you can run the calculator anyway.")
+	# 		yn = input("Would you like to continue? (y/N)")
+	# 		if yn != "y":
+	# 			return
 
 	oldcalc=" "
 	try:
@@ -233,6 +246,7 @@ def main(config=config, warmupThread=warmupThread):
 				if os.path.isfile('.development'):
 					print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
 		else:
+			#Snend signal and clear screen for different OSs
 			if(platform.system()=="Linux"):
 				signal("onLinuxStart")
 				os.system("clear")
@@ -258,6 +272,7 @@ def main(config=config, warmupThread=warmupThread):
 					except:
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
+		#Display start up stuff
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read())
 		if not upToDate:
 			print(Fore.WHITE + Back.MAGENTA + "Update available!")
@@ -265,6 +280,7 @@ def main(config=config, warmupThread=warmupThread):
 		print(theme["styles"]["link"] + "https://turbowafflz.gitlab.io/iicalc.html" + theme["styles"]["normal"])
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
+		#Display startupmessage
 		try:
 			with open(config["appearance"]["messageFile"]) as messagesFile:
 				messages=messagesFile.readlines()
@@ -285,10 +301,12 @@ def main(config=config, warmupThread=warmupThread):
 		print('')
 		calc=''
 		signal("onStarted")
+		#Main loop
 		while True:
 			pr=True
 			print('')
 			signal("onReady")
+			#Take command from user
 			try:
 				calc=input(theme["styles"]["prompt"] + config["appearance"]["prompt"] + theme["styles"]["input"] + " ")
 			except KeyboardInterrupt:
@@ -298,8 +316,10 @@ def main(config=config, warmupThread=warmupThread):
 			signal("onInput", "'" + calc + "'")
 			print('')
 			print(theme["styles"]["output"])
+			#Calculate/execute command
 			try:
 				cl=list(calc)
+				#Special cases
 				if calc=='AllWillPerish':
 					pr=0
 					print(theme["styles"]["important"] + "Cheat mode active" + theme["styles"]["normal"])
@@ -317,20 +337,21 @@ def main(config=config, warmupThread=warmupThread):
 				# if pr:
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
+				#Evaluate command
 				try:
 					ans=eval(str(eqn))
 				except KeyboardInterrupt:
 					ans=None
 			except Exception as e:
 				try:
-					#changing it to not print exec as it returns None
-					#print(theme["styles"]["output"] + exec(str(calc)))
+					#Exec if eval failed
 					try:
 						exec(str(calc))
 					except KeyboardInterrupt:
 						pass
 					pr=0
 				except:
+					#Couldn't execute, display error
 					signal("onError", str(e))
 					if pr:
 						print(theme["styles"]["error"] + "Error: " + str(e) + theme["styles"]["normal"])
@@ -365,11 +386,13 @@ def main(config=config, warmupThread=warmupThread):
 	# 	print(theme["styles"]["important"] + "\nKeyboard Interrupt, exiting...")
 	# 	print(Fore.RESET + Back.RESET + Style.NORMAL)
 	# 	exit()
+	#Exit cleanly on Ctrl + D
 	except EOFError:
 		signal("onEofExit")
 		print(theme["styles"]["important"] + "\nEOF, exiting...")
 		print(Fore.RESET + Back.RESET + Style.NORMAL)
 		exit()
+	#Catch errors and display nice message
 	except Exception as e:
 		signal("onFatalError")
 		print(theme["styles"]["error"])
