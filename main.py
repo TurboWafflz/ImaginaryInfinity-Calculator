@@ -331,6 +331,9 @@ def main(config=config, warmupThread=warmupThread):
 					cl=list(calc)
 				if calc == ' ':
 					pr=0
+				if calc == 'clear':
+					clear()
+					pr=0
 				eqn=calc
 				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 					eqn=str(ans)+str(calc)
