@@ -18,9 +18,10 @@ import time
 from shutil import copytree, rmtree, copy
 import configparser
 import re
-
+#Import dialog if on a supported OS
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 	from dialog import Dialog, ExecutableNotFound
+#Load config from ~/.iicalc
 try:
 	home = os.path.expanduser("~")
 	print("Loading config...")
@@ -31,6 +32,7 @@ try:
 	with open(configPath, "w") as configFile:
 		config.write(configFile)
 		configFile.close()
+#Load config from current directory
 except:
 	try:
 		print("Loading portable config...")
@@ -40,9 +42,11 @@ except:
 	except:
 		print("Fatal error: Cannot load config")
 		exit()
+#Get paths
 themePath = config["paths"]["userPath"] + "/themes/"
 pluginPath = config["paths"]["userPath"] + "/plugins/"
 sys.path.insert(1, config["paths"]["userPath"])
+#Load theme from user path
 try:
 	print("Attempting to load user theme...")
 	theme = configparser.ConfigParser()
@@ -77,6 +81,7 @@ try:
 		for s in theme["styles"]:
 			#print(theme["styles"][str(s)])
 			theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+#Load theme from system path
 except:
 	print("Attempting to load system theme...")
 	try:
@@ -112,6 +117,7 @@ except:
 			for s in theme["styles"]:
 				#print(theme["styles"][str(s)])
 				theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
+	#Couldn't load theme, load default dark theme
 	except Exception as e:
 		try:
 			theme = configparser.ConfigParser()
@@ -154,6 +160,7 @@ except:
 				print("Failed to load selected theme. Loading dark instead.")
 				print("Error: " + str(e))
 				input("[Press enter to continue]")
+			#No theme available. Can't start
 			except:
 				print("Fatal error: unable to find a useable theme")
 				exit()
@@ -187,6 +194,7 @@ def AllWillPerish():
 
 #Clear
 def clear():
+	#Just clear on known operating systems
 	if(platform.system()=="Linux"):
 		os.system("clear")
 		import readline
@@ -198,6 +206,7 @@ def clear():
 		colorama.init(convert=True)
 	elif(platform.system()=="Darwin"):
 		os.system("clear")
+	#Try to clear with common commands on unknown operating systems
 	else:
 		try:
 			os.system("clear")
