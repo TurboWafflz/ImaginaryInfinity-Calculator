@@ -14,6 +14,11 @@ We provide a packaged version of ImaginaryInfinity calculator for some Linux dis
 
 This package can be installed with apt, gdebi, qapt, etc.
 
+#### AppImage
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
+
+Just make executable and run on many Linux distributions
+
 
 ## Supported platforms
 **ImaginaryInfinity Calculator fully supports the following platforms:**
