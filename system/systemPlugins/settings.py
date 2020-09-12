@@ -1,4 +1,4 @@
-import configparser 
+import configparser
 import sys
 from systemPlugins.core import *
 import platform
@@ -55,7 +55,7 @@ def editor():
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
 										("Safe mode", "Disable all plugins except core and settings"),
-										("Start Server", "Start the index server on start")
+										("Server Wakeup", "Start the index server on start")
 										]
 
 			for plugin in plugins(False):
