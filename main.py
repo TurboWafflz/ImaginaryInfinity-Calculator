@@ -143,7 +143,9 @@ elif config["startup"]["startserver"] == "yes":
 
 #ask to start server
 if config["startup"]["startserver"] == "ask":
-	if input("Would you like to ping the server at startup to have faster access times to the plugin store? [Y/n] ").lower() == "n":
+	print()
+	print()
+	if input(theme["styles"]["important"] + "Would you like to ping the server at startup to have faster access times to the plugin store? [Y/n] ").lower() == "n":
 		config["startup"]["startserver"] = "false"
 	else:
 		config["startup"]["startserver"] = "true"
