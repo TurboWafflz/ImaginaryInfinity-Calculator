@@ -23,10 +23,11 @@ def signal(sig,config,args=""):
 		except Exception as e:
 			pass
 
-
+#Dialog based settings editor
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
+		#Load config
 		try:
 			home = os.path.expanduser("~")
 			print("Loading config...")
@@ -48,6 +49,7 @@ def editor():
 				exit()
 		d = Dialog(dialog="dialog")
 		while True:
+			#Define menu options
 			choices = [("Theme", "The colors the calculator will use"),
 										("Prompt", "The prompt that will be displayed"),
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
@@ -64,10 +66,12 @@ def editor():
 					pass
 					#print(e); import traceback; traceback.print_exc(); import sys; sys.exit(0)
 			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving your changes")]
+			#Display menu
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
 								choices=choices, width=0, height=0)
 			if code == d.OK:
 				clear()
+				#Theme settings
 				if tag == "Theme":
 					themeFiles = os.listdir(config["paths"]["userPath"] + "/themes/") + os.listdir(config["paths"]["systemPath"] + "/themes/")
 					if len(themeFiles) == 0:
@@ -100,6 +104,7 @@ def editor():
 									config["appearance"]["theme"] = themeFile
 						else:
 							clear()
+				#Prompt settings
 				elif tag == "Prompt":
 					#print(config)
 					#import sys
@@ -132,6 +137,7 @@ def editor():
 								os.rename(config["paths"]["userPath"] + "/plugins/" + plugin[0], config["paths"]["userPath"] + "/plugins/" + plugin[0][:-9])
 					else:
 						d.msgbox("You have not installed any plugins.")
+				#Safe mode settings
 				elif tag=="Safe mode":
 					scode, stag = d.menu("ImaginaryInfinity Calculator Safe Mode Settings",
 										choices=[("On", "Enable safe mode"),
@@ -141,17 +147,20 @@ def editor():
 							config["startup"]["safemode"] = "true"
 						if stag == "Off":
 							config["startup"]["safemode"] = "false"
-				elif tag == "Start Server":
-					startserver = d.menu("ImaginaryInfinity Calculator Server Start", choices=[("On", "Enable starting server on start"), ("Off", "Disable starting server on start")])
+				#Server wakeup settings
+				elif tag == "Server Wakeup":
+					startserver = d.menu("ImaginaryInfinity Calculator Server Wakeup", choices=[("On", "Enable starting server on start"), ("Off", "Disable starting server on start")])
 					if startserver[0] == "On":
 						config["startup"]["startserver"] = "true"
 					else:
 						config["startup"]["startserver"] = "false"
+				#Close settings without modifying config
 				elif tag == "Save and exit":
 					with open(configPath, "w") as configFile:
 						config.write(configFile)
 						configFile.close()
 					break
+				#Close settings and write changes to config
 				elif tag == "Exit without saving":
 					break
 				else:
@@ -159,6 +168,7 @@ def editor():
 
 			else:
 				clear()
+		#Prompt to restart to apply settings
 		if tag != "Exit without saving":
 			restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)
 			if restartbox == "ok":
@@ -168,6 +178,7 @@ def editor():
 				clear()
 		else:
 			clear()
+	#Display messages for unsupported operating systems
 	elif platform.system() == "Windows":
 		print("The setting editor does not support Windows. Don't start an issue, support will not be added.")
 	else:
