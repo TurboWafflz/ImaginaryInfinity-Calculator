@@ -184,5 +184,7 @@ then
 	# 	./wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
 	# fi
 	# chmod +x ./appimagetool-x86_64.AppImage
-	ARCH=x86_64 ./appimagetool-x86_64.AppImage iicalc-appImage
+	./appimagetool-x86_64.AppImage --appimage-extract
+	mv squashfs-root appimagetool
+	ARCH=x86_64 ./appimagetool/AppRun iicalc-appImage
 fi
