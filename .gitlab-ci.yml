@@ -11,7 +11,7 @@ debian packager:
 AppImage packager:
     stage: build
     script:
-        - apt-get -y install fuse
+        - apt-get -y search fuse
         - ./installer.sh --make-appImage
     artifacts:
         paths:
