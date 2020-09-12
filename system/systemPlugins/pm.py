@@ -11,7 +11,7 @@ import time
 import subprocess
 from systemPlugins.core import theme,config
 builtin = True
-
+#Loading spinner
 def loading(text):
 	for c in itertools.cycle(['|', '/', '-', '\\']):
 		if done:
@@ -19,7 +19,7 @@ def loading(text):
 		sys.stdout.write('\r' + text + " " + c)
 		sys.stdout.flush()
 		time.sleep(0.1)
-
+#Download file
 def download(url, localFilename):
 	# NOTE the stream=True parameter
 	r = requests.get(url, stream=True)
@@ -28,6 +28,7 @@ def download(url, localFilename):
 			if chunk: # filter out keep-alive new chunks
 				f.write(chunk)
 	return localFilename
+#Check plugin against hash
 def verify(plugin):
 	#Load index, if available
 	try:
