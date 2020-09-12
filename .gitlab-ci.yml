@@ -11,7 +11,8 @@ debian packager:
 AppImage packager:
     stage: build
     script:
-        - apt install file
+        - apt update
+        - apt install -y file
         - ./installer.sh --make-appImage
     artifacts:
         paths:
