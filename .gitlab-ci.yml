@@ -8,12 +8,13 @@ debian packager:
             - iicalc.deb
     only:
         - development
-# AppImage packager:
-#     stage: build
-#     script:
-#         - ./installer.sh --make-appImage
-#     artifacts:
-#         paths:
-#             - ImaginaryInfinity_Calculator-x86_64.AppImage
-#     only:
-#         - development
+AppImage packager:
+    stage: build
+    script:
+        - apt-get -y install fuse
+        - ./installer.sh --make-appImage
+    artifacts:
+        paths:
+            - ImaginaryInfinity_Calculator-x86_64.AppImage
+    only:
+        - development
