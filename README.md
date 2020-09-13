@@ -29,7 +29,7 @@ Just make executable and run on many Linux distributions
 **ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **Haiku**
 	- Haiku will regain full support once I upgrade my testing VM to the latest version
-- **MacOS X**
+- **MacOS**
 	- MacOS support is untested as I do not currently have access to a Mac
 - **Windows**
 	- Windows support receives much less testing than other platforms
