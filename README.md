@@ -40,6 +40,8 @@ Just make executable and run on many Linux distributions
 
 ## Plugins
 New functionality can easily be added by placing Python files with additional functions in the plugins directory or by downloading plugins from the store. To access a function added by a plugin, type `[plugin].[function]()`. For example, if you wanted to run the function `egg` from the plugin `food`, you would type `food.egg()`. Arguments placed in the parentheses will be passed to the function.
+##### Plugin Documentation
+- [Adding custom config settings](https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/addSettings.md)
 
 **Note:**
 Functions in the `core` plugin can be accessed without specifying `core`.
