@@ -1,4 +1,4 @@
-import configparser
+import configparser 
 import sys
 from systemPlugins.core import *
 import platform
