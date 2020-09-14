@@ -633,15 +633,26 @@ def guiUpdate(theme=theme, config=config):
 		return
 
 def update():
-	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
-		try:
-			guiUpdate()
-		except ExecutableNotFound as e:
-			from getpass import getpass
-			print("Dialog Execeutable Not Found. (Try 'sudo apt install dialog')")
-			getpass("[Press Enter to use the CLI Updater]")
+	if config["installation"]["installtype"] == "deb":
+		#Download
+		with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
+			f.write(requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager").content)
+		#Update
+		os.system("apt install " + os.path.join(config["paths"]["userpath"], "/iicalc.deb"))
+	elif config["installation"]["installtype"] == "AppImage":
+		print("Please download the latest AppImage here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
+	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
+		if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+			try:
+				guiUpdate()
+			except ExecutableNotFound as e:
+				from getpass import getpass
+				print("Dialog Execeutable Not Found. (Try 'sudo apt install dialog')")
+				getpass("[Press Enter to use the CLI Updater]")
+				cmdUpdate()
+		elif platform.system() == "Windows":
+			print("Windows does not support the update wizard")
+		else:
 			cmdUpdate()
-	elif platform.system() == "Windows":
-		print("Windows does not support the update wizard")
 	else:
-		cmdUpdate()
+		print("Invalid install type: " + config["installation"]["installtype"])
