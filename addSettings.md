@@ -24,14 +24,14 @@ if not config.has_section("discord"):
 		config.write(configFile)
 ```
 
-3. The third step is to create your settings class. This will tell the calculator where to look for your settings. Somewhere in your plugin, add a settings class. You will need to put a variable called `choices` in this class. This variable will indicate what goes in the main settings menu, and consists of a bunch of tuples in a list. An example of this is the `Theme` setting, which says `The colors the calculator will use`. Add the settings class like this:
+4. The third step is to create your settings class. This will tell the calculator where to look for your settings. Somewhere in your plugin, add a settings class. You will need to put a variable called `choices` in this class. This variable will indicate what goes in the main settings menu, and consists of a bunch of tuples in a list. An example of this is the `Theme` setting, which says `The colors the calculator will use`. Add the settings class like this:
 ```py
 class settings:
 	choices = [("Discord Rich Presence", "Display ImaginaryInfinity Calculator as your status in Discord"), ("Dynamic RPC", "Update Discord RPC on calculation")]
 ```
   As you can see, we're adding 2 settings. 1 entry for `Discord Rich Presence`, and 1 for `Dynamic RPC`.
 
-4. Next we have to add the actual code that handles the setting buttons being pressed. The calculator searches your plugin for a function in the settings class called `settingsPopup`. This function must take 2 arguments, `tag` and `config`. Just add an empty function with this name to your `settings` class. This is what your new settings class should look like:
+5. Next we have to add the actual code that handles the setting buttons being pressed. The calculator searches your plugin for a function in the settings class called `settingsPopup`. This function must take 2 arguments, `tag` and `config`. Just add an empty function with this name to your `settings` class. This is what your new settings class should look like:
 ```py
 class settings:
 	choices = [("Discord Rich Presence", "Display ImaginaryInfinity Calculator as your status in Discord"), ("Dynamic RPC", "Update Discord RPC on calculation")]
@@ -39,7 +39,7 @@ class settings:
 		pass
 ```
 
-5. Next, we have to initialize a new dialog in the function.
+6. Next, we have to initialize a new dialog in the function.
 ```py
 class settings:
 	choices = [("Discord Rich Presence", "Display ImaginaryInfinity Calculator as your status in Discord"), ("Dynamic RPC", "Update Discord RPC on calculation")]
@@ -58,7 +58,7 @@ class settings:
 			pass
 ```
 
-6. Now we must make each value display a dialog menu. Just create a new dialog menu with the different options of the setting in it. `d.menu` takes the arguments `d.menu(menuTitle, choices=[choices])`
+7. Now we must make each value display a dialog menu. Just create a new dialog menu with the different options of the setting in it. `d.menu` takes the arguments `d.menu(menuTitle, choices=[choices])`
 ```py
 class settings:
 	choices = [("Discord Rich Presence", "Display ImaginaryInfinity Calculator as your status in Discord"), ("Dynamic RPC", "Update Discord RPC on calculation")]
@@ -69,7 +69,7 @@ class settings:
 		elif tag == "Dynamic RPC":
 			dynamicRPCMenu = d.menu("Update Discord RPC with your last done calculation", choices=[("Enable", "Enable Dynamic RPC"), ("Disable", "Disable Dynamic RPC")])
 ```
-7. We're almost done now. Now we must check which option of the setting the user selected and apply that change. Just replace `config["discord"]["tagName"]` with `config["mySection"]["myTagName"]`
+8. We're almost done now. Now we must check which option of the setting the user selected and apply that change. Just replace `config["discord"]["tagName"]` with `config["mySection"]["myTagName"]`
 ```py
 class settings:
 	choices = [("Discord Rich Presence", "Display ImaginaryInfinity Calculator as your status in Discord"), ("Dynamic RPC", "Update Discord RPC on calculation")]
@@ -89,7 +89,7 @@ class settings:
 				config["discord"]["dynamicPresence"] = "false"
 ```
 
-8. This last step is ***VERY IMPORTANT***. You ***MUST*** return `config` at the end of the function, or else no settings will be applied. Just add `return config` at the end.
+9. This last step is ***VERY IMPORTANT***. You ***MUST*** return `config` at the end of the function, or else no settings will be applied. Just add `return config` at the end.
 ```py
 class settings:
 	choices = [("Discord Rich Presence", "Display ImaginaryInfinity Calculator as your status in Discord"), ("Dynamic RPC", "Update Discord RPC on calculation")]
