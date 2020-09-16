@@ -314,6 +314,8 @@ def search(bypass=False, choices=[]):
 			if len(choices) == 0:
 				choices.append(("", ""))
 				text="No Results"
+		else:
+			return
 	x = d.menu(text, height=None, width=None, menu_height=None, choices=choices, cancel_label="Back")
 	if x[0] == d.OK and x[1] != "":
 		pluginpage(x[1], (choices,))
