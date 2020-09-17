@@ -1,4 +1,4 @@
-##ImaginaryInfinity Calculator 
+##ImaginaryInfinity Calculator
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.gitlab.io/iicalc.html
 print("Loading...")
@@ -198,7 +198,7 @@ def hasInternet():
 		return False
 
 #Check if up to date
-if hasInternet():
+if hasInternet() and config["startup"]["checkupdates"] == "true":
 	try:
 		print("Checking for update... (Press Ctrl + C to cancel)")
 		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt")
@@ -215,6 +215,8 @@ if hasInternet():
 	except KeyboardInterrupt:
 		upToDate = True
 		print("Cancelled")
+else:
+	upToDate = True
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
 	# if config["startup"]["firststart"] == "true":
