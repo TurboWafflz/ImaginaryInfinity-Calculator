@@ -151,18 +151,20 @@ def editor():
 				#Server wakeup settings
 				elif tag == "Server Wakeup":
 					startserver = d.menu("ImaginaryInfinity Calculator Server Wakeup", choices=[("On", "Enable starting server on start"), ("Off", "Disable starting server on start")])
-					if startserver[0] == "On":
-						config["startup"]["startserver"] = "true"
-					else:
-						config["startup"]["startserver"] = "false"
+					if startserver[0] == d.OK:
+						if startserver[1] == "On":
+							config["startup"]["startserver"] = "true"
+						else:
+							config["startup"]["startserver"] = "false"
 
 				#Debug mode settings
 				elif tag == "Debug Mode":
 					debugmode = d.menu("ImaginaryInfinity Calculator Debug Settings", choices=[("On", "Enable debug mode"), ("Off", "Disable debug mode")])
-					if debugmode[0] == "On":
-						config["dev"]["debug"] = "true"
-					else:
-						config["dev"]["debug"] = "false"
+					if debugmode[0] == d.OK:
+						if debugmode[1] == "On":
+							config["dev"]["debug"] = "true"
+						else:
+							config["dev"]["debug"] = "false"
 
 				#Close settings without modifying config
 				elif tag == "Save and exit":
