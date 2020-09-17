@@ -409,6 +409,10 @@ def plugins(printval=True, hidedisabled=False):
 		plugins.remove("__init__.py")
 	except ValueError:
 		pass
+	try:
+		plugins.remove(".reqs")
+	except ValueError:
+		pass
 	i = 0
 	if printval == True:
 		while i < len(plugins):
