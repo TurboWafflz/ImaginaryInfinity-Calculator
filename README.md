@@ -129,6 +129,7 @@ all get shown to the user:**
 - `factorList(<number>, [printResult])`
 - `isPrime(<number>, [printResult])`
 - `isPerfect(<number>, [printResult])`
+- `toStd("<value>", [roundVal], [printResult]) - Convert e notation number to standard notation`
 
 printResult can be set to `True` or `False`, and defaults to `True` if not specified
 
