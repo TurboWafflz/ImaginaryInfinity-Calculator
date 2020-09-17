@@ -55,7 +55,8 @@ def editor():
 										("Update", "Update to the latest version of ImaginaryInfinity Calculator"),
 										("Plugins", "Enable/disable plugins"),
 										("Safe mode", "Disable all plugins except core and settings"),
-										("Server Wakeup", "Start the index server on start")
+										("Server Wakeup", "Start the index server on start"),
+										("Debug Mode", "Enable/disable debug mode")
 										]
 
 			for plugin in plugins(False):
@@ -154,6 +155,15 @@ def editor():
 						config["startup"]["startserver"] = "true"
 					else:
 						config["startup"]["startserver"] = "false"
+
+				#Debug mode settings
+				elif tag == "Debug Mode":
+					debugmode = d.menu("ImaginaryInfinity Calculator Debug Settings", choices=[("On", "Enable debug mode"), ("Off", "Disable debug mode")])
+					if debugmode[0] == "On":
+						config["dev"]["debug"] = "true"
+					else:
+						config["dev"]["debug"] = "false"
+
 				#Close settings without modifying config
 				elif tag == "Save and exit":
 					with open(configPath, "w") as configFile:
