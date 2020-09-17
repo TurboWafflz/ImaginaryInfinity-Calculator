@@ -161,6 +161,8 @@ if config["startup"]["startserver"] == "ask":
 if config["startup"]["startserver"] == "true":
 	warmupThread = Thread(target=pingServer)
 	warmupThread.start()
+else:
+	warmupThread = None
 
 # #Complex toggle
 # def complex(onOff):
