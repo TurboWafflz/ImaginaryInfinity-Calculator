@@ -56,7 +56,8 @@ def editor():
 										("Plugins", "Enable/disable plugins"),
 										("Safe mode", "Disable all plugins except core and settings"),
 										("Server Wakeup", "Start the index server on start"),
-										("Debug Mode", "Enable/disable debug mode")
+										("Debug Mode", "Enable/disable debug mode"),
+										("Check for Updates", "Check for Updates on Starup")
 										]
 
 			for plugin in plugins(False):
@@ -165,6 +166,15 @@ def editor():
 							config["dev"]["debug"] = "true"
 						else:
 							config["dev"]["debug"] = "false"
+
+				#Check for updates settings
+				elif tag == "Check for Updates":
+					checkupdates = d.menu("ImaginaryInfinity Calculator Update Checker Settings", choices=[("On", "Enable checking for updates"), ("Off", "Disable checking for updates")])
+					if checkupdates[0] == d.OK:
+						if checkupdates[1] == "On":
+							config["startup"]["checkupdates"] = "true"
+						else:
+							config["startup"]["checkupdates"] = "false"
 
 				#Close settings without modifying config
 				elif tag == "Save and exit":
