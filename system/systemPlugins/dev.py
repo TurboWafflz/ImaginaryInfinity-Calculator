@@ -8,6 +8,7 @@ from dialog import Dialog
 import time
 import shutil
 import subprocess
+
 def switchBranch(branch):
 	if branch != "master":
 		print(Fore.RESET + "Warning, branches other than " + Fore.CYAN + "master " + Fore.RESET + "may be unstable and buggy. Are you sure you want to continue switching to " + Fore.CYAN + branch + Fore.RESET + "?(y/n)")
@@ -45,16 +46,16 @@ def showPallate():
 	print(theme["styles"]["output"] + "Output")
 
 def getReqs(filename):
-	if not os.path.isdir("plugins/.reqs"):
-		os.mkdir("plugins/.reqs")
-	shutil.move("plugins/" + filename, "plugins/.reqs/" + filename)
+	if not os.path.isdir(pluginPath + "/.reqs"):
+		os.mkdir(pluginPath + "/.reqs")
+	shutil.move(pluginPath + "/" + filename, pluginPath + "/.reqs/" + filename)
 	subprocess.call(
-  ["pipreqs", "--force","plugins/.reqs"],
+  ["pipreqs", "--force",pluginPath + "/.reqs"],
   stdout=subprocess.DEVNULL,
   stderr=subprocess.DEVNULL
 )
-	shutil.move("plugins/.reqs/" + filename, "plugins/" + filename)
-	with open("plugins/.reqs/requirements.txt") as f:
+	shutil.move(pluginPath + "/.reqs/" + filename, pluginPath + "/" + filename)
+	with open(pluginPath + "/.reqs/requirements.txt") as f:
 		reqs = [line.rstrip().split("==")[0] for line in f.readlines()]
 	reqstr = ""
 	if len(reqs) == 1 and reqs[0] == "":
