@@ -217,6 +217,12 @@ if hasInternet() and config["startup"]["checkupdates"] == "true":
 		print("Cancelled")
 else:
 	upToDate = True
+
+#Import/install
+def iprt(lib):
+	os.system("pip3 install " + lib)
+	globals()[lib] = __import__(lib)
+
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
 	# if config["startup"]["firststart"] == "true":

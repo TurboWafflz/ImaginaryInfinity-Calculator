@@ -18,6 +18,7 @@ import time
 from shutil import copytree, rmtree, copy
 import configparser
 import re
+
 #Import dialog if on a supported OS
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 	from dialog import Dialog, ExecutableNotFound
@@ -319,11 +320,6 @@ def install(url):
 	else:
 		#Dont know if this is nessecary
 		os.system("cd ..")
-
-#Import/install
-def iprt(lib):
-	os.system("pip3 install " + lib)
-	import lib
 
 #isPerfect
 def isPerfect(num,printResult=True):
