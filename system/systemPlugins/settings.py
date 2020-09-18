@@ -118,7 +118,7 @@ def editor():
 						clear()
 				elif tag=="Update":
 					update()
-					break
+					
 				elif tag=="Plugins":
 					pluginslist = plugins(False)
 					i=0
@@ -191,7 +191,7 @@ def editor():
 			else:
 				clear()
 		#Prompt to restart to apply settings
-		if tag != "Exit without saving":
+		if tag == "Save and exit":
 			restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)
 			if restartbox == "ok":
 				clear()

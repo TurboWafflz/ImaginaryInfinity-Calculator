@@ -507,9 +507,10 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		os.chdir(themes)
 		files = os.listdir(".")
 		for file in files:
-			source = os.path.join(themes, file)
-			dest = os.path.join(parent, tempThemeDir)
-			shutil.move(source, dest)
+			if not file == ".placeholder":
+				source = os.path.join(themes, file)
+				dest = os.path.join(parent, tempThemeDir)
+				shutil.move(source, dest)
 	if gui == True:
 		d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
 
