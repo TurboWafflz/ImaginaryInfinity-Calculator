@@ -56,7 +56,8 @@ def editor():
 										("Plugins", "Enable/disable plugins"),
 										("Safe mode", "Disable all plugins except core and settings"),
 										("Server Wakeup", "Start the index server on start"),
-										("Debug Mode", "Enable/disable debug mode")
+										("Debug Mode", "Enable/disable debug mode"),
+										("Check for Updates", "Check for Updates on Starup")
 										]
 
 			for plugin in plugins(False):
@@ -117,7 +118,7 @@ def editor():
 						clear()
 				elif tag=="Update":
 					update()
-					break
+					
 				elif tag=="Plugins":
 					pluginslist = plugins(False)
 					i=0
@@ -151,18 +152,29 @@ def editor():
 				#Server wakeup settings
 				elif tag == "Server Wakeup":
 					startserver = d.menu("ImaginaryInfinity Calculator Server Wakeup", choices=[("On", "Enable starting server on start"), ("Off", "Disable starting server on start")])
-					if startserver[0] == "On":
-						config["startup"]["startserver"] = "true"
-					else:
-						config["startup"]["startserver"] = "false"
+					if startserver[0] == d.OK:
+						if startserver[1] == "On":
+							config["startup"]["startserver"] = "true"
+						else:
+							config["startup"]["startserver"] = "false"
 
 				#Debug mode settings
 				elif tag == "Debug Mode":
 					debugmode = d.menu("ImaginaryInfinity Calculator Debug Settings", choices=[("On", "Enable debug mode"), ("Off", "Disable debug mode")])
-					if debugmode[0] == "On":
-						config["dev"]["debug"] = "true"
-					else:
-						config["dev"]["debug"] = "false"
+					if debugmode[0] == d.OK:
+						if debugmode[1] == "On":
+							config["dev"]["debug"] = "true"
+						else:
+							config["dev"]["debug"] = "false"
+
+				#Check for updates settings
+				elif tag == "Check for Updates":
+					checkupdates = d.menu("ImaginaryInfinity Calculator Update Checker Settings", choices=[("On", "Enable checking for updates"), ("Off", "Disable checking for updates")])
+					if checkupdates[0] == d.OK:
+						if checkupdates[1] == "On":
+							config["startup"]["checkupdates"] = "true"
+						else:
+							config["startup"]["checkupdates"] = "false"
 
 				#Close settings without modifying config
 				elif tag == "Save and exit":
@@ -179,7 +191,7 @@ def editor():
 			else:
 				clear()
 		#Prompt to restart to apply settings
-		if tag != "Exit without saving":
+		if tag == "Save and exit":
 			restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)
 			if restartbox == "ok":
 				clear()

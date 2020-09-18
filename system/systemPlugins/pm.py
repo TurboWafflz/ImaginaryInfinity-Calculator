@@ -650,5 +650,5 @@ def help():
 	print("pm.search(\"<term>\") - Search the package index")
 	print("pm.info(\"<plugin>\") - Show info about a package")
 	print("pm.upgrade() - Install all available updates")
-	print("pm.remove(\"<plugin>\") - Removes an installed packages")
+	print("pm.remove(\"<plugin>\") - Remove an installed package")
 	print("pm.installFromFile(\"<filename>\") - Install a packages from a local *.icpk file")
