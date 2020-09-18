@@ -85,30 +85,7 @@ def uninstall(filename, plugin):
 #Plugin rating function
 def ratePlugin(plugin):
 	d = Dialog(dialog="dialog")
-	#define data
-	data = {"plugin":plugin, "rating":d.rangebox("Rate " + plugin, height=0, width=0, min=1, max=5, init=5)[1]}
-	#post data to form
-	resp = requests.post("https://turbowafflz.azurewebsites.net/iicalc/plugins/rate", data).status_code
-
-	#Response from server processing
-	if resp == 200:
-		d.msgbox("Your review has been submitted")
-	elif resp == 404:
-		d.msgbox("404 Error. Please open an issue on GitHub.")
-	elif resp == 400:
-		d.msgbox("400 Bad Request. Please open an issue on GitHub with the following debug information:\n" + str(data))
-	elif resp == 403:
-		d.msgbox("403 Forbidden. Please open an issue on GirHub")
-	elif resp == 429:
-		d.msgbox("429 Too Many Requests. You have sent too many requests to the server and are being rate-limited. Please wait before sending another request")
-	elif resp == 450:
-		d.msgbox("Windows Parental Controls have blocked access to the website. Please disable them and try again.")
-	elif resp == 500:
-		d.msgbox("500 Internal Server Error. Please open an issue on GitHub with the following debug information:\n" + str(data))
-	elif resp == 503:
-		d.msgbox("503 Service Unavailable. The server is currently unable to handle the request due to a temporary overload  or maintenance of the server")
-	else:
-		d.msgbox("Error " + str(resp) + ". Please open an issue on GitHub")
+	d.msgbox("Coming soon")
 
 #download plugins
 def download(plugin_name, bulk=False):
