@@ -69,8 +69,6 @@ plugin.
 - `fancyFactor(<number>)` - Shows factor pairs and their sums and differences for
 a number
 
-- `install('<url>')` - Installs a plugin from the web (Linux only)
-
 - `iprt('<module>')` - Installs and imports a python module from PyPi
 
 - `isPrime(<number>)` - Checks whether or not a number is is prime
