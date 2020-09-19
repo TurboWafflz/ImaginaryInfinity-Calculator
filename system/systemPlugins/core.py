@@ -309,18 +309,6 @@ def fancyFactor(num):
 				print("")
 			i=i-1
 
-#Install plugins
-def install(url):
-	print("Installing...")
-	os.system("cd plugins")
-	urllib.request.urlretrieve(url, os.getcwd())
-	yesNo = input("Plugin installed, would you like to restart? (y/N)")
-	if yesNo.lower() == "y":
-		restart()
-	else:
-		#Dont know if this is nessecary
-		os.system("cd ..")
-
 #isPerfect
 def isPerfect(num,printResult=True):
 	factorsSum=sum(factorList(num,False))
