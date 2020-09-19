@@ -333,25 +333,6 @@ def isPerfect(num,printResult=True):
 			print("False")
 		return(False)
 
-#Check if number is prime
-#By TabulateJarl8
-#def isPrime(n):
-#		if (n <= 1):
-#				print("False")
-#				return False
-#		if (n <= 3):
-#				print("False")
-#				return True
-#		if (n % 2 == 0 or n % 3 == 0):
-#				print("False")
-#				return False
-#		i = 5
-#		while(i * i <= n):
-#						print("False")
-#						return False
-#				i = i + 6
-#		print("True")
-#		return True
 
 #isPrime
 def isPrime(num, printResult=True):
@@ -671,7 +652,7 @@ def update():
 				guiUpdate()
 			except ExecutableNotFound as e:
 				from getpass import getpass
-				print("Dialog Execeutable Not Found. (Try 'sudo apt install dialog')")
+				print("Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)")
 				getpass("[Press Enter to use the CLI Updater]")
 				cmdUpdate()
 		elif platform.system() == "Windows":
