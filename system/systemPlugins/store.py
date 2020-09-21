@@ -316,7 +316,7 @@ def store(reload=True):
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
 	#default options
-	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed Plugins", "View Your Installed Plugins"), ("", "")]
+	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed", "View Your Installed Plugins"), ("", "")]
 	#add all plugins to result
 	for key in index.sections():
 		choices.append((key, index[key]["summary"]))
