@@ -69,7 +69,7 @@ sys.path.insert(1, config["paths"]["userPath"])
 #Signals to trigger functions in plugins
 def signal(sig,args=""):
 	try:
-		nonplugins = ["__init__.py", "__pycache__", "core.py"]
+		nonplugins = ["__init__.py", "__pycache__", ".reqs"]
 		for plugin in os.listdir(pluginPath):
 			if not plugin in nonplugins:
 				plugin = plugin[:-3]
