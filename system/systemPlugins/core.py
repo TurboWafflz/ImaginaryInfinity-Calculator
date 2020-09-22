@@ -352,7 +352,7 @@ def toStd(value, roundVal=None, printResult=True):
 	if roundVal is None:
 		roundVal = len(nums)
 		if negative:
-			roundVal += enot
+			roundVal += abs(enot)
 	if printResult:
 		print(("{:." + str(roundVal) + "f}").format(float(value)))
 	else:
