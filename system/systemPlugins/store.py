@@ -332,7 +332,7 @@ def store(reload=True):
 			updateMenu()
 		elif mainmenu[1] == "":
 			pass
-		elif mainmenu[1] == "Installed Plugins":
+		elif mainmenu[1] == "Installed":
 			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
