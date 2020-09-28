@@ -178,6 +178,7 @@ def chelp():
 	print("factor(<number>) - Shows factor pairs for a number")
 	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
 	print("isPrime(<number>) - Checks whether or not a number is prime")
+	print("toStd(\"<value>\", [roundVal], [printResult]) - Convert e notation number to standard notation")
 	if(platform.system()=="Linux"):
 		print("readme() - Shows the README file (Online/Linux only)")
 	print("sh('<command>') - Run a command directly on your computer")
@@ -370,6 +371,28 @@ def isPrime(num, printResult=True):
 			print("False")
 		return(False)
 
+def toStd(value, roundVal=None, printResult=True):
+	value = str(value).lower()
+	try:
+		nums = list(re.findall("[0-9]+?(?=e)", value)[0])
+	except IndexError:
+		print("Not in e notation.")
+		return
+	enotlist = re.findall("[^e]*$", value)[0]
+	enot = ""
+	negative = True if "-" in enotlist else False
+	for i in range(len(enotlist)):
+		enot += enotlist[i]
+	enot = int(enot)
+	if roundVal is None:
+		roundVal = len(nums)
+		if negative:
+			roundVal += enot
+	if printResult:
+		print(("{:." + str(roundVal) + "f}").format(float(value)))
+	else:
+		return ("{:." + str(roundVal) + "f}").format(float(value))
+
 #List Plugins
 def plugins(printval=True, hidedisabled=False):
 	plugins = os.listdir(config["paths"]["userPath"] + "/plugins/")
@@ -384,6 +407,10 @@ def plugins(printval=True, hidedisabled=False):
 		pass
 	try:
 		plugins.remove("__init__.py")
+	except ValueError:
+		pass
+	try:
+		plugins.remove(".reqs")
 	except ValueError:
 		pass
 	i = 0
@@ -480,9 +507,10 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		os.chdir(themes)
 		files = os.listdir(".")
 		for file in files:
-			source = os.path.join(themes, file)
-			dest = os.path.join(parent, tempThemeDir)
-			shutil.move(source, dest)
+			if not file == ".placeholder":
+				source = os.path.join(themes, file)
+				dest = os.path.join(parent, tempThemeDir)
+				shutil.move(source, dest)
 	if gui == True:
 		d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
 
