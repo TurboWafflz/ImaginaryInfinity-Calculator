@@ -626,7 +626,7 @@ def guiUpdate(theme=theme, config=config):
 		return
 
 def update():
-	if config["installation"]["installtype"] == "deb":
+	if config["installation"]["installtype"] == "debian":
 		#Download
 		with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
 			f.write(requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager").content)
