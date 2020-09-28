@@ -434,7 +434,7 @@ def upgrade():
 		#Make sure plugin's file exists
 		if os.path.exists(location + "/" + installed[plugin]["filename"]):
 			#Check plugin against hash
-			if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+			if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"] and not float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
 				print("Hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
 				print("Expected: " + index[plugin]["hash"])
 				installed[plugin]["verified"] = "false"
