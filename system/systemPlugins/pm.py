@@ -96,11 +96,6 @@ def update(silent=False, theme=theme):
 			installedFile.close()
 			installed = configparser.ConfigParser()
 			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-	#Set verified to none if it is not set in installed list
-	try:
-		verified = installed[plugin]["verified"]
-	except:
-		verified = "none"
 	updates = 0
 	reinstall = 0
 	#Iterate through installed plugins
@@ -118,15 +113,15 @@ def update(silent=False, theme=theme):
 			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]) and not silent:
 				updates = updates + 1
 				print("\nAn update is available for " + plugin)
-			#Verify plugin against the hash stored in the index
-		elif not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-			installed[plugin]["verified"] = "false"
-			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-				installed.write(f)
-			#Warn if plugin is marked as damaged
-			if installed[plugin]["verified"] != "true" and not silent:
-				reinstall = reinstall + 1
-				print("\n" + plugin + " is damaged and should be reinstalled")
+				#Verify plugin against the hash stored in the index
+			elif not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+				installed[plugin]["verified"] = "false"
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
+				#Warn if plugin is marked as damaged
+				if installed[plugin]["verified"] != "true" and not silent:
+					reinstall = reinstall + 1
+					print("\n" + plugin + " is damaged and should be reinstalled")
 		#Plugin missing, mark as unverified
 		else:
 			print("File not found: " + location +  "/" + installed[plugin]["filename"])
@@ -434,9 +429,7 @@ def upgrade():
 		#Make sure plugin's file exists
 		if os.path.exists(location + "/" + installed[plugin]["filename"]):
 			#Check plugin against hash
-			if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"] and not float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
-				print("Hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
-				print("Expected: " + index[plugin]["hash"])
+			if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
 				installed[plugin]["verified"] = "false"
 				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
