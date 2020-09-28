@@ -155,7 +155,7 @@ def install(plugin):
 	except:
 		print("Could not find package list, maybe run pm.update()")
 	#Load installed list if available
-	print(config.sections())
+	#print(config.sections())
 	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
 		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
