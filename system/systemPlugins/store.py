@@ -174,16 +174,16 @@ def pluginpage(plugin, cache=None):
 	if os.path.isfile(index[plugin]["type"] + "/" + index[plugin]["filename"]):
 		try:
 			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
-				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
-			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back"))
+			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
-		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
 
 	#processing to tell what to do when buttons are pressed
