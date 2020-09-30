@@ -336,19 +336,6 @@ def isPrime(num, printResult=True):
 			print("False")
 		return(False)
 
-def chi2(o,e):
-	if len(o) != len(e):
-		print("Number of observed values is not equal to number of expected values.")
-		return
-	diff2s = []
-	for i in range(len(e)):
-		print("\nObservation:" + str(o[i]))
-		print("Difference: " + str(o[i]-e[i]))
-		print("Difference^2: " + str((o[i]-e[i])**2))
-		print("Difference^2/Expected: " + str(((o[i]-e[i])**2)/e[i]))
-		diff2s.append(((o[i]-e[i])**2)/e[i])
-	print(sum(diff2s))
-
 def toStd(value, roundVal=None, printResult=True):
 	value = str(value).lower()
 	try:
