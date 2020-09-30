@@ -76,6 +76,8 @@ a number
 - `isPerfect(<number>)` - Checks whether or not a number's factors add up to twice the
 starting number
 
+- `chi2(<observedList>, <expectedList>)` - Takes 2 lists of observed and expected values and calculates the chi square
+
 - `restart()` - Restarts iiCalc
 
 - `sh('<command>')` - Runs a command directly on your computer
