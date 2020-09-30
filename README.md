@@ -116,7 +116,9 @@ starting number
 - themes
 
 #### Submitting a plugin
-You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth)
+You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth). The plugin must fit the guidelines which can be found [here](placeholder). Violating these guidelines may result in your plugins being removed and a permanent ban from submitting plugins. 
+
+**Disclaimer:** Even though we try to filter out malware, we cannot catch everything. We are not responsible for any damage caused by using user-created content. By using ImaginaryInfinity Calculator or any of it's services, you agree that no contributers to ImaginaryInfinity Calculator are responsible for any harm or damage caused by the usage of user-created content.
 
 <hr style="border: 1px solid white">
 
