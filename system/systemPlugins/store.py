@@ -7,6 +7,7 @@ from systemPlugins.core import clear, config
 from systemPlugins import pm
 import sys
 import subprocess
+import re
 
 builtin=True
 
@@ -264,11 +265,17 @@ def search(bypass=False, choices=[]):
 				if not " " in x[1].strip():
 					#only searching for type
 					for key in index.sections():
-						if index[key]["type"] == x[1].strip()[5:]:
+						if index[key]["type"] == re.sub("theme(?!s)", "themes", re.sub("plugin(?!s)", "plugins", x[1].strip()[5:])):
 							choices.append((key, index[key]["summary"]))
 				else:
-					query = x[1].replace("type:", "").split(" ", 1)[1]
-					type = x[1].replace("type:", "").split(" ", 1)[0]
+					#Get index of type in search
+					splitSearch = x[1].split(" ")
+					parsedSearch = list(filter(lambda i: "type:" in splitSearch[i], range(len(splitSearch))))
+					type = re.sub("theme(?!s)", "themes", re.sub("plugin(?!s)", "plugins", splitSearch[parsedSearch[0]].replace("type:", "")))
+					splitSearch.pop(parsedSearch[0])
+					query = " ".join(splitSearch)
+					# query = x[1].replace("type:", "").split(" ", 1)[1]
+					# type = x[1].replace("type:", "").split(" ", 1)[0]
 					#searching for type with query
 					choices = []
 					for key in index.sections():

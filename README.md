@@ -112,10 +112,10 @@ starting number
 
 - `store.store()` - Runs the GUI version of the plugin store
 
-**Note:** In the GUI search box, you can specify `type:<type>` at the beginning of the query to search for types of plugins. You can add a subquery by specifying it after the type. Example: `type:plugins discord` to search for only plugins with the keyword of discord. Types of plugins include:
+**Note:** In the GUI search box, you can specify `type:<type>` anywhere in the query to search for types of plugins. You can add a subquery by specifying it after the type. Example: `type:plugins discord` to search for only plugins with the keyword of discord or `light type:theme` to search for only themes with the keyword of light. Types of plugins include:
 
-- plugins
-- themes
+- plugin(s)
+- theme(s)
 
 #### Submitting a plugin
 You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth). The plugin must fit the guidelines which can be found [here](guidelines.md). Violating these guidelines may result in your plugins being removed and a permanent ban from submitting plugins.
