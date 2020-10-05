@@ -24,6 +24,7 @@ import configparser
 import subprocess
 from threading import Thread
 from packaging import version
+from sympy import S
 
 #Make sure math is real and Python is not completely insane
 if not 1 == 1:
@@ -352,9 +353,14 @@ def main(config=config, warmupThread=warmupThread):
 				oldcalc=calc
 				#Evaluate command
 				try:
-					ans=eval(str(eqn))
-				except KeyboardInterrupt:
-					ans=None
+					ans = S(eqn)
+					if "." in str(ans):
+						ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
+				except:
+					try:
+						ans=eval(str(eqn))
+					except KeyboardInterrupt:
+						ans=None
 			except Exception as e:
 				try:
 					#Exec if eval failed
