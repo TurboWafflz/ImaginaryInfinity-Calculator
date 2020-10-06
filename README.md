@@ -69,8 +69,6 @@ plugin.
 - `fancyFactor(<number>)` - Shows factor pairs and their sums and differences for
 a number
 
-- `install('<url>')` - Installs a plugin from the web (Linux only)
-
 - `iprt('<module>')` - Installs and imports a python module from PyPi
 
 - `isPrime(<number>)` - Checks whether or not a number is is prime
@@ -79,6 +77,8 @@ a number
 starting number
 
 - `restart()` - Restarts iiCalc
+
+- `clear()` or `clear` - Clears the screen
 
 - `sh('<command>')` - Runs a command directly on your computer
 
@@ -112,13 +112,15 @@ starting number
 
 - `store.store()` - Runs the GUI version of the plugin store
 
-**Note:** In the GUI search box, you can specify `type:<type>` at the beginning of the query to search for types of plugins. You can add a subquery by specifying it after the type. Example: `type:plugins discord` to search for only plugins with the keyword of discord. Types of plugins include:
+**Note:** In the GUI search box, you can specify `type:<type>` anywhere in the query to search for types of plugins. You can add a subquery by specifying it after the type. Example: `type:plugins discord` to search for only plugins with the keyword of discord or `light type:theme` to search for only themes with the keyword of light. Types of plugins include:
 
-- plugins
-- themes
+- plugin(s)
+- theme(s)
 
 #### Submitting a plugin
-You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth)
+You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth). The plugin must fit the guidelines which can be found [here](guidelines.md). Violating these guidelines may result in your plugins being removed and a permanent ban from submitting plugins.
+
+**Disclaimer:** Even though we try to filter out malware, we cannot catch everything. We are not responsible for any damage caused by using user-created content. By using ImaginaryInfinity Calculator or any of it's services, you agree that no contributers to ImaginaryInfinity Calculator are responsible for any harm or damage caused by the usage of user-created content.
 
 <hr style="border: 1px solid white">
 
