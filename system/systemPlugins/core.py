@@ -18,6 +18,7 @@ import time
 from shutil import copytree, rmtree, copy
 import configparser
 import re
+
 #Import dialog if on a supported OS
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 	from dialog import Dialog, ExecutableNotFound
@@ -308,23 +309,6 @@ def fancyFactor(num):
 				print("")
 			i=i-1
 
-#Install plugins
-def install(url):
-	print("Installing...")
-	os.system("cd plugins")
-	urllib.request.urlretrieve(url, os.getcwd())
-	yesNo = input("Plugin installed, would you like to restart? (y/N)")
-	if yesNo.lower() == "y":
-		restart()
-	else:
-		#Dont know if this is nessecary
-		os.system("cd ..")
-
-#Import/install
-def iprt(lib):
-	os.system("pip3 install " + lib)
-	import lib
-
 #isPerfect
 def isPerfect(num,printResult=True):
 	factorsSum=sum(factorList(num,False))
@@ -337,25 +321,6 @@ def isPerfect(num,printResult=True):
 			print("False")
 		return(False)
 
-#Check if number is prime
-#By TabulateJarl8
-#def isPrime(n):
-#		if (n <= 1):
-#				print("False")
-#				return False
-#		if (n <= 3):
-#				print("False")
-#				return True
-#		if (n % 2 == 0 or n % 3 == 0):
-#				print("False")
-#				return False
-#		i = 5
-#		while(i * i <= n):
-#						print("False")
-#						return False
-#				i = i + 6
-#		print("True")
-#		return True
 
 #isPrime
 def isPrime(num, printResult=True):
@@ -387,7 +352,7 @@ def toStd(value, roundVal=None, printResult=True):
 	if roundVal is None:
 		roundVal = len(nums)
 		if negative:
-			roundVal += enot
+			roundVal += abs(enot)
 	if printResult:
 		print(("{:." + str(roundVal) + "f}").format(float(value)))
 	else:
@@ -661,7 +626,7 @@ def guiUpdate(theme=theme, config=config):
 		return
 
 def update():
-	if config["installation"]["installtype"] == "deb":
+	if config["installation"]["installtype"] == "debian":
 		#Download
 		with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
 			f.write(requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager").content)
@@ -675,7 +640,7 @@ def update():
 				guiUpdate()
 			except ExecutableNotFound as e:
 				from getpass import getpass
-				print("Dialog Execeutable Not Found. (Try 'sudo apt install dialog')")
+				print("Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)")
 				getpass("[Press Enter to use the CLI Updater]")
 				cmdUpdate()
 		elif platform.system() == "Windows":

@@ -7,6 +7,7 @@ from systemPlugins.core import clear, config
 from systemPlugins import pm
 import sys
 import subprocess
+import re
 
 builtin=True
 
@@ -85,30 +86,7 @@ def uninstall(filename, plugin):
 #Plugin rating function
 def ratePlugin(plugin):
 	d = Dialog(dialog="dialog")
-	#define data
-	data = {"plugin":plugin, "rating":d.rangebox("Rate " + plugin, height=0, width=0, min=1, max=5, init=5)[1]}
-	#post data to form
-	resp = requests.post("https://turbowafflz.azurewebsites.net/iicalc/plugins/rate", data).status_code
-
-	#Response from server processing
-	if resp == 200:
-		d.msgbox("Your review has been submitted")
-	elif resp == 404:
-		d.msgbox("404 Error. Please open an issue on GitHub.")
-	elif resp == 400:
-		d.msgbox("400 Bad Request. Please open an issue on GitHub with the following debug information:\n" + str(data))
-	elif resp == 403:
-		d.msgbox("403 Forbidden. Please open an issue on GirHub")
-	elif resp == 429:
-		d.msgbox("429 Too Many Requests. You have sent too many requests to the server and are being rate-limited. Please wait before sending another request")
-	elif resp == 450:
-		d.msgbox("Windows Parental Controls have blocked access to the website. Please disable them and try again.")
-	elif resp == 500:
-		d.msgbox("500 Internal Server Error. Please open an issue on GitHub with the following debug information:\n" + str(data))
-	elif resp == 503:
-		d.msgbox("503 Service Unavailable. The server is currently unable to handle the request due to a temporary overload  or maintenance of the server")
-	else:
-		d.msgbox("Error " + str(resp) + ". Please open an issue on GitHub")
+	d.msgbox("Coming soon")
 
 #download plugins
 def download(plugin_name, bulk=False):
@@ -197,16 +175,16 @@ def pluginpage(plugin, cache=None):
 	if os.path.isfile(index[plugin]["type"] + "/" + index[plugin]["filename"]):
 		try:
 			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
-				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
+				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				 x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
 				 x.append("update")
 		except KeyError:
-			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back"))
+			x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
 	else:
-		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"] + "\nScreened: " + index[plugin]["approved"], height=0, width=0, no_label="Back", cancel_label="Back"))
+		x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
 		x.append("download")
 
 	#processing to tell what to do when buttons are pressed
@@ -287,11 +265,17 @@ def search(bypass=False, choices=[]):
 				if not " " in x[1].strip():
 					#only searching for type
 					for key in index.sections():
-						if index[key]["type"] == x[1].strip()[5:]:
+						if index[key]["type"] == re.sub("theme(?!s)", "themes", re.sub("plugin(?!s)", "plugins", x[1].strip()[5:])):
 							choices.append((key, index[key]["summary"]))
 				else:
-					query = x[1].replace("type:", "").split(" ", 1)[1]
-					type = x[1].replace("type:", "").split(" ", 1)[0]
+					#Get index of type in search
+					splitSearch = x[1].split(" ")
+					parsedSearch = list(filter(lambda i: "type:" in splitSearch[i], range(len(splitSearch))))
+					type = re.sub("theme(?!s)", "themes", re.sub("plugin(?!s)", "plugins", splitSearch[parsedSearch[0]].replace("type:", "")))
+					splitSearch.pop(parsedSearch[0])
+					query = " ".join(splitSearch)
+					# query = x[1].replace("type:", "").split(" ", 1)[1]
+					# type = x[1].replace("type:", "").split(" ", 1)[0]
 					#searching for type with query
 					choices = []
 					for key in index.sections():
@@ -339,7 +323,7 @@ def store(reload=True):
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
 	#default options
-	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed Plugins", "View Your Installed Plugins"), ("", "")]
+	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed", "View Your Installed Plugins"), ("", "")]
 	#add all plugins to result
 	for key in index.sections():
 		choices.append((key, index[key]["summary"]))
@@ -355,7 +339,7 @@ def store(reload=True):
 			updateMenu()
 		elif mainmenu[1] == "":
 			pass
-		elif mainmenu[1] == "Installed Plugins":
+		elif mainmenu[1] == "Installed":
 			pluginmenu()
 		else:
 			pluginpage(mainmenu[1])
