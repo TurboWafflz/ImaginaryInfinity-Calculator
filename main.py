@@ -352,15 +352,21 @@ def main(config=config, warmupThread=warmupThread):
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
 				#Evaluate command
-				try:
-					ans = S(eqn)
-					if "." in str(ans):
-						ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
-				except:
+				if len(re.findall("[a-zA-Z]+\([^\)]*\)(\.[^\)]*\))?", eqn)) >= 1 or len(re.findall("^[a-zA-Z]*$", eqn)) >= 1 or len(re.findall("^[a-zA-Z]+[0-9]*\s*={1,2}\s*", eqn)) >= 1:
 					try:
 						ans=eval(str(eqn))
 					except KeyboardInterrupt:
 						ans=None
+				else:
+					try:
+						ans = S(eqn)
+						if "." in str(ans):
+							ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
+					except:
+						try:
+							ans=eval(str(eqn))
+						except KeyboardInterrupt:
+							ans=None
 			except Exception as e:
 				try:
 					#Exec if eval failed
