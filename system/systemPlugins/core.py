@@ -666,7 +666,7 @@ def update():
 		with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
 			f.write(requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager").content)
 		#Update
-		os.system("apt install " + os.path.join(config["paths"]["userpath"], "/iicalc.deb"))
+		os.system("sudo apt install " + os.path.join(config["paths"]["userpath"], "/iicalc.deb"))
 	elif config["installation"]["installtype"] == "AppImage":
 		print("Please download the latest AppImage here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
 	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
