@@ -352,11 +352,20 @@ def main(config=config, warmupThread=warmupThread):
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
 				#Evaluate command
-				try:
-					ans = S(eqn)
-					if "." in str(ans):
-						ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
-				except:
+				#Test if eqn contains floating point number and is not a function
+				if len(re.findall("[a-zA-Z]+\([^\)]*\)(\.[^\)]*\))?", eqn)) == 0 and len(re.findall("[0-9]\.[0-9]", eqn)) >= 1:
+					#Is an equation
+					try:
+						ans = S(eqn)
+						if "." in str(ans):
+							ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
+					except:
+						try:
+							ans=eval(str(eqn))
+						except KeyboardInterrupt:
+							ans=None
+				else:
+					#Isn't an equation
 					try:
 						ans=eval(str(eqn))
 					except KeyboardInterrupt:
