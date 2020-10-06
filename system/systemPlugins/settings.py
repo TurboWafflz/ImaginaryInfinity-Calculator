@@ -67,7 +67,7 @@ def editor():
 				except Exception as e:
 					pass
 					#print(e); import traceback; traceback.print_exc(); import sys; sys.exit(0)
-			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving your changes")]
+			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving changes")]
 			#Display menu
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
 								choices=choices, width=0, height=0)
@@ -118,7 +118,7 @@ def editor():
 						clear()
 				elif tag=="Update":
 					update()
-					
+
 				elif tag=="Plugins":
 					pluginslist = plugins(False)
 					i=0
