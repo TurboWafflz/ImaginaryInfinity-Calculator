@@ -644,7 +644,7 @@ def update():
 				getpass("[Press Enter to use the CLI Updater]")
 				cmdUpdate()
 		elif platform.system() == "Windows":
-			print("Windows does not support the update wizard")
+			print("The update wizard does not support Windows. Do not start an issue as this is a problem with Windows and not a problem with iicalc.")
 		else:
 			cmdUpdate()
 	else:
