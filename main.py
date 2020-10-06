@@ -24,6 +24,7 @@ import configparser
 import subprocess
 from threading import Thread
 from packaging import version
+from sympy import S
 
 #Make sure math is real and Python is not completely insane
 if not 1 == 1:
@@ -69,7 +70,7 @@ sys.path.insert(1, config["paths"]["userPath"])
 #Signals to trigger functions in plugins
 def signal(sig,args=""):
 	try:
-		nonplugins = ["__init__.py", "__pycache__", "core.py"]
+		nonplugins = ["__init__.py", "__pycache__", ".reqs"]
 		for plugin in os.listdir(pluginPath):
 			if not plugin in nonplugins:
 				plugin = plugin[:-3]
@@ -217,6 +218,12 @@ if hasInternet() and config["startup"]["checkupdates"] == "true":
 		print("Cancelled")
 else:
 	upToDate = True
+
+#Import/install
+def iprt(lib):
+	os.system("pip3 install " + lib)
+	globals()[lib] = __import__(lib)
+
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
 	# if config["startup"]["firststart"] == "true":
@@ -346,9 +353,14 @@ def main(config=config, warmupThread=warmupThread):
 				oldcalc=calc
 				#Evaluate command
 				try:
-					ans=eval(str(eqn))
-				except KeyboardInterrupt:
-					ans=None
+					ans = S(eqn)
+					if "." in str(ans):
+						ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
+				except:
+					try:
+						ans=eval(str(eqn))
+					except KeyboardInterrupt:
+						ans=None
 			except Exception as e:
 				try:
 					#Exec if eval failed
