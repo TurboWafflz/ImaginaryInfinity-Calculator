@@ -352,6 +352,7 @@ def main(config=config, warmupThread=warmupThread):
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
 				#Evaluate command
+				#Test for functions, settings/testing variables, or calling variables
 				if len(re.findall("[a-zA-Z]+\([^\)]*\)(\.[^\)]*\))?", eqn)) >= 1 or len(re.findall("^[a-zA-Z]*$", eqn)) >= 1 or len(re.findall("^[a-zA-Z]+[0-9]*\s*={1,2}\s*", eqn)) >= 1:
 					try:
 						ans=eval(str(eqn))
