@@ -296,12 +296,6 @@ def main(config=config, warmupThread=warmupThread):
 			with open(config["appearance"]["messageFile"]) as messagesFile:
 				messages=messagesFile.readlines()
 				msg = messages[randint(0,len(messages)-1)]
-				if msg == "[debt]":
-					if hasInternet():
-						msg = getDebt()
-					else:
-						while msg == "[debt]":
-							msg = messages[randint(0,len(messages)-1)]
 				print(theme["styles"]["startupmessage"] + msg + theme["styles"]["normal"])
 		except:
 			print("Could not find messages file")
