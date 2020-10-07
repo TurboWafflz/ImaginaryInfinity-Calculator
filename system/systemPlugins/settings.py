@@ -3,6 +3,12 @@ import sys
 from systemPlugins.core import *
 import platform
 from plugins import *
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", "-c", type=str, help="Optional config file")
+args = parser.parse_args()
+
 builtin=True
 #Modify Configuration file
 def configMod(section, key, value, config=config):
@@ -27,26 +33,37 @@ def signal(sig,config,args=""):
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
-		#Load config
-		try:
-			home = os.path.expanduser("~")
-			print("Loading config...")
-			config = configparser.ConfigParser()
-			config.read(home + "/.iicalc/config.ini")
-			config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-			configPath = home + "/.iicalc/config.ini"
-			with open(configPath, "w") as configFile:
-				config.write(configFile)
-				configFile.close()
-		except:
-			try:
-				print("Loading portable config...")
+		#Check if config manually specified
+		if args.config != None:
+			if os.path.isfile(args.config):
 				config = configparser.ConfigParser()
-				config.read("config.ini")
-				configPath = "config.ini"
-			except:
-				print("Fatal error: Cannot load config")
+				config.read(args.config)
+				configPath = args.config
+			else:
+				print("Invalid config file location specified: " + args.config)
 				exit()
+		else:
+			#Load config from ~/.iicalc
+			try:
+				home = os.path.expanduser("~")
+				print("Loading config...")
+				config = configparser.ConfigParser()
+				config.read(home + "/.iicalc/config.ini")
+				config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+				configPath = home + "/.iicalc/config.ini"
+				with open(configPath, "w") as configFile:
+					config.write(configFile)
+					configFile.close()
+			#Load config from current directory
+			except:
+				try:
+					print("Loading portable config...")
+					config = configparser.ConfigParser()
+					config.read("config.ini")
+					configPath = "config.ini"
+				except:
+					print("Fatal error: Cannot load config")
+					exit()
 		d = Dialog(dialog="dialog")
 		while True:
 			#Define menu options
