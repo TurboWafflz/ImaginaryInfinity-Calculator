@@ -25,6 +25,11 @@ import subprocess
 from threading import Thread
 from packaging import version
 from sympy import S
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", "-c", type=str, help="Optional config file")
+args = parser.parse_args()
 
 #Make sure math is real and Python is not completely insane
 if not 1 == 1:
@@ -44,26 +49,31 @@ def pingServer():
 		pass
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
-#Load config from ~/.iicalc
-try:
-	home = os.path.expanduser("~")
-	print("Loading config...")
+#Check if config manually specified
+if args.config != None:
 	config = configparser.ConfigParser()
-	config.read(home + "/.iicalc/config.ini")
-	config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-	configPath = home + "/.iicalc/config.ini"
-	with open(configPath, "w") as configFile:
-		config.write(configFile)
-		configFile.close()
-#Load config from current directory
-except:
+	config.read(args.config)
+else:
+	#Load config from ~/.iicalc
 	try:
-		print("Loading portable config...")
+		home = os.path.expanduser("~")
+		print("Loading config...")
 		config = configparser.ConfigParser()
-		config.read("config.ini")
+		config.read(home + "/.iicalc/config.ini")
+		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+		configPath = home + "/.iicalc/config.ini"
+		with open(configPath, "w") as configFile:
+			config.write(configFile)
+			configFile.close()
+	#Load config from current directory
 	except:
-		print("Fatal error: Cannot load config")
-		exit()
+		try:
+			print("Loading portable config...")
+			config = configparser.ConfigParser()
+			config.read("config.ini")
+		except:
+			print("Fatal error: Cannot load config")
+			exit()
 pluginPath=config["paths"]["userPath"] + "/plugins/"
 #Add system path to path to load built in plugins
 sys.path.insert(1, config["paths"]["userPath"])
@@ -247,7 +257,7 @@ def main(config=config, warmupThread=warmupThread):
 	oldcalc=" "
 	try:
 		global debugMode
-		if(len(sys.argv)>1):
+		try:
 			if(sys.argv[1]=="online"):
 				signal("onOnlineStart")
 				import readline
@@ -256,8 +266,10 @@ def main(config=config, warmupThread=warmupThread):
 				print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
 				if os.path.isfile('.development'):
 					print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
-		else:
-			#Snend signal and clear screen for different OSs
+			else:
+				raise ValueError
+		except:
+			#Send signal and clear screen for different OSs
 			if(platform.system()=="Linux"):
 				signal("onLinuxStart")
 				os.system("clear")
