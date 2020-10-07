@@ -225,7 +225,7 @@ if hasInternet() and config["startup"]["checkupdates"] == "true":
 		else:
 			versionnum = versionnum.text
 			with open(config["paths"]["systemPath"] + "/version.txt") as f:
-				if version.parse(versionnum) > version.parse(f.read()):
+				if version.parse(versionnum) > version.parse(f.read().rstrip("\n")):
 					upToDate = False
 				else:
 					upToDate = True
