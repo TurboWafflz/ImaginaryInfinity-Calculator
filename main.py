@@ -51,8 +51,13 @@ print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 #Check if config manually specified
 if args.config != None:
-	config = configparser.ConfigParser()
-	config.read(args.config)
+	if os.path.isfile(args.config):
+		config = configparser.ConfigParser()
+		config.read(args.config)
+		configPath = args.config
+	else:
+		print("Invalid config file location specified: " + args.config)
+		exit()
 else:
 	#Load config from ~/.iicalc
 	try:
@@ -71,6 +76,7 @@ else:
 			print("Loading portable config...")
 			config = configparser.ConfigParser()
 			config.read("config.ini")
+			configPath = "config.ini"
 		except:
 			print("Fatal error: Cannot load config")
 			exit()
