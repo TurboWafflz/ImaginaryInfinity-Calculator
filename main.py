@@ -218,7 +218,7 @@ def hasInternet():
 if hasInternet() and config["startup"]["checkupdates"] == "true":
 	try:
 		print("Checking for update... (Press Ctrl + C to cancel)")
-		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt")
+		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt", timeout=5)
 		if versionnum.status_code == 404:
 			print("Not on branch with version.txt")
 			upToDate = True
@@ -232,6 +232,9 @@ if hasInternet() and config["startup"]["checkupdates"] == "true":
 	except KeyboardInterrupt:
 		upToDate = True
 		print("Cancelled")
+	except requests.exceptions.ConnectTimeout:
+		print("Connection timed out")
+		upToDate = True
 else:
 	upToDate = True
 
