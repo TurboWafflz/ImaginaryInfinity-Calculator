@@ -302,7 +302,7 @@ def main(config=config, warmupThread=warmupThread):
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
 		#Display start up stuff
-		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read())
+		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read().rstrip("\n"))
 		if not upToDate:
 			print(Fore.WHITE + Back.MAGENTA + "Update available!")
 		print(theme["styles"]["normal"] + "Copyright 2020 Finian Wright")
