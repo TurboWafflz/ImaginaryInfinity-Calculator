@@ -19,6 +19,7 @@ from shutil import copytree, rmtree, copy
 import configparser
 import re
 import argparse
+from packaging import version
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
@@ -628,7 +629,25 @@ def cmdUpdate(theme=theme, config=config):
 		doUpdate(branch)
 
 def guiUpdate(theme=theme, config=config):
-	d = Dialog(dialog="dialog").yesno("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch.")
+	try:
+		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt", timeout=10)
+		if versionnum.status_code == 404:
+			print("Not on branch with version.txt")
+			return
+		else:
+			versionnum = versionnum.text
+			with open(config["paths"]["systemPath"] + "/version.txt") as f:
+				if version.parse(versionnum) > version.parse(f.read().rstrip("\n")):
+					upToDate = "Would you like to update?"
+				else:
+					upToDate = "You are currently up to date.\n\nWould you like to redownload the current version?"
+	except KeyboardInterrupt:
+		print("Cancelled")
+		return
+	except requests.exceptions.ConnectTimeout:
+		print("Connection timed out")
+		return
+	d = Dialog(dialog="dialog").yesno(upToDate + " You are currently on the " + config["updates"]["branch"] + " branch.", width="0", height="0")
 	if d == "ok":
 		branch = "master"
 		try:
