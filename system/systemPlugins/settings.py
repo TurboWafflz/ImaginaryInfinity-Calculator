@@ -87,12 +87,13 @@ def editor():
 			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving changes")]
 			#Display menu
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
-								choices=choices, width=0, height=0)
+								choices=choices, width=0, height=0, cancel_label="Quit")
 			if code == d.OK:
 				clear()
 				#Theme settings
 				if tag == "Theme":
 					themeFiles = os.listdir(config["paths"]["userPath"] + "/themes/") + os.listdir(config["paths"]["systemPath"] + "/themes/")
+					themeFiles.remove(".placeholder")
 					if len(themeFiles) == 0:
 						d.msgbox("No themes installed")
 						pass
@@ -113,6 +114,7 @@ def editor():
 											choices=choices, width=0, height=0)
 						if tcode == d.OK:
 							themeFiles = os.listdir(config["paths"]["userPath"] + "/themes/") + os.listdir(config["paths"]["systemPath"] + "/themes/")
+							themeFiles.remove(".placeholder")
 							for themeFile in themeFiles:
 								themeInfo = configparser.ConfigParser()
 								if os.path.exists(config["paths"]["userPath"] + "/themes/" + themeFile):
@@ -206,7 +208,12 @@ def editor():
 					config = signal("settingsPopup", config, "\"" + tag + "\"")
 
 			else:
-				clear()
+				code = d.yesno("Save changes?", width=0, height=0)
+				if code == d.OK:
+					tag = "Save and exit"
+				else:
+					tag = ""
+				break
 		#Prompt to restart to apply settings
 		if tag == "Save and exit":
 			restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)
