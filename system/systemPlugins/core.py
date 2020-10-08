@@ -647,7 +647,7 @@ def guiUpdate(theme=theme, config=config):
 	except requests.exceptions.ConnectTimeout:
 		print("Connection timed out")
 		return
-	d = Dialog(dialog="dialog").yesno(upToDate + " You are currently on the " + config["updates"]["branch"] + " branch.", width="0", height="0")
+	d = Dialog(dialog="dialog").yesno(upToDate + " You are currently on the " + config["updates"]["branch"] + " branch.", width=0, height=0)
 	if d == "ok":
 		branch = "master"
 		try:
