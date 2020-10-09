@@ -208,7 +208,7 @@ def editor():
 					config = signal("settingsPopup", config, "\"" + tag + "\"")
 
 			else:
-				code = d.yesno("Save changes?", width=0, height=0)
+				code = d.yesno("Save changes?")
 				if code == d.OK:
 					tag = "Save and exit"
 				else:
