@@ -54,21 +54,21 @@ elif [ "$1" == "--make-appImage" ]
 #Install for Android
 elif [ $(echo $PREFIX | grep -o "com.termux") != "0" ]
 then
-    echo "The installer has detected that you are using Android, is this correct? (Y/n)"
-    read yn
-    if [ "$yn" == "n" ]
-    then
-        exit
-    fi
-    systemPath="/data/data/com.termux/files/usr/share/iicalc"
-    binPath="/data/data/com.termux/files/usr/bin/"
-    config=".installer/configDefaults/android.ini"
-    launcher=".installer/launchers/android.sh"
-    iconPath="/dev/null"
-    desktopFilePath="/dev/null"
-    desktopFile=".installer/desktopFiles/iicalc.desktop"
-    installDesktopFile="false"
-    pythonCommand="python3"
+	echo "The installer has detected that you are using Android, is this correct? (Y/n)"
+	read yn
+	if [ "$yn" == "n" ]
+	then
+		exit
+	fi
+	systemPath="/data/data/com.termux/files/usr/share/iicalc"
+	binPath="/data/data/com.termux/files/usr/bin/"
+	config=".installer/configDefaults/android.ini"
+	launcher=".installer/launchers/android.sh"
+	iconPath="/dev/null"
+	desktopFilePath="/dev/null"
+	desktopFile=".installer/desktopFiles/iicalc.desktop"
+	installDesktopFile="false"
+	pythonCommand="python3"
 
 #Install for Linux
 elif [ `uname` == "Linux" ]
@@ -148,8 +148,8 @@ cp -v $launcher "$binPath/iicalc"
 if [ $installDesktopFile == "true" ]
 then
 	cp -r $desktopFile $desktopFilePath
-        echo "Installing icons..."
-        cp iicalc.tiff "$iconPath"
+	echo "Installing icons..."
+	cp iicalc.tiff "$iconPath"
 fi
 #Warn about missing Python if installing
 if [ "$buildOnly" != "true" ]
@@ -160,7 +160,7 @@ then
 		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3"
 		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add python3"
 		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python"
-                echo "On Android based operating systems (Termux) run: pkg install python"
+		echo "On Android based operating systems (In Termux) run: pkg install python"
 	fi
 fi
 #Copy files
