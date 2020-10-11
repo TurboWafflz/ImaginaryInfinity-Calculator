@@ -68,7 +68,7 @@ then
     desktopFilePath="/dev/null"
     desktopFile=".installer/desktopFiles/iicalc.desktop"
     installDesktopFile="false"
-    pythonCommand="python"
+    pythonCommand="python3"
 
 #Install for Linux
 elif [ `uname` == "Linux" ]
@@ -160,6 +160,7 @@ then
 		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3"
 		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add python3"
 		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python"
+                echo "On Android based operating systems (Termux) run: pkg install python"
 	fi
 fi
 #Copy files
