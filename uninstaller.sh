@@ -3,7 +3,7 @@ clear
 echo "ImaginaryInfinity Calculator Uninstaller"
 DIR=`dirname $0`
 
-if [ $(echo $PREFIX | grep -o "com.termux") != "0" ]
+elif [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
