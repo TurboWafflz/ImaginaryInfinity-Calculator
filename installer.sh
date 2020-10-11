@@ -52,7 +52,7 @@ elif [ "$1" == "--make-appImage" ]
 		installDesktopFile="true"
 		buildOnly="true"
 #Install for Android
-elif [ $(echo $PREFIX | grep -o "com.termux") != "0" ]
+elif [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
 	echo "The installer has detected that you are using Android, is this correct? (Y/n)"
 	read yn
