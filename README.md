@@ -25,6 +25,8 @@ Just make executable and run on many Linux distributions
 - **Linux**
 	- Primary development and testing OS. Should have the best support
 - **Web** (repl.it)
+- **Android**
+	- Termux support covers all or most features including installation. 
 
 **ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **Haiku**
