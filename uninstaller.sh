@@ -3,7 +3,7 @@ clear
 echo "ImaginaryInfinity Calculator Uninstaller"
 DIR=`dirname $0`
 
-elif [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
+if [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
@@ -119,7 +119,7 @@ echo "Removing builtin plugins..."
 rm -rf $systemPath
 if [ -f "/etc/arch-release" ]
 then
-	echo "\e[38;5;11mWarning: Removing ImaginaryInfinity Calculator does not remove the .iicalc folder in your home directory. If you want to run the portable version of ImaginaryInfinity Calculator again, you will have to delete it.\e[m"
+	echo -e "\e[38;5;11mWarning: Removing ImaginaryInfinity Calculator does not remove the .iicalc folder in your home directory. If you want to run the portable version of ImaginaryInfinity Calculator again, you will have to delete it.\e[m"
 else
 	echo "\033[38;5;11mWarning: Removing ImaginaryInfinity Calculator does not remove the .iicalc folder in your home directory. If you want to run the portable version of ImaginaryInfinity Calculator again, you will have to delete it.\033[m"
 fi
