@@ -28,42 +28,55 @@ installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 
 #reload index
 def reloadPluginList():
-	file_name = config["paths"]["userPath"] + "/.pluginstore/index.ini"
-	link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
-	#display progress box of updating index
-	d = Dialog(dialog="dialog")
-	d.add_persistent_args(["--title", "Reloading Plugin List..."])
-	d.gauge_start(text="This may take a while if the server hasn\'t been pinged in a while", height=None, width=None, percent=0)
+	try:
+		file_name = config["paths"]["userPath"] + "/.pluginstore/index.ini"
+		link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
+		#display progress box of updating index
+		d = Dialog(dialog="dialog")
+		d.add_persistent_args(["--title", "Reloading Plugin List..."])
+		d.gauge_start(text="This may take a while if the server hasn\'t been pinged in a while", height=None, width=None, percent=0)
 
-	#download actual index from site
-	with open(file_name, "wb") as f:
-		try:
-			response = requests.get(link, stream=True)
-		except requests.exceptions.ConnectionError:
-			d.gauge_stop()
-			if d.yesno("No Connection. Would you like to continue without a connection?") == d.OK:
-				store(False)
+		#download actual index from site
+		with open(file_name, "wb") as f:
+			try:
+				response = requests.get(link, stream=True)
+			except requests.exceptions.ConnectionError:
+				d.gauge_stop()
+				if d.yesno("No Connection. Would you like to continue without a connection?") == d.OK:
+					store(False)
+				else:
+					raise ValueError("Exited")
+			total_length = response.headers.get('content-length')
+
+			if total_length is None: # no content length header
+				f.write(response.content)
 			else:
-				raise ValueError("Exited")
-		total_length = response.headers.get('content-length')
+				dl = 0
+				total_length = int(total_length)
+				olddone=0
+				for data in response.iter_content(chunk_size=4096):
+					dl += len(data)
+					f.write(data)
+					done = int(100 * dl / total_length)
+					if done > 100:
+						done = 100
+					if olddone != done:
+						olddone = done
 
-		if total_length is None: # no content length header
-			f.write(response.content)
-		else:
-			dl = 0
-			total_length = int(total_length)
-			olddone=0
-			for data in response.iter_content(chunk_size=4096):
-				dl += len(data)
-				f.write(data)
-				done = int(100 * dl / total_length)
-				if done > 100:
-					done = 100
-				if olddone != done:
-					olddone = done
-
-					d.gauge_update(done)
-	d.gauge_stop()
+						d.gauge_update(done)
+		d.gauge_stop()
+		return True
+	except KeyboardInterrupt:
+		try:
+			#Stop gague if it's started
+			d.gauge_stop()
+		except:
+			pass
+		with open(config["paths"]["userPath"] + "/.pluginstore/index.ini") as index:
+			if index.read().strip("\n") == "#" or index.read().strip("\n") == "":
+				return False
+			else:
+				return True
 
 #Uninstall plugin
 def uninstall(filename, plugin):
@@ -330,7 +343,10 @@ def search(bypass=False, choices=[]):
 def store(reload=True):
 	#reload index
 	if reload == True:
-		reloadPluginList()
+		if reloadPluginList() == False:
+			clear()
+			print("The plugin index must be reloaded to access the store. To enter the store without reloading, type store.store(False)")
+			return
 	try:
 		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
