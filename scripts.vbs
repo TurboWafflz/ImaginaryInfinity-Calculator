@@ -24,7 +24,7 @@ ElseIf (Wscript.Arguments(0)="path") Then
 	oldSystemPath = objEnv("PATH")
 	newSystemPath = oldSystemPath & ";" & pathToAdd
 	objEnv("PATH") = newSystemPath
-Else
+ElseIf (Wscript.Arguments(0)="startmenu") Then
     path = objShell.SpecialFolders("StartMenu")
     Set link = objShell.CreateShortcut(path & "\ImaginaryInfinity Calculator.lnk")
     link.Description = "ImaginaryInfinity Calculator"
@@ -32,4 +32,15 @@ Else
     link.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
     'link.WorkingDirectory = "dir"
     link.Save
+ElseIf (Wscript.Arguments(0)="uninstall") Then
+    usersDesktop = objShell.SpecialFolders("Desktop")
+		startmenu = objShell.SpecialFolders("StartMenu")
+		Set fs = CreateObject("Scripting.Filesystemobject")
+		If (fs.FileExists(usersDesktop & "\ImaginaryInfinity Calculator.lnk")) Then
+				fs.DeleteFile( usersDesktop & "\ImaginaryInfinity Calculator.lnk" )
+		End If
+		If (fs.FileExists(startmenu & "\ImaginaryInfinity Calculator.lnk")) Then
+				fs.DeleteFile( startmenu & "\ImaginaryInfinity Calculator.lnk" )
+		End If
+
 End If
