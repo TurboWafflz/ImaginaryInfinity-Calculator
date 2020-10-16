@@ -345,7 +345,6 @@ def store(reload=True):
 	if reload == True:
 		if reloadPluginList() == False:
 			clear()
-			print("The plugin index must be reloaded to access the store. To enter the store without reloading, type store.store(False)")
 			return
 	try:
 		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
