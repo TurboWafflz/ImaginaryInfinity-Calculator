@@ -20,16 +20,19 @@ SET systemPath="C:\Program Files (x86)\iicalc\"
 SET config=".installer\configDefaults\windows.ini"
 SET launcher=".installer\launchers\windows.bat"
 cd /d "%~dp0"
+mkdir %systemPath%
 echo "Installing launcher..."
-COPY  %launcher% "%systemPath%launcher.bat"
+::COPY  %launcher% %systemPath%launcher.bat
 ::Check if systemPath in PATH
 echo ;%PATH%; | find /C /I ";C:\Program Files (x86)\iicalc\;" >> temp.txt
 set /p setpath=<temp.txt
 del /f /q temp.txt
 ::If systemPath not in PATH, add it
-IF %setpath%==0(
-	scripts.vbs path
+IF %setpath%==0 (
+pause
+	cscript //nologo scripts.vbs path
 )
+pause
 ::Set doskey file for command line opening of calculator
 echo iicalc=C:\Program Files (x86)\iicalc\iicalc.bat>%systemPath%iicalc.doskey
 ::Add doskey path to registry
@@ -48,7 +51,6 @@ echo "Adding start menu entry..."
 scripts.vbs startmenu
 py -V > nul 2>&1 || echo "Python is not installed, to install it, go to https://python.org and download the latest version"
 echo "Installing builtin plugins..."
-mkdir %systemPath%
 mkdir "%systemPath%\systemPlugins"
 COPY  system\systemPlugins\* "%systemPath%\systemPlugins"
 mkdir "%systemPath%\themes"
@@ -62,3 +64,4 @@ COPY  system\version.txt "%systemPath%"
 COPY  %config% "%systemPath%\config.ini"
 echo "Installing Python modules..."
 py -m pip install -r requirements.txt
+cmd /k
