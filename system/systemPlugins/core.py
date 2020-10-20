@@ -454,7 +454,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 	except:
 		pass
 	if gui == True:
-		d.gauge_update(13, "Updating...\nBacking Up...", update_text=True)
+		d.gauge_update(12, "Updating...\nBacking Up...", update_text=True)
 
 	#Backup
 	if os.path.isdir(parent + ".iibackup"):
@@ -493,7 +493,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 				dest = os.path.join(parent, tempThemeDir)
 				shutil.move(source, dest)
 	if gui == True:
-		d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
+		d.gauge_update(37, "Updating...\nRemoving Old Files...", update_text=True)
 
 	#Delete contents of calculator
 	for filename in os.listdir(root):
@@ -507,7 +507,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 	if gui == True:
-		d.gauge_update(51, "Updating...\nDownloading Update...", update_text=True)
+		d.gauge_update(50, "Updating...\nDownloading Update...", update_text=True)
 
 	#download files
 	try:
@@ -529,7 +529,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		sys.exit("Fatal Error")
 
 	if gui == True:
-		d.gauge_update(64, "Updating...\nUnzipping...", update_text=True)
+		d.gauge_update(62, "Updating...\nUnzipping...", update_text=True)
 
 	#Unzip File
 	os.chdir(root)
@@ -547,7 +547,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 	os.remove("newcalc.zip")
 
 	if gui == True:
-		d.gauge_update(77, "Updating...\nRestoring Plugins...", update_text=True)
+		d.gauge_update(75, "Updating...\nRestoring Plugins...", update_text=True)
 
 	if config["installation"]["installtype"] == "portable":
 		#move plugins back into /plugins
@@ -573,7 +573,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		os.chdir(root)
 
 	if gui == True:
-		d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
+		d.gauge_update(87, "Updating...\nVerifying Update...", update_text=True)
 
 	#check if all is fine
 	if not os.path.isfile("main.py") or not os.path.exists(config["paths"]["userpath"] + "/plugins"):
