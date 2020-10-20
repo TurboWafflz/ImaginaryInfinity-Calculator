@@ -123,7 +123,7 @@ else
 	echo "The installer does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual installation (y/N)?"
 	read yn
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		exit
 	fi

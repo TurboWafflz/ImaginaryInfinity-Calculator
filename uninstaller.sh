@@ -8,7 +8,7 @@ then
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
 	read
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		echo "Cancelled"
 		exit
@@ -38,7 +38,7 @@ then
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
 	read yn
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		echo "Cancelled"
 		exit
@@ -68,7 +68,7 @@ then
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
 	read yn
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		echo "Cancelled"
 		exit
@@ -91,7 +91,7 @@ else
 	echo "The uninstaller does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual uninstallation (y/N)?"
 	read yn
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		exit
 	fi
