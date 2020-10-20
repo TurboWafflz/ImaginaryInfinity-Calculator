@@ -510,9 +510,24 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		d.gauge_update(50, "Updating...\nDownloading Update...", update_text=True)
 
 	#download files
+	newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
+	total_length = len(newzip.content)
 	try:
 		with open(root + "newcalc.zip", "wb") as f:
-			f.write(requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip").content)
+			if total_length is None:
+				f.write(newzip.content)
+			else:
+				dl = 0
+				olddone=0
+				for data in newzip.iter_content(chunk_size=4096):
+					dl += len(data)
+					f.write(data)
+					done = int(12 * dl / total_length)
+					if done > 12:
+						done = 12
+					if olddone != done:
+						olddone = done
+						d.gauge_update(50 + done)
 	except Exception as e:
 		clear()
 		print(e)
