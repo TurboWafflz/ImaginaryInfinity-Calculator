@@ -465,9 +465,6 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		shutil.rmtree(parent + ".iithemesbackup")
 	shutil.copytree(root, parent + ".iibackup/")
 
-	if gui == True:
-		d.gauge_update(25, "Updating...\nMoving Plugins...", update_text=True)
-
 	if config["installation"]["installtype"] == "portable":
 		#Move Plugins out of Plugins
 		os.chdir(parent)
@@ -493,7 +490,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 				dest = os.path.join(parent, tempThemeDir)
 				shutil.move(source, dest)
 	if gui == True:
-		d.gauge_update(37, "Updating...\nRemoving Old Files...", update_text=True)
+		d.gauge_update(25, "Updating...\nRemoving Old Files...", update_text=True)
 
 	#Delete contents of calculator
 	for filename in os.listdir(root):
@@ -507,7 +504,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 	if gui == True:
-		d.gauge_update(50, "Updating...\nDownloading Update...", update_text=True)
+		d.gauge_update(37, "Updating...\nDownloading Update...", update_text=True)
 
 	#download files
 	newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
@@ -522,12 +519,12 @@ def doUpdate(branch="master", theme=theme, gui=False):
 				for data in newzip.iter_content(chunk_size=4096):
 					dl += len(data)
 					f.write(data)
-					done = int(12 * dl / total_length)
-					if done > 12:
-						done = 12
+					done = int(25 * dl / total_length)
+					if done > 25:
+						done = 25
 					if olddone != done:
 						olddone = done
-						d.gauge_update(50 + done)
+						d.gauge_update(37 + done)
 	except Exception as e:
 		clear()
 		print(e)
