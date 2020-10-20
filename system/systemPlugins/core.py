@@ -631,16 +631,15 @@ def cmdUpdate(theme=theme, config=config):
 def guiUpdate(theme=theme, config=config):
 	try:
 		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt", timeout=10)
-		if versionnum.status_code == 404:
-			print("Not on branch with version.txt")
-			return
-		else:
+		if versionnum.status_code == 200:
 			versionnum = versionnum.text
 			with open(config["paths"]["systemPath"] + "/version.txt") as f:
 				if version.parse(versionnum) > version.parse(f.read().rstrip("\n")):
 					upToDate = "Would you like to update?"
 				else:
 					upToDate = "You are currently up to date.\n\nWould you like to redownload the current version?"
+		else:
+			upToDate = "Would you like to update?"
 	except KeyboardInterrupt:
 		print("Cancelled")
 		return
