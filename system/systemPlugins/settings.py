@@ -3,6 +3,12 @@ import sys
 from systemPlugins.core import *
 import platform
 from plugins import *
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", "-c", type=str, help="Optional config file")
+args = parser.parse_args()
+
 builtin=True
 #Modify Configuration file
 def configMod(section, key, value, config=config):
@@ -27,26 +33,37 @@ def signal(sig,config,args=""):
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
 		from dialog import Dialog
-		#Load config
-		try:
-			home = os.path.expanduser("~")
-			print("Loading config...")
-			config = configparser.ConfigParser()
-			config.read(home + "/.iicalc/config.ini")
-			config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-			configPath = home + "/.iicalc/config.ini"
-			with open(configPath, "w") as configFile:
-				config.write(configFile)
-				configFile.close()
-		except:
-			try:
-				print("Loading portable config...")
+		#Check if config manually specified
+		if args.config != None:
+			if os.path.isfile(args.config):
 				config = configparser.ConfigParser()
-				config.read("config.ini")
-				configPath = "config.ini"
-			except:
-				print("Fatal error: Cannot load config")
+				config.read(args.config)
+				configPath = args.config
+			else:
+				print("Invalid config file location specified: " + args.config)
 				exit()
+		else:
+			#Load config from ~/.iicalc
+			try:
+				home = os.path.expanduser("~")
+				print("Loading config...")
+				config = configparser.ConfigParser()
+				config.read(home + "/.iicalc/config.ini")
+				config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+				configPath = home + "/.iicalc/config.ini"
+				with open(configPath, "w") as configFile:
+					config.write(configFile)
+					configFile.close()
+			#Load config from current directory
+			except:
+				try:
+					print("Loading portable config...")
+					config = configparser.ConfigParser()
+					config.read("config.ini")
+					configPath = "config.ini"
+				except:
+					print("Fatal error: Cannot load config")
+					exit()
 		d = Dialog(dialog="dialog")
 		while True:
 			#Define menu options
@@ -70,12 +87,13 @@ def editor():
 			choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving changes")]
 			#Display menu
 			code, tag = d.menu("ImaginaryInfinity Calculator Settings",
-								choices=choices, width=0, height=0)
+								choices=choices, width=0, height=0, cancel_label="Quit")
 			if code == d.OK:
 				clear()
 				#Theme settings
 				if tag == "Theme":
 					themeFiles = os.listdir(config["paths"]["userPath"] + "/themes/") + os.listdir(config["paths"]["systemPath"] + "/themes/")
+					themeFiles.remove(".placeholder")
 					if len(themeFiles) == 0:
 						d.msgbox("No themes installed")
 						pass
@@ -96,6 +114,7 @@ def editor():
 											choices=choices, width=0, height=0)
 						if tcode == d.OK:
 							themeFiles = os.listdir(config["paths"]["userPath"] + "/themes/") + os.listdir(config["paths"]["systemPath"] + "/themes/")
+							themeFiles.remove(".placeholder")
 							for themeFile in themeFiles:
 								themeInfo = configparser.ConfigParser()
 								if os.path.exists(config["paths"]["userPath"] + "/themes/" + themeFile):
@@ -189,7 +208,12 @@ def editor():
 					config = signal("settingsPopup", config, "\"" + tag + "\"")
 
 			else:
-				clear()
+				code = d.yesno("Save changes?")
+				if code == d.OK:
+					tag = "Save and exit"
+				else:
+					tag = ""
+				break
 		#Prompt to restart to apply settings
 		if tag == "Save and exit":
 			restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)

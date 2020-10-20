@@ -25,6 +25,11 @@ import subprocess
 from threading import Thread
 from packaging import version
 from sympy import S
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", "-c", type=str, help="Optional config file")
+args = parser.parse_args()
 
 #Make sure math is real and Python is not completely insane
 if not 1 == 1:
@@ -44,26 +49,37 @@ def pingServer():
 		pass
 print("Importing plugins...")
 print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
-#Load config from ~/.iicalc
-try:
-	home = os.path.expanduser("~")
-	print("Loading config...")
-	config = configparser.ConfigParser()
-	config.read(home + "/.iicalc/config.ini")
-	config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-	configPath = home + "/.iicalc/config.ini"
-	with open(configPath, "w") as configFile:
-		config.write(configFile)
-		configFile.close()
-#Load config from current directory
-except:
-	try:
-		print("Loading portable config...")
+#Check if config manually specified
+if args.config != None:
+	if os.path.isfile(args.config):
 		config = configparser.ConfigParser()
-		config.read("config.ini")
-	except:
-		print("Fatal error: Cannot load config")
+		config.read(args.config)
+		configPath = args.config
+	else:
+		print("Invalid config file location specified: " + args.config)
 		exit()
+else:
+	#Load config from ~/.iicalc
+	try:
+		home = os.path.expanduser("~")
+		print("Loading config...")
+		config = configparser.ConfigParser()
+		config.read(home + "/.iicalc/config.ini")
+		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+		configPath = home + "/.iicalc/config.ini"
+		with open(configPath, "w") as configFile:
+			config.write(configFile)
+			configFile.close()
+	#Load config from current directory
+	except:
+		try:
+			print("Loading portable config...")
+			config = configparser.ConfigParser()
+			config.read("config.ini")
+			configPath = "config.ini"
+		except:
+			print("Fatal error: Cannot load config")
+			exit()
 pluginPath=config["paths"]["userPath"] + "/plugins/"
 #Add system path to path to load built in plugins
 sys.path.insert(1, config["paths"]["userPath"])
@@ -202,20 +218,23 @@ def hasInternet():
 if hasInternet() and config["startup"]["checkupdates"] == "true":
 	try:
 		print("Checking for update... (Press Ctrl + C to cancel)")
-		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt")
+		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt", timeout=5)
 		if versionnum.status_code == 404:
 			print("Not on branch with version.txt")
 			upToDate = True
 		else:
 			versionnum = versionnum.text
 			with open(config["paths"]["systemPath"] + "/version.txt") as f:
-				if version.parse(versionnum) > version.parse(f.read()):
+				if version.parse(versionnum) > version.parse(f.read().rstrip("\n")):
 					upToDate = False
 				else:
 					upToDate = True
 	except KeyboardInterrupt:
 		upToDate = True
 		print("Cancelled")
+	except requests.exceptions.ConnectTimeout:
+		print("Connection timed out")
+		upToDate = True
 else:
 	upToDate = True
 
@@ -247,7 +266,7 @@ def main(config=config, warmupThread=warmupThread):
 	oldcalc=" "
 	try:
 		global debugMode
-		if(len(sys.argv)>1):
+		try:
 			if(sys.argv[1]=="online"):
 				signal("onOnlineStart")
 				import readline
@@ -256,8 +275,10 @@ def main(config=config, warmupThread=warmupThread):
 				print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
 				if os.path.isfile('.development'):
 					print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
-		else:
-			#Snend signal and clear screen for different OSs
+			else:
+				raise ValueError
+		except:
+			#Send signal and clear screen for different OSs
 			if(platform.system()=="Linux"):
 				signal("onLinuxStart")
 				os.system("clear")
@@ -284,7 +305,7 @@ def main(config=config, warmupThread=warmupThread):
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
 		#Display start up stuff
-		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read())
+		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read().rstrip("\n"))
 		if not upToDate:
 			print(Fore.WHITE + Back.MAGENTA + "Update available!")
 		print(theme["styles"]["normal"] + "Copyright 2020 Finian Wright")
@@ -296,12 +317,6 @@ def main(config=config, warmupThread=warmupThread):
 			with open(config["appearance"]["messageFile"]) as messagesFile:
 				messages=messagesFile.readlines()
 				msg = messages[randint(0,len(messages)-1)]
-				if msg == "[debt]":
-					if hasInternet():
-						msg = getDebt()
-					else:
-						while msg == "[debt]":
-							msg = messages[randint(0,len(messages)-1)]
 				print(theme["styles"]["startupmessage"] + msg + theme["styles"]["normal"])
 		except:
 			print("Could not find messages file")
