@@ -52,7 +52,7 @@ ex. `factor(7)` instead of `core.factor(7)`
 <hr style="border: 1px solid white">
 
 ## Themes
-The colors used by the calculator can be modified by themes. Themes are ini files that define the colors the calculator will use and are stored in the `themes` folder. To change the theme used by the calculator, run `settings.configMod("appearance", "theme", "<theme name>")`, or select a theme in the settings editor. Two themes are included by default, `dark` for use on terminals with a dark background, and `light` for use on terminals with a light background.
+The colors used by the calculator can be modified by themes. Themes are ini files that define the colors the calculator will use and are stored in the `themes` folder. To change the theme used by the calculator, run `settings.configMod("appearance", "theme", "<theme name>")`, or select a theme in the settings editor. One theme is included by default, `dark` for use on terminals with a dark background. If you use a terminal with a light background, you can download our official `light` theme from the store.
 
 <hr style="border: 1px solid white">
 
