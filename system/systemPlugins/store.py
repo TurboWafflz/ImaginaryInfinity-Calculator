@@ -3,7 +3,7 @@ from dialog import Dialog
 import configparser
 from fuzzywuzzy import fuzz
 import os
-from systemPlugins.core import clear, config
+from systemPlugins.core import clear, config, pluginPath, themePath
 from systemPlugins import pm
 import sys
 import subprocess
@@ -28,50 +28,69 @@ installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 
 #reload index
 def reloadPluginList():
-	file_name = config["paths"]["userPath"] + "/.pluginstore/index.ini"
-	link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
-	#display progress box of updating index
-	d = Dialog(dialog="dialog")
-	d.add_persistent_args(["--title", "Reloading Plugin List..."])
-	d.gauge_start(text="This may take a while if the server hasn\'t been pinged in a while", height=None, width=None, percent=0)
+	try:
+		file_name = config["paths"]["userPath"] + "/.pluginstore/index.ini"
+		link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
+		#display progress box of updating index
+		d = Dialog(dialog="dialog")
+		d.add_persistent_args(["--title", "Reloading Plugin List..."])
+		d.gauge_start(text="This may take a while if the server hasn\'t been pinged in a while", height=None, width=None, percent=0)
 
-	#download actual index from site
-	with open(file_name, "wb") as f:
-		try:
-			response = requests.get(link, stream=True)
-		except requests.exceptions.ConnectionError:
-			d.gauge_stop()
-			if d.yesno("No Connection. Would you like to continue without a connection?") == d.OK:
-				store(False)
+		#download actual index from site
+		with open(file_name, "wb") as f:
+			try:
+				response = requests.get(link, stream=True)
+			except requests.exceptions.ConnectionError:
+				d.gauge_stop()
+				if d.yesno("No Connection. Would you like to continue without a connection?") == d.OK:
+					store(False)
+				else:
+					raise ValueError("Exited")
+			total_length = response.headers.get('content-length')
+
+			if total_length is None: # no content length header
+				f.write(response.content)
 			else:
-				raise ValueError("Exited")
-		total_length = response.headers.get('content-length')
+				dl = 0
+				total_length = int(total_length)
+				olddone=0
+				for data in response.iter_content(chunk_size=4096):
+					dl += len(data)
+					f.write(data)
+					done = int(100 * dl / total_length)
+					if done > 100:
+						done = 100
+					if olddone != done:
+						olddone = done
 
-		if total_length is None: # no content length header
-			f.write(response.content)
-		else:
-			dl = 0
-			total_length = int(total_length)
-			olddone=0
-			for data in response.iter_content(chunk_size=4096):
-				dl += len(data)
-				f.write(data)
-				done = int(100 * dl / total_length)
-				if done > 100:
-					done = 100
-				if olddone != done:
-					olddone = done
-
-					d.gauge_update(done)
-	d.gauge_stop()
+						d.gauge_update(done)
+		d.gauge_stop()
+		return True
+	except KeyboardInterrupt:
+		try:
+			#Stop gague if it's started
+			d.gauge_stop()
+		except:
+			pass
+		with open(config["paths"]["userPath"] + "/.pluginstore/index.ini") as index:
+			if index.read().strip("\n") == "#" or index.read().strip("\n") == "":
+				return False
+			else:
+				return True
 
 #Uninstall plugin
 def uninstall(filename, plugin):
+	if installed[plugin]["type"] == "plugins":
+		installpath = pluginPath + filename
+	elif installed[plugin]["type"] == "themes":
+		installpath = themePath + filename
+	else:
+		print("Invalid type: " + installed[plugin]["type"])
 	#Confirmation Box
 	d = Dialog(dialog="dialog")
 	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:
 		#Delete file
-		os.remove(installed[plugin]["type"] + "/" + filename)
+		os.remove(installpath)
 		#Remove section in installed
 		installed.remove_section(plugin)
 		#write the updated install file to the install file
@@ -91,9 +110,14 @@ def ratePlugin(plugin):
 #download plugins
 def download(plugin_name, bulk=False):
 	link = index[plugin_name]["download"]
-	file_name = index[plugin_name]["type"] + "/" + index[plugin_name]["filename"]
+	if index[plugin_name]["type"] == "plugins":
+		file_name = pluginPath + index[plugin_name]["filename"]
+	elif index[plugin_name]["type"] == "themes":
+		file_name = themePath + index[plugin_name]["filename"]
+	else:
+		print("Invalid type: " + index[plugin_name]["type"])
 	d = Dialog(dialog="dialog")
-	d.add_persistent_args(["--title", "Downloading " + file_name])
+	d.add_persistent_args(["--title", "Downloading " + plugin_name])
 	#Progress gauge
 	d.gauge_start(text="Installing " + plugin_name, height=None, width=None, percent=0)
 	#Actual downloading of file
@@ -147,13 +171,13 @@ def download(plugin_name, bulk=False):
 		depends = depends.split(",")
 		for i in range(len(depends)):
 			if depends[i].startswith("pypi:"):
-				d.gauge_update(100, text="Installing Dependancy " + depends[i][5:], update_text=True)
+				d.gauge_update(100, text="Installing Dependency " + depends[i][5:], update_text=True)
 				process = subprocess.Popen([sys.executable, "-m", "pip","install", depends[i][5:]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 				text = ""
 				for c in iter(lambda: process.stdout.read(1), b''):
 					text += c.decode("utf-8")
 					if text.endswith("\n"):
-						d.gauge_update(100, text="Installing Dependancy " + depends[i][5:] + "\n" + text.strip(), update_text=True)
+						d.gauge_update(100, text="Installing Dependency " + depends[i][5:] + "\n" + text.strip(), update_text=True)
 						text = ""
 
 
@@ -161,7 +185,7 @@ def download(plugin_name, bulk=False):
 				download(depends[i], True)
 	d.gauge_stop()
 	if bulk == False and failed == False:
-		d.msgbox("Successfully downloaded " + file_name, height=None, width=None)
+		d.msgbox("Successfully downloaded " + plugin_name, height=None, width=None)
 
 #Plugin page
 def pluginpage(plugin, cache=None):
@@ -172,7 +196,13 @@ def pluginpage(plugin, cache=None):
 	d.add_persistent_args(["--yes-label", "Download", "--ok-label", "Download", "--title", plugin])
 	x = []
 	#processing to detect what labels to put on the buttons
-	if os.path.isfile(index[plugin]["type"] + "/" + index[plugin]["filename"]):
+	if index[plugin]["type"] == "plugins":
+		filepath = pluginPath + index[plugin]["filename"]
+	elif index[plugin]["type"] == "themes":
+		filepath = themePath + index[plugin]["filename"]
+	else:
+		print("Invalid type: " + index[plugin]["type"])
+	if os.path.isfile(filepath):
 		try:
 			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
 				x.append(d.yesno(index[plugin]["description"] + "\n\nRating: " + index[plugin]["rating"] + "/5\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
@@ -313,7 +343,9 @@ def search(bypass=False, choices=[]):
 def store(reload=True):
 	#reload index
 	if reload == True:
-		reloadPluginList()
+		if reloadPluginList() == False:
+			clear()
+			return
 	try:
 		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:

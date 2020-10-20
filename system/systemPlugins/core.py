@@ -18,31 +18,47 @@ import time
 from shutil import copytree, rmtree, copy
 import configparser
 import re
+import argparse
+from packaging import version
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--config", "-c", type=str, help="Optional config file")
+args = parser.parse_args()
 
 #Import dialog if on a supported OS
 if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 	from dialog import Dialog, ExecutableNotFound
-#Load config from ~/.iicalc
-try:
-	home = os.path.expanduser("~")
-	print("Loading config...")
-	config = configparser.ConfigParser()
-	config.read(home + "/.iicalc/config.ini")
-	config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-	configPath = home + "/.iicalc/config.ini"
-	with open(configPath, "w") as configFile:
-		config.write(configFile)
-		configFile.close()
-#Load config from current directory
-except:
-	try:
-		print("Loading portable config...")
+#Check if config manually specified
+if args.config != None:
+	if os.path.isfile(args.config):
 		config = configparser.ConfigParser()
-		config.read("config.ini")
-		configPath = "config.ini"
-	except:
-		print("Fatal error: Cannot load config")
+		config.read(args.config)
+		configPath = args.config
+	else:
+		print("Invalid config file location specified: " + args.config)
 		exit()
+else:
+	#Load config from ~/.iicalc
+	try:
+		home = os.path.expanduser("~")
+		print("Loading config...")
+		config = configparser.ConfigParser()
+		config.read(home + "/.iicalc/config.ini")
+		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+		configPath = home + "/.iicalc/config.ini"
+		with open(configPath, "w") as configFile:
+			config.write(configFile)
+			configFile.close()
+	#Load config from current directory
+	except:
+		try:
+			print("Loading portable config...")
+			config = configparser.ConfigParser()
+			config.read("config.ini")
+			configPath = "config.ini"
+		except:
+			print("Fatal error: Cannot load config")
+			exit()
 #Get paths
 themePath = config["paths"]["userPath"] + "/themes/"
 pluginPath = config["paths"]["userPath"] + "/plugins/"
@@ -613,7 +629,25 @@ def cmdUpdate(theme=theme, config=config):
 		doUpdate(branch)
 
 def guiUpdate(theme=theme, config=config):
-	d = Dialog(dialog="dialog").yesno("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch.")
+	try:
+		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt", timeout=10)
+		if versionnum.status_code == 404:
+			print("Not on branch with version.txt")
+			return
+		else:
+			versionnum = versionnum.text
+			with open(config["paths"]["systemPath"] + "/version.txt") as f:
+				if version.parse(versionnum) > version.parse(f.read().rstrip("\n")):
+					upToDate = "Would you like to update?"
+				else:
+					upToDate = "You are currently up to date.\n\nWould you like to redownload the current version?"
+	except KeyboardInterrupt:
+		print("Cancelled")
+		return
+	except requests.exceptions.ConnectTimeout:
+		print("Connection timed out")
+		return
+	d = Dialog(dialog="dialog").yesno(upToDate + " You are currently on the " + config["updates"]["branch"] + " branch.", width=0, height=0)
 	if d == "ok":
 		branch = "master"
 		try:

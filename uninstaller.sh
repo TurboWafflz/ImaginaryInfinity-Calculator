@@ -2,7 +2,32 @@
 clear
 echo "ImaginaryInfinity Calculator Uninstaller"
 DIR=`dirname $0`
-if [ `uname` == "Linux" ]
+
+if [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
+then
+	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
+	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
+	read
+	if [ $yn != "y" ]
+	then
+		echo "Cancelled"
+		exit
+	fi
+	echo "The uninstaller has detected that you are using Android, is this correct? (Y/n)"
+	read yn
+	if [ "$yn" == "n" ]
+	then
+		exit
+	fi
+	systemPath="/data/data/com.termux/files/usr/share/iicalc/"
+	binPath="/data/data/com.termux/files/usr/bin/"
+	config=".installer/configDefaults/unix.ini"
+	launcher=".installer/launchers/unix.sh"
+	iconPath="/dev/null"
+	desktopFilePath="/dev/null"
+	desktopFile="iicalc.desktop"
+	installDesktopFile="false"
+elif [ `uname` == "Linux" ]
 then
 	if [ `whoami` != "root" ]
 	then
@@ -85,10 +110,11 @@ rm "$binPath/iicalc"
 if [ $installDesktopFile == "true" ]
 then
 	rm -rf "$desktopFilePath/$desktopFile"
+	echo "Removing icons..."
+	rm "$iconPath/iicalc.tiff"
 fi
 echo "Removing main Python script.."
 rm "$systemPath/iicalc.py"
 echo "Removing builtin plugins..."
 rm -rf $systemPath
-echo "Removing icons..."
-rm "$iconPath/iicalc.tiff"
+echo -e "\033[38;5;11mWarning: Removing ImaginaryInfinity Calculator does not remove the .iicalc folder in your home directory. If you want to run the portable version of ImaginaryInfinity Calculator again, you will have to delete it.\033[m"

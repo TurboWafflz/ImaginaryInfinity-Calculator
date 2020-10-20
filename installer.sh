@@ -2,6 +2,8 @@
 clear
 echo "ImaginaryInfinity Calculator Installer"
 DIR=`dirname $0`
+chmod +x installer.sh
+chmod +x uninstaller.sh
 
 #Build deb
 if [ "$1" == "--make-deb" ]
@@ -49,6 +51,24 @@ elif [ "$1" == "--make-appImage" ]
 		cp "iicalc.png" "iicalc-appImage"
 		installDesktopFile="true"
 		buildOnly="true"
+#Install for Android
+elif [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
+then
+	echo "The installer has detected that you are using Android, is this correct? (Y/n)"
+	read yn
+	if [ "$yn" == "n" ]
+	then
+		exit
+	fi
+	systemPath="/data/data/com.termux/files/usr/share/iicalc"
+	binPath="/data/data/com.termux/files/usr/bin/"
+	config=".installer/configDefaults/android.ini"
+	launcher=".installer/launchers/android.sh"
+	iconPath="/dev/null"
+	desktopFilePath="/dev/null"
+	desktopFile=".installer/desktopFiles/iicalc.desktop"
+	installDesktopFile="false"
+	pythonCommand="python3"
 
 #Install for Linux
 elif [ `uname` == "Linux" ]
@@ -128,6 +148,8 @@ cp -v $launcher "$binPath/iicalc"
 if [ $installDesktopFile == "true" ]
 then
 	cp -r $desktopFile $desktopFilePath
+	echo "Installing icons..."
+	cp iicalc.tiff "$iconPath"
 fi
 #Warn about missing Python if installing
 if [ "$buildOnly" != "true" ]
@@ -138,6 +160,7 @@ then
 		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3"
 		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add python3"
 		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python"
+		echo "On Android based operating systems (In Termux) run: pkg install python"
 	fi
 fi
 #Copy files
@@ -155,8 +178,6 @@ cp requirements.txt "$systemPath"
 cp messages.txt "$systemPath"
 cp system/version.txt "$systemPath"
 cp $config "$systemPath/config.ini"
-echo "Installing icons..."
-cp iicalc.tiff "$iconPath"
 #Install Python modules if installing
 if [ "$buildOnly" != "true" ]
 then
