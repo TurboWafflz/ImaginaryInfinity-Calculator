@@ -662,12 +662,23 @@ def guiUpdate(theme=theme, config=config):
 def update():
 	if config["installation"]["installtype"] == "debian":
 		#Download
-		with open(config["paths"]["userpath"] + "iicalc.deb", "wb") as f:
-			f.write(requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager").content)
-		#Update
-		os.system("sudo apt install " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
+		deb = requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/iicalc.deb?job=debian%20packager")
+		if deb.status_code == 404:
+			print("The " + config["updates"]["branch"] + " is not currently creating a deb for new releases.")
+			return
+		elif deb.status_code != 200:
+			print("Error code " + str(deb.status_code))
+			return
+		else:
+			with open(config["paths"]["userpath"] + "iicalc.deb", "wb") as f:
+				f.write(deb.content)
+			#Update
+			os.system("sudo apt install " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
+			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+			if x != "n":
+				restart()
 	elif config["installation"]["installtype"] == "AppImage":
-		print("Please download the latest AppImage here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
+		print("Please download the latest AppImage for your branch here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
 	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
 		if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
 			try:
