@@ -29,6 +29,13 @@ def signal(sig,config,args=""):
 		except Exception as e:
 			pass
 
+def list():
+	for section in config.sections():
+		print(theme["styles"]["important"] + section + Fore.RESET + Back.RESET + Style.NORMAL)
+		for (key, val) in config.items(section):
+			print(key + " = " + val)
+		print()
+
 #Dialog based settings editor
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
