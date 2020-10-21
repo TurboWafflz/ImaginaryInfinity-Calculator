@@ -688,6 +688,22 @@ def update():
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
+	elif config["installation"]["installtype"] == "arch":
+		archpkg = requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/iicalc-any.pkg.tar.zst?job=buildpkg")
+		if archpkg.status_code == 404:
+			print("The " + config["updates"]["branch"] + " is not currently creating an arch package for new releases.")
+			return
+		elif archpkg.status_code != 200:
+			print("Error code " + str(archpkg.status_code))
+			return
+		else:
+			with open(config["paths"]["userpath"] + "iicalc.pkg.tar.zst", "wb") as f:
+				f.write(archpkg.content)
+			#Update
+			os.system("sudo pacman -U " + os.path.join(config["paths"]["userpath"], "iicalc.pkg.tar.zst"))
+			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+			if x != "n":
+				restart()
 	elif config["installation"]["installtype"] == "AppImage":
 		print("Please download the latest AppImage for your branch here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
 	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
