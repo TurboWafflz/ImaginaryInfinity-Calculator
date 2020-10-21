@@ -14,6 +14,11 @@ We provide a packaged version of ImaginaryInfinity calculator for some Linux dis
 
 This package can be installed with apt, gdebi, qapt, etc.
 
+#### Arch Linux
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc-any.pkg.tar.zst?job=buildpkg) (iicalc-any.pkg.tar.zst)
+
+This package can be installed using pacman, with `sudo pacman -U iicalc-any.pkg.tar.zst`
+
 #### AppImage
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
 
@@ -26,7 +31,7 @@ Just make executable and run on many Linux distributions
 	- Primary development and testing OS. Should have the best support
 - **Web** (repl.it)
 - **Android**
-	- Termux support covers all or most features including installation. 
+	- Termux support covers all or most features including installation.
 
 **ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **Haiku**
