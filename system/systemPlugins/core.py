@@ -675,7 +675,7 @@ def update():
 		#Download
 		deb = requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/iicalc.deb?job=debian%20packager")
 		if deb.status_code == 404:
-			print("The " + config["updates"]["branch"] + " is not currently creating a deb for new releases.")
+			print("The " + config["updates"]["branch"] + " branch is not currently creating a deb for new releases.")
 			return
 		elif deb.status_code != 200:
 			print("Error code " + str(deb.status_code))
@@ -691,7 +691,7 @@ def update():
 	elif config["installation"]["installtype"] == "arch":
 		archpkg = requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/iicalc-any.pkg.tar.zst?job=buildpkg")
 		if archpkg.status_code == 404:
-			print("The " + config["updates"]["branch"] + " is not currently creating an arch package for new releases.")
+			print("The " + config["updates"]["branch"] + " branch is not currently creating an arch package for new releases.")
 			return
 		elif archpkg.status_code != 200:
 			print("Error code " + str(archpkg.status_code))
