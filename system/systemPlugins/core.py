@@ -681,7 +681,7 @@ def update():
 			print("Error code " + str(deb.status_code))
 			return
 		else:
-			with open(config["paths"]["userpath"] + "iicalc.deb", "wb") as f:
+			with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
 				f.write(deb.content)
 			#Update
 			os.system("sudo apt install " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
@@ -697,7 +697,7 @@ def update():
 			print("Error code " + str(archpkg.status_code))
 			return
 		else:
-			with open(config["paths"]["userpath"] + "iicalc.pkg.tar.zst", "wb") as f:
+			with open(config["paths"]["userpath"] + "/iicalc.pkg.tar.zst", "wb") as f:
 				f.write(archpkg.content)
 			#Update
 			os.system("sudo pacman -U " + os.path.join(config["paths"]["userpath"], "iicalc.pkg.tar.zst"))
