@@ -345,12 +345,13 @@ def store(reload=True):
 	if reload == True:
 		if reloadPluginList() == False:
 			clear()
+			print("Please reload the plugin index to continue.")
 			return
 	try:
 		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	except configparser.MissingSectionHeaderError:
 		clear()
-		print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later.")
+		print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later or use store.store(False) to enter the store without reloading the index.")
 		return
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
