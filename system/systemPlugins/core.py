@@ -684,7 +684,7 @@ def update():
 			with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
 				f.write(deb.content)
 			#Update
-			os.system("sudo apt install " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
+			os.system("sudo dpkg -i " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
