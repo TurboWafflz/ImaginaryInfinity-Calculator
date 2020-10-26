@@ -27,7 +27,7 @@ then
 	desktopFilePath="/dev/null"
 	desktopFile="iicalc.desktop"
 	installDesktopFile="false"
-elif [ `uname` == "Linux" ]
+elif [ `uname` == "Linux" ] || grep -q BSD <<< `uname`
 then
 	if [ `whoami` != "root" ]
 	then
