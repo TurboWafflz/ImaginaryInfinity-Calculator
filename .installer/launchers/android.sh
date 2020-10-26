@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 systemPath="/data/data/com.termux/files/usr/share/iicalc/"
 userPath="$HOME/.iicalc"
 if [ ! -d "$userPath" ]

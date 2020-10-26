@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 systemPath="/usr/share/iicalc/"
 userPath="$HOME/.iicalc"
 if [ ! -d "$userPath" ]
