@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 clear
 echo "ImaginaryInfinity Calculator Installer"
 DIR=`dirname $0`

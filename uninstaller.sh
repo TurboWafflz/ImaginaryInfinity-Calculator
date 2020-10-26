@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 clear
 echo "ImaginaryInfinity Calculator Uninstaller"
 DIR=`dirname $0`
