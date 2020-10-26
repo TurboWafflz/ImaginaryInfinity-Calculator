@@ -341,38 +341,42 @@ def search(bypass=False, choices=[]):
 
 #Main store function
 def store(reload=True):
-	#reload index
-	if reload == True:
-		if reloadPluginList() == False:
-			clear()
-			print("Please reload the plugin index to continue.")
-			return
 	try:
-		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
-	except configparser.MissingSectionHeaderError:
-		clear()
-		print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later or use store.store(False) to enter the store without reloading the index.")
-		return
-	d = Dialog(dialog="dialog")
-	d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
-	#default options
-	choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed", "View Your Installed Plugins"), ("", "")]
-	#add all plugins to result
-	for key in index.sections():
-		choices.append((key, index[key]["summary"]))
-	#display menu
-	while True:
-		mainmenu = d.menu("", height=None, width=None, menu_height=None, choices=choices)
-		if mainmenu[0] == d.CANCEL:
+		#reload index
+		if reload == True:
+			if reloadPluginList() == False:
+				clear()
+				print("Please reload the plugin index to continue.")
+				return
+		try:
+			index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
+		except configparser.MissingSectionHeaderError:
 			clear()
-			break
-		elif mainmenu[1] == "Search":
-			search()
-		elif mainmenu[1] == "Updates":
-			updateMenu()
-		elif mainmenu[1] == "":
-			pass
-		elif mainmenu[1] == "Installed":
-			pluginmenu()
-		else:
-			pluginpage(mainmenu[1])
+			print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later or use store.store(False) to enter the store without reloading the index.")
+			return
+		d = Dialog(dialog="dialog")
+		d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
+		#default options
+		choices = [("Search", "Search for plugins"), ("Updates", "Check for Updates"), ("Installed", "View Your Installed Plugins"), ("", "")]
+		#add all plugins to result
+		for key in index.sections():
+			choices.append((key, index[key]["summary"]))
+		#display menu
+		while True:
+			mainmenu = d.menu("", height=None, width=None, menu_height=None, choices=choices)
+			if mainmenu[0] == d.CANCEL:
+				clear()
+				break
+			elif mainmenu[1] == "Search":
+				search()
+			elif mainmenu[1] == "Updates":
+				updateMenu()
+			elif mainmenu[1] == "":
+				pass
+			elif mainmenu[1] == "Installed":
+				pluginmenu()
+			else:
+				pluginpage(mainmenu[1])
+	except KeyboardInterrupt:
+		clear()
+		return
