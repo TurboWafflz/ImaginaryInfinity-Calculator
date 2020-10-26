@@ -38,7 +38,7 @@ def list():
 
 #Dialog based settings editor
 def editor():
-	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
+	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku" or "BSD" in platform.system():
 		from dialog import Dialog
 		#Check if config manually specified
 		if args.config != None:

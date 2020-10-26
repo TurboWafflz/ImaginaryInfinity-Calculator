@@ -26,7 +26,7 @@ parser.add_argument("--config", "-c", type=str, help="Optional config file")
 args = parser.parse_args()
 
 #Import dialog if on a supported OS
-if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
 	from dialog import Dialog, ExecutableNotFound
 #Check if config manually specified
 if args.config != None:
@@ -196,7 +196,7 @@ def chelp():
 	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
 	print("isPrime(<number>) - Checks whether or not a number is prime")
 	print("toStd(\"<value>\", [roundVal], [printResult]) - Convert e notation number to standard notation")
-	if(platform.system()=="Linux"):
+	if(platform.system()=="Linux" or "BSD" in platform.system()):
 		print("readme() - Shows the README file (Online/Linux only)")
 	print("sh('<command>') - Run a command directly on your computer")
 	#print("shell() - Starts a shell directly on your computer")
@@ -213,7 +213,7 @@ def AllWillPerish():
 #Clear
 def clear():
 	#Just clear on known operating systems
-	if(platform.system()=="Linux"):
+	if(platform.system()=="Linux" or "BSD" in platform.system()):
 		os.system("clear")
 		import readline
 	elif(platform.system()=="Haiku"):
@@ -409,7 +409,7 @@ def quit():
 
 #README (Linux only)
 def readme():
-	if(platform.system()=="Linux"):
+	if(platform.system()=="Linux" or "BSD" in platform.system()):
 		sh("cat README-online | less")
 	else:
 		return("Sorry, this command only works on Linux")
@@ -601,7 +601,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		d.gauge_update(100, "Updating...\nFinishing Up...", update_text=True)
 
 	#make launcher.sh executable
-	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
 		os.system("chmod +x launcher.sh")
 
 	#Load old conf vals
@@ -707,7 +707,7 @@ def update():
 	elif config["installation"]["installtype"] == "AppImage":
 		print("Please download the latest AppImage for your branch here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
 	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
-		if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+		if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
 			try:
 				guiUpdate()
 			except ExecutableNotFound as e:

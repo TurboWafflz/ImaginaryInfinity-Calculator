@@ -279,7 +279,7 @@ def main(config=config, warmupThread=warmupThread):
 				raise ValueError
 		except:
 			#Send signal and clear screen for different OSs
-			if(platform.system()=="Linux"):
+			if(platform.system()=="Linux" or "BSD" in platform.system()):
 				signal("onLinuxStart")
 				os.system("clear")
 				import readline
