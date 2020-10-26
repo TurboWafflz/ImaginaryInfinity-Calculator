@@ -71,7 +71,7 @@ then
 	pythonCommand="python3"
 
 #Install for Linux
-elif [ `uname` == "Linux" ]
+elif [ `uname` == "Linux" ] || grep -q BSD <<< `uname`
 then
 	if [ `whoami` != "root" ]
 	then
