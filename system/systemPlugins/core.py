@@ -707,6 +707,22 @@ def update():
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
+	elif config["installation"]["installtype"] == "redhat":
+		rpm = requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/iicalc.rpm?job=buildrpm")
+		if rpm.status_code == 404:
+			print("The " + config["updates"]["branch"] + " branch is not currently creating an rpm package for new releases.")
+			return
+		elif rpm.status_code != 200:
+			print("Error code " + str(rpm.status_code))
+			return
+		else:
+			with open(config["paths"]["userpath"] + "/iicalc.rpm", "wb") as f:
+				f.write(rpm.content)
+			#Update
+			os.system("sudo rpm -Uhv " + os.path.join(config["paths"]["userpath"], "iicalc.rpm"))
+			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+			if x != "n":
+				restart()
 	elif config["installation"]["installtype"] == "AppImage":
 		print("Please download the latest AppImage for your branch here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
 	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
