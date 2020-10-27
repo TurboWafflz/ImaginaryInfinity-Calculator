@@ -177,6 +177,7 @@ cp main.py "$systemPath/iicalc.py"
 cp requirements.txt "$systemPath"
 cp messages.txt "$systemPath"
 cp system/version.txt "$systemPath"
+cp README-online "$systemPath"
 cp $config "$systemPath/config.ini"
 #Install Python modules if installing
 if [ "$buildOnly" != "true" ]

@@ -43,6 +43,13 @@ Just make executable and run on many Linux distributions
 - **Any other OS that can run Python 3**
 	- Start an issue on GitHub and we may improve support for your OS
 
+**ImaginaryInfinity Calculator has been tested to work on these platforms:**
+- Ubuntu
+- Arch Linux
+- OpenBSD
+- Android (Termux)
+- Windows
+
 <hr style="border: 1px solid white">
 
 ## Plugins
@@ -62,8 +69,7 @@ The colors used by the calculator can be modified by themes. Themes are ini file
 <hr style="border: 1px solid white">
 
 ## Built in commands:
-The following commands are built in to the calculator or added by the "core"
-plugin.
+The following commands are built in to the calculator or added by the "core" plugin:
 
 - `settings.configMod("<section>", "<key>", "<value>")` - Changes a value in the config file.
 
