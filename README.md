@@ -53,7 +53,7 @@ Just make executable and run on many Linux distributions
 - Arch Linux
 - OpenBSD
 - FreeBSD
-- Red Hat
+- Red Hat Linux
 - Android (Termux)
 - Windows
 
