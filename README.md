@@ -19,6 +19,11 @@ This package can be installed with apt, gdebi, qapt, etc.
 
 This package can be installed using pacman, with `sudo pacman -U iicalc-any.pkg.tar.zst`
 
+#### Red Hat
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=makerpm) (iicalc.rpm)
+
+This package can be installed on Red Hat based systems, like Fedora and CentOS, by using the command `dnf localinstall iicalc.rpm` if connected to the internet, or `rpm -i iicalc.rpm` if offline.
+
 #### AppImage
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
 
@@ -48,6 +53,7 @@ Just make executable and run on many Linux distributions
 - Arch Linux
 - OpenBSD
 - FreeBSD
+- Red Hat
 - Android (Termux)
 - Windows
 
