@@ -410,7 +410,10 @@ def quit():
 #README (Linux only)
 def readme():
 	if(platform.system()=="Linux" or "BSD" in platform.system()):
-		sh("cat README-online | less")
+		if config["installation"]["installtype"] == "portable":
+			sh("cat README-online | less")
+		else:
+			sh("cat " + config["paths"]["systemPath"] + "/README-online | less")
 	else:
 		return("Sorry, this command only works on Linux")
 
