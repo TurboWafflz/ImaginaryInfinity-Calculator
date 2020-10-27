@@ -1,15 +1,75 @@
-image: ubuntu:latest
+stages:
+  - debian packager
+  - buildpkg
+  - makerpm
+  - buildrpm
+  - AppImage packager
 debian packager:
-    stage: build
-    script:
-        - ./installer.sh --make-deb
-    artifacts:
-        paths:
-            - iicalc.deb
-    only:
-        - development
+  image: ubuntu:latest
+  stage: debian packager
+  script:
+    - ./installer.sh --make-deb
+  artifacts:
+    paths:
+      - iicalc.deb
+  only:
+    - development
+buildpkg:
+  image: archlinux:latest
+  stage: buildpkg
+  before_script:
+    - pacman -Sy bash binutils fakeroot pkgfile wget --noconfirm --needed
+  script:
+    - wget 'https://raw.githubusercontent.com/TabulateJarl8/files/master/debtoap'
+    - chmod +x debtoap
+    - bash debtoap -u
+    - bash debtoap iicalc.deb
+  artifacts:
+    paths:
+      - iicalc-any.pkg.tar.zst
+  only:
+    - development
+makerpm:
+  image: ubuntu:latest
+  stage: makerpm
+  before_script:
+    - apt update
+    - export DEBIAN_FRONTEND=noninteractive
+    - ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+    - apt install -y tzdata
+    - dpkg-reconfigure --frontend noninteractive tzdata
+    - apt install -y alien
+  script:
+    - mkdir tmp
+    - dpkg-deb -R iicalc.deb tmp
+    - sed -i -E "s/debian/redhat/" tmp/usr/share/iicalc/config.ini
+    - dpkg-deb -b tmp iicalc-rpm.deb
+    - alien --scripts -r iicalc-rpm.deb
+    - mv iicalc*.rpm iicalcunbuilt.rpm
+  artifacts:
+    paths:
+      - iicalcunbuilt.rpm
+  only:
+    - development
+buildrpm:
+  image: fedora:latest
+  stage: buildrpm
+  before_script:
+    - dnf -y install rpmrebuild wget
+    - wget https://raw.githubusercontent.com/TabulateJarl8/files/master/rpmrebuild.sh
+    - rm /usr/lib/rpmrebuild/rpmrebuild.sh
+    - cp rpmrebuild.sh /usr/lib/rpmrebuild/rpmrebuild.sh
+    - chmod +rwx /usr/lib/rpmrebuild/rpmrebuild.sh
+  script:
+    - rpmrebuild -pe -n iicalcunbuilt.rpm
+    - mv /root/rpmbuild/RPMS/noarch/iicalc*.rpm ./iicalc.rpm
+  artifacts:
+    paths:
+      - iicalc.rpm
+  only:
+    - development
 AppImage packager:
-    stage: build
+    stage: AppImage packager
     script:
         - apt update
         - apt install -y file
