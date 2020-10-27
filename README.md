@@ -47,6 +47,7 @@ Just make executable and run on many Linux distributions
 - Ubuntu
 - Arch Linux
 - OpenBSD
+- FreeBSD
 - Android (Termux)
 - Windows
 
