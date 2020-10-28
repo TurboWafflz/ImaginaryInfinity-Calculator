@@ -731,7 +731,7 @@ def update():
 				guiUpdate()
 			except ExecutableNotFound as e:
 				from getpass import getpass
-				print("Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)")
+				print(theme["styles"]["error"] + "Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)" + theme["styles"]["normal"])
 				getpass("[Press Enter to use the CLI Updater]")
 				cmdUpdate()
 		elif platform.system() == "Windows":
