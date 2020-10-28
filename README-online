@@ -37,7 +37,7 @@ ImaginaryInfinity Calculator has been tested to work on these platforms:
 - Red Hat Linux
 - Alpine Linux
 - Android (Termux)
-- Windows
+- Windows 10
 
 Plugins
 New functionality can easily be added by placing Python files with additional functions in the plugins directory or by downloading plugins from the store. To access a function added by a plugin, type `[plugin].[function]()`. For example, if you wanted to run the function `egg` from the plugin `food`, you would type `food.egg()`. Arguments placed in the parentheses will be passed to the function.
