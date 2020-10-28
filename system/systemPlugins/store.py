@@ -1,9 +1,9 @@
 import requests
-from dialog import Dialog
+from dialog import Dialog, ExecutableNotFound
 import configparser
 from fuzzywuzzy import fuzz
 import os
-from systemPlugins.core import clear, config, pluginPath, themePath
+from systemPlugins.core import clear, config, pluginPath, themePath, theme
 from systemPlugins import pm
 import sys
 import subprocess
@@ -379,4 +379,7 @@ def store(reload=True):
 				pluginpage(mainmenu[1])
 	except KeyboardInterrupt:
 		clear()
+		return
+	except ExecutableNotFound:
+		print(theme["styles"]["error"] + "Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)" + theme["styles"]["normal"])
 		return

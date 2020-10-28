@@ -39,7 +39,7 @@ def list():
 #Dialog based settings editor
 def editor():
 	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku" or "BSD" in platform.system():
-		from dialog import Dialog
+		from dialog import Dialog, ExecutableNotFound
 		#Check if config manually specified
 		if args.config != None:
 			if os.path.isfile(args.config):
@@ -71,7 +71,11 @@ def editor():
 				except:
 					print("Fatal error: Cannot load config")
 					exit()
-		d = Dialog(dialog="dialog")
+		try:
+			d = Dialog(dialog="dialog")
+		except ExecutableNotFound:
+			print(theme["styles"]["error"] + "Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)" + theme["styles"]["normal"])
+			return
 		while True:
 			#Define menu options
 			choices = [("Theme", "The colors the calculator will use"),
