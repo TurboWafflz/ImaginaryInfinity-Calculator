@@ -54,6 +54,7 @@ Just make executable and run on many Linux distributions
 - OpenBSD
 - FreeBSD
 - Red Hat Linux
+- Alpine Linux
 - Android (Termux)
 - Windows
 
