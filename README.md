@@ -56,7 +56,7 @@ Just make executable and run on many Linux distributions
 - Red Hat Linux
 - Alpine Linux
 - Android (Termux)
-- Windows
+- Windows 10
 
 <hr style="border: 1px solid white">
 
