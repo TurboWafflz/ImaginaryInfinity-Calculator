@@ -26,6 +26,7 @@ from threading import Thread
 from packaging import version
 from sympy import S
 import argparse
+import atexit
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
@@ -304,6 +305,16 @@ def main(config=config, warmupThread=warmupThread):
 					except:
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
+
+		#Load line history
+		if "readline" in sys.modules:
+			try:
+				readline.read_history_file(config["paths"]["userPath"] + "/.history")
+			except FileNotFoundError:
+				pass
+			readline.set_history_length(1000)
+			atexit.register(readline.write_history_file, config["paths"]["userPath"] + "/.history")
+
 		#Display start up stuff
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read().rstrip("\n"))
 		if not upToDate:
