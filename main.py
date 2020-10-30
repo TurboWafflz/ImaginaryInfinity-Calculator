@@ -374,6 +374,8 @@ def main(config=config, warmupThread=warmupThread):
 				eqn=calc
 				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 					eqn=str(ans)+str(calc)
+				if cl[-1] == "+" or cl[-1] == "-" or cl[-1] == "*" or cl[-1] == "/" or cl[-1] == "^":
+					eqn=str(calc)+str(ans)
 				# if pr:
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
