@@ -1,6 +1,6 @@
 import re
 from functools import reduce
-from fractions import gcd
+from math import gcd
 import colorama
 import math
 builtin=True
