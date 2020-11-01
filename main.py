@@ -1,7 +1,9 @@
 ##ImaginaryInfinity Calculator
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.gitlab.io/iicalc.html
-print("Loading...")
+import sys
+if not "-V" in sys.argv and not "--version" in sys.argv:
+	print("Loading...")
 global cplx
 global onlineMode
 global debugMode
@@ -15,7 +17,6 @@ import time
 from math import *
 from cmath import *
 import pkgutil
-import sys
 import platform
 import os
 import requests
@@ -30,6 +31,7 @@ import atexit
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
+parser.add_argument("--version", "-V", action="store_true", help="Print Version")
 args = parser.parse_args()
 
 #Make sure math is real and Python is not completely insane
@@ -48,8 +50,11 @@ def pingServer():
 		pass
 	except requests.exceptions.ReadTimeout:
 		pass
-print("Importing plugins...")
-print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
+
+if args.version is False:
+	print("Importing plugins...")
+	print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
+
 #Check if config manually specified
 if args.config != None:
 	if os.path.isfile(args.config):
@@ -63,7 +68,8 @@ else:
 	#Load config from ~/.iicalc
 	try:
 		home = os.path.expanduser("~")
-		print("Loading config...")
+		if args.version is False:
+			print("Loading config...")
 		config = configparser.ConfigParser()
 		config.read(home + "/.iicalc/config.ini")
 		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
@@ -74,13 +80,24 @@ else:
 	#Load config from current directory
 	except:
 		try:
-			print("Loading portable config...")
+			if args.version is False:
+				print("Loading portable config...")
 			config = configparser.ConfigParser()
 			config.read("config.ini")
 			configPath = "config.ini"
 		except:
 			print("Fatal error: Cannot load config")
 			exit()
+
+if args.version is True:
+	if os.path.isfile(config["paths"]["systemPath"] + "/version.txt"):
+		with open(config["paths"]["systemPath"] + "/version.txt") as f:
+			print(Fore.MAGENTA + "Version: " + f.read().strip() + Fore.RESET)
+		exit()
+	else:
+		print("Version file not found: " + config["paths"]["systemPath"] + "/version.txt")
+		exit()
+
 pluginPath=config["paths"]["userPath"] + "/plugins/"
 #Add system path to path to load built in plugins
 sys.path.insert(1, config["paths"]["userPath"])
