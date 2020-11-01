@@ -33,7 +33,7 @@ def reloadPluginList():
 		link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
 		#display progress box of updating index
 		d = Dialog(dialog="dialog")
-		d.add_persistent_args(["--title", "Reloading Plugin List..."])
+		d.add_persistent_args(["--title", "Updating package List..."])
 		d.gauge_start(text="This may take a while if the server hasn\'t been pinged in a while", height=None, width=None, percent=0)
 
 		#download actual index from site
@@ -346,13 +346,13 @@ def store(reload=True):
 		if reload == True:
 			if reloadPluginList() == False:
 				clear()
-				print("Please reload the plugin index to continue.")
+				print("Please update the package list to continue.")
 				return
 		try:
 			index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 		except configparser.MissingSectionHeaderError:
 			clear()
-			print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later or use store.store(False) to enter the store without reloading the index.")
+			print("The index is temporarily unavailable due to a Microsoft Azure outage. Please try again later or use store.store(False) to enter the store without updating the package list.")
 			return
 		d = Dialog(dialog="dialog")
 		d.add_persistent_args(["--title", "Browse", "--cancel-label", "Quit"])
