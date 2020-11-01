@@ -92,7 +92,7 @@ else:
 if args.version is True:
 	if os.path.isfile(config["paths"]["systemPath"] + "/version.txt"):
 		with open(config["paths"]["systemPath"] + "/version.txt") as f:
-			print(Fore.MAGENTA + "Version: " + f.read().strip() + Fore.RESET)
+			print(Fore.MAGENTA + "Version " + f.read().strip() + Fore.RESET)
 		exit()
 	else:
 		print("Version file not found: " + config["paths"]["systemPath"] + "/version.txt")
