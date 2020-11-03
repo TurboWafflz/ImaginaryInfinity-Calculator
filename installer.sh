@@ -2,7 +2,7 @@
 clear
 echo "ImaginaryInfinity Calculator Installer"
 DIR=`dirname $0`
-chmod +x $DIR/installer.sh
+chmod +x $DIR/${0##*/}
 
 #Build deb
 if [ "$1" == "--make-deb" ]
@@ -75,7 +75,7 @@ then
 	if [ `whoami` != "root" ]
 	then
 		echo "Root access is required to install ImaginaryInfinity Calculator."
-		sudo $DIR/installer.sh
+		sudo $DIR/${0##*/}
 		exit
 	fi
 	echo "The installer has detected that you are using Linux, is this correct? (Y/n)"
@@ -100,7 +100,7 @@ then
 	if [ `whoami` != "root" ]
 	then
 		echo "Root access is required to install ImaginaryInfinity Calculator."
-		sudo $DIR/installer.sh
+		sudo $DIR/${0##*/}
 		exit
 	fi
 	echo "The installer has detected that you are using MacOS, is this correct? (Y/n)"
