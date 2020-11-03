@@ -2,8 +2,7 @@
 clear
 echo "ImaginaryInfinity Calculator Installer"
 DIR=`dirname $0`
-chmod +x installer.sh
-chmod +x uninstaller.sh
+chmod +x $DIR/installer.sh
 
 #Build deb
 if [ "$1" == "--make-deb" ]

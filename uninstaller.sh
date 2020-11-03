@@ -2,6 +2,7 @@
 clear
 echo "ImaginaryInfinity Calculator Uninstaller"
 DIR=`dirname $0`
+chmod +x $DIR/uninstaller.sh
 
 if [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
