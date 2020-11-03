@@ -181,18 +181,23 @@ cp $config "$systemPath/config.ini"
 #Install Python modules if installing
 if [ "$buildOnly" != "true" ]
 then
-        "$pythonCommand" -m pip --version 1> /dev/null 2> /dev/null
+	"$pythonCommand" -m pip --version 1> /dev/null 2> /dev/null
 	if [ "$?" != "0"  ]
 	then
 		echo ""
 		echo -e "\033[0;31mPip does not seem to be installed. Before running the calculator, please install pip.\033[0m"
-                echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3-pip"
-                echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3-pip"
-                echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add py3-pip"
-                echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python-pip"
+		echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3-pip"
+		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3-pip"
+		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add py3-pip"
+		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python-pip"
 	else
 		echo "Installing Python modules..."
-        	"$pythonCommand" -m pip install -r requirements.txt
+		"$pythonCommand" -m pip install -r requirements.txt
+		gcc -v 1> /dev/null 2> /dev/null
+		if [ "$?" == "0" ]
+		then
+			"$pythonCommand" -m pip install python-Levenshtein
+		fi
 	fi
 fi
 #Finish building deb
