@@ -182,8 +182,20 @@ cp $config "$systemPath/config.ini"
 #Install Python modules if installing
 if [ "$buildOnly" != "true" ]
 then
+        "$pythonCommand" -m pip --version 1> /dev/null 2> /dev/null
+	if [ "$?" != "0"  ]
+	then
+		echo -e "\033[0;31mPip does not seem to be installed. Before running the calculator, please install pip.\033[0m"
+                echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3-pip"
+                echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3-pip"
+                echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add py3-pip"
+                echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python-pip"
+	fi
+fi
+if [ "$buildOnly" != "true" ]
+then
 	echo "Installing Python modules..."
-	python3 -m pip install -r requirements.txt
+	"$pythonCommand" -m pip install -r requirements.txt
 fi
 #Finish building deb
 if [ "$1" == "--make-deb" ]
