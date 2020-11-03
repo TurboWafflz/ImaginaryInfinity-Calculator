@@ -2,7 +2,7 @@
 clear
 echo "ImaginaryInfinity Calculator Uninstaller"
 DIR=`dirname $0`
-chmod +x $DIR/uninstaller.sh
+chmod +x $DIR/${0##*/}
 
 if [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
@@ -33,7 +33,7 @@ then
 	if [ `whoami` != "root" ]
 	then
 		echo "Restarting the uninstaller as root"
-		sudo $DIR/uninstaller.sh
+		sudo $DIR/${0##*/}
 		exit
 	fi
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
@@ -63,7 +63,7 @@ then
 	if [ `whoami` != "root" ]
 	then
 		echo "Restarting the uninstaller as root"
-		sudo $DIR/uninstaller.sh
+		sudo $DIR/${0##*/}
 		exit
 	fi
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
