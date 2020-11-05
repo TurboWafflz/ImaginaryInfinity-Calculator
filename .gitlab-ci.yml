@@ -32,8 +32,8 @@ buildpkg:
     - bash debtoap -u
     - bash debtoap -p iicalc.deb
     - git clone ssh://aur@aur.archlinux.org/iicalc.git iicalcaur
-    - cp -v /builds/TabulateJarl8/ImaginaryInfinity-Calculator/iicalc/* iicalcaur/
-    - chmod -R 757 /builds/TabulateJarl8/ImaginaryInfinity-Calculator/iicalcaur
+    - cp -v /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalc/* iicalcaur/
+    - chmod -R 757 /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalcaur
     - cd iicalcaur
     - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
     - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git
