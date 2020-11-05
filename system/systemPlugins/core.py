@@ -20,6 +20,7 @@ import configparser
 import re
 import argparse
 from packaging import version
+import tempfile
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
@@ -723,6 +724,20 @@ def update():
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
+	elif config["installation"]["installtype"] == "aur":
+		with tempfile.TemporaryDirectory() as td:
+			os.chdir(td)
+			if os.system("git clone https://aur.archlinux.org/iicalc.git") != 0:
+				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+				return
+			os.chdir("iicalc")
+			if os.system("makepkg -s") != 0:
+				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+				return
+			if os.system("sudo pacman -U *.pkg*") != 0:
+				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+				return
+		print(theme["styles"]["important"] + "Update Complete. Please restart the calculator to apply changes.")
 	elif config["installation"]["installtype"] == "AppImage":
 		print("Please download the latest AppImage for your branch here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
 	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
