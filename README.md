@@ -15,6 +15,16 @@ We provide a packaged version of ImaginaryInfinity calculator for some Linux dis
 This package can be installed with apt, gdebi, qapt, etc.
 
 #### Arch Linux
+You can install the AUR package or download the package below. To install from the AUR:
+
+```bash
+git clone https://aur.archlinux.org/iicalc.git && cd iicalc
+makepkg -s
+sudo pacman -U *.pkg*
+```
+
+Or you can install it with the below package:
+
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc-any.pkg.tar.zst?job=buildpkg) (iicalc-any.pkg.tar.zst)
 
 This package can be installed using pacman, with `sudo pacman -U iicalc-any.pkg.tar.zst`
