@@ -18,12 +18,30 @@ buildpkg:
   image: archlinux:latest
   stage: buildpkg
   before_script:
-    - pacman -Sy bash binutils fakeroot pkgfile wget --noconfirm --needed
+    - pacman -Sy bash binutils fakeroot pkgfile wget openssh sudo git --noconfirm --needed
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - ssh-keyscan -v -t rsa,dsa,ecdsa,ed25519 aur.archlinux.org >>~/.ssh/known_hosts
+    - chmod 700 ~/.ssh
+    - git config --global user.name "TabulateJarl8"
+    - git config --global user.email "tabulatejarl8@gmail.com"
   script:
     - wget 'https://raw.githubusercontent.com/TabulateJarl8/files/master/debtoap'
     - chmod +x debtoap
     - bash debtoap -u
-    - bash debtoap iicalc.deb
+    - bash debtoap -p iicalc.deb
+    - git clone ssh://aur@aur.archlinux.org/iicalc.git iicalcaur
+    - cp -v /builds/TabulateJarl8/ImaginaryInfinity-Calculator/iicalc/* iicalcaur/
+    - chmod -R 757 /builds/TabulateJarl8/ImaginaryInfinity-Calculator/iicalcaur
+    - cd iicalcaur
+    - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
+    - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git
+    - git add .
+    - git commit -m "Update"
+    - git push aur master
+    - cd ..
+
   artifacts:
     paths:
       - iicalc-any.pkg.tar.zst
