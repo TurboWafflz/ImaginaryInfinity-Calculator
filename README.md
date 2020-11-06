@@ -1,7 +1,7 @@
 # ImaginaryInfinity Calculator
 ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
 command line interface is designed to resemble that of some graphing
-calculators.
+calculators. To preform another operation on a result, simply type the operation you wish to preform (eg. "/5" to divide the previous result by 5). To use the previous result in a new calculation, just specify the operation after the new calculation (eg. "5-" to subtract the previous result from 5).
 
 ![Screenshot](iicalc.png)
 ## Packages
@@ -13,6 +13,26 @@ We provide a packaged version of ImaginaryInfinity calculator for some Linux dis
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager) (iicalc.deb)
 
 This package can be installed with apt, gdebi, qapt, etc.
+
+#### Arch Linux
+You can install the AUR package or download the package below. To install from the AUR:
+
+```bash
+git clone https://aur.archlinux.org/iicalc.git && cd iicalc
+makepkg -s
+sudo pacman -U *.pkg*
+```
+
+Or you can install it with the below package:
+
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc-any.pkg.tar.zst?job=buildpkg) (iicalc-any.pkg.tar.zst)
+
+This package can be installed using pacman, with `sudo pacman -U iicalc-any.pkg.tar.zst`
+
+#### Red Hat
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=buildrpm) (iicalc.rpm)
+
+This package can be installed or updated on Red Hat based systems, like Fedora and CentOS, using rpm, with `sudo rpm -Uhv iicalc.rpm`
 
 #### AppImage
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
@@ -26,7 +46,7 @@ Just make executable and run on many Linux distributions
 	- Primary development and testing OS. Should have the best support
 - **Web** (repl.it)
 - **Android**
-	- Termux support covers all or most features including installation. 
+	- Termux support covers all or most features including installation.
 
 **ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **Haiku**
@@ -37,6 +57,16 @@ Just make executable and run on many Linux distributions
 	- Windows support receives much less testing than other platforms
 - **Any other OS that can run Python 3**
 	- Start an issue on GitHub and we may improve support for your OS
+
+**ImaginaryInfinity Calculator has been tested to work on these platforms:**
+- Ubuntu
+- Arch Linux
+- OpenBSD
+- FreeBSD
+- Red Hat Linux
+- Alpine Linux
+- Android (Termux)
+- Windows 10
 
 <hr style="border: 1px solid white">
 
@@ -52,13 +82,12 @@ ex. `factor(7)` instead of `core.factor(7)`
 <hr style="border: 1px solid white">
 
 ## Themes
-The colors used by the calculator can be modified by themes. Themes are ini files that define the colors the calculator will use and are stored in the `themes` folder. To change the theme used by the calculator, run `settings.configMod("appearance", "theme", "<theme name>")`, or select a theme in the settings editor. Two themes are included by default, `dark` for use on terminals with a dark background, and `light` for use on terminals with a light background.
+The colors used by the calculator can be modified by themes. Themes are ini files that define the colors the calculator will use and are stored in the `themes` folder. To change the theme used by the calculator, run `settings.configMod("appearance", "theme", "<theme name>")`, or select a theme in the settings editor. One theme is included by default, `dark` for use on terminals with a dark background. If you use a terminal with a light background, you can download our official `light` theme from the store.
 
 <hr style="border: 1px solid white">
 
 ## Built in commands:
-The following commands are built in to the calculator or added by the "core"
-plugin.
+The following commands are built in to the calculator or added by the "core" plugin:
 
 - `settings.configMod("<section>", "<key>", "<value>")` - Changes a value in the config file.
 

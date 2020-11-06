@@ -1,14 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 clear
 echo "ImaginaryInfinity Calculator Uninstaller"
 DIR=`dirname $0`
+chmod +x $DIR/${0##*/}
 
 if [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
 	read
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		echo "Cancelled"
 		exit
@@ -27,18 +28,18 @@ then
 	desktopFilePath="/dev/null"
 	desktopFile="iicalc.desktop"
 	installDesktopFile="false"
-elif [ `uname` == "Linux" ]
+elif [ `uname` == "Linux" ] || grep -q BSD <<< `uname`
 then
 	if [ `whoami` != "root" ]
 	then
 		echo "Restarting the uninstaller as root"
-		sudo $DIR/uninstaller.sh
+		sudo $DIR/${0##*/}
 		exit
 	fi
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
 	read yn
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		echo "Cancelled"
 		exit
@@ -62,13 +63,13 @@ then
 	if [ `whoami` != "root" ]
 	then
 		echo "Restarting the uninstaller as root"
-		sudo $DIR/uninstaller.sh
+		sudo $DIR/${0##*/}
 		exit
 	fi
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
 	read yn
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		echo "Cancelled"
 		exit
@@ -91,7 +92,7 @@ else
 	echo "The uninstaller does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual uninstallation (y/N)?"
 	read yn
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		exit
 	fi

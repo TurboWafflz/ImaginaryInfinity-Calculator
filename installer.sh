@@ -1,9 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 clear
 echo "ImaginaryInfinity Calculator Installer"
 DIR=`dirname $0`
-chmod +x installer.sh
-chmod +x uninstaller.sh
+chmod +x $DIR/${0##*/}
 
 #Build deb
 if [ "$1" == "--make-deb" ]
@@ -71,12 +70,12 @@ then
 	pythonCommand="python3"
 
 #Install for Linux
-elif [ `uname` == "Linux" ]
+elif [ `uname` == "Linux" ] || grep -q BSD <<< `uname`
 then
 	if [ `whoami` != "root" ]
 	then
 		echo "Root access is required to install ImaginaryInfinity Calculator."
-		sudo $DIR/installer.sh
+		sudo $DIR/${0##*/}
 		exit
 	fi
 	echo "The installer has detected that you are using Linux, is this correct? (Y/n)"
@@ -101,7 +100,7 @@ then
 	if [ `whoami` != "root" ]
 	then
 		echo "Root access is required to install ImaginaryInfinity Calculator."
-		sudo $DIR/installer.sh
+		sudo $DIR/${0##*/}
 		exit
 	fi
 	echo "The installer has detected that you are using MacOS, is this correct? (Y/n)"
@@ -123,7 +122,7 @@ else
 	echo "The installer does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual installation (y/N)?"
 	read yn
-	if [ $yn != "y" ]
+	if [ "$yn" != "y" ]
 	then
 		exit
 	fi
@@ -177,12 +176,29 @@ cp main.py "$systemPath/iicalc.py"
 cp requirements.txt "$systemPath"
 cp messages.txt "$systemPath"
 cp system/version.txt "$systemPath"
+cp README-online "$systemPath"
 cp $config "$systemPath/config.ini"
 #Install Python modules if installing
 if [ "$buildOnly" != "true" ]
 then
-	echo "Installing Python modules..."
-	python3 -m pip install -r requirements.txt
+	"$pythonCommand" -m pip --version 1> /dev/null 2> /dev/null
+	if [ "$?" != "0"  ]
+	then
+		echo ""
+		echo -e "\033[0;31mPip does not seem to be installed. Before running the calculator, please install pip.\033[0m"
+		echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3-pip"
+		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3-pip"
+		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add py3-pip"
+		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python-pip"
+	else
+		echo "Installing Python modules..."
+		"$pythonCommand" -m pip install -r requirements.txt
+		gcc -v 1> /dev/null 2> /dev/null
+		if [ "$?" == "0" ]
+		then
+			"$pythonCommand" -m pip install python-Levenshtein
+		fi
+	fi
 fi
 #Finish building deb
 if [ "$1" == "--make-deb" ]

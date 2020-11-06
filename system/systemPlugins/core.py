@@ -20,13 +20,14 @@ import configparser
 import re
 import argparse
 from packaging import version
+import tempfile
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
 args = parser.parse_args()
 
 #Import dialog if on a supported OS
-if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
 	from dialog import Dialog, ExecutableNotFound
 #Check if config manually specified
 if args.config != None:
@@ -190,13 +191,13 @@ def restart():
 def chelp():
 	print("Commands:")
 	print("------")
-	print("settings.configMod('<section>', '<key>', '<value>'') - Changes a value in the config file.")
+	print("settings.configMod('<section>', '<key>', '<value>') - Changes a value in the config file.")
 	print("settings.editor() - Settings editor (Not supported on all platforms)")
 	print("factor(<number>) - Shows factor pairs for a number")
 	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
 	print("isPrime(<number>) - Checks whether or not a number is prime")
 	print("toStd(\"<value>\", [roundVal], [printResult]) - Convert e notation number to standard notation")
-	if(platform.system()=="Linux"):
+	if(platform.system()=="Linux" or "BSD" in platform.system()):
 		print("readme() - Shows the README file (Online/Linux only)")
 	print("sh('<command>') - Run a command directly on your computer")
 	#print("shell() - Starts a shell directly on your computer")
@@ -213,7 +214,7 @@ def AllWillPerish():
 #Clear
 def clear():
 	#Just clear on known operating systems
-	if(platform.system()=="Linux"):
+	if(platform.system()=="Linux" or "BSD" in platform.system()):
 		os.system("clear")
 		import readline
 	elif(platform.system()=="Haiku"):
@@ -409,8 +410,11 @@ def quit():
 
 #README (Linux only)
 def readme():
-	if(platform.system()=="Linux"):
-		sh("cat README-online | less")
+	if(platform.system()=="Linux" or "BSD" in platform.system()):
+		if config["installation"]["installtype"] == "portable":
+			sh("cat README-online | less")
+		else:
+			sh("cat " + config["paths"]["systemPath"] + "/README-online | less")
 	else:
 		return("Sorry, this command only works on Linux")
 
@@ -454,7 +458,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 	except:
 		pass
 	if gui == True:
-		d.gauge_update(13, "Updating...\nBacking Up...", update_text=True)
+		d.gauge_update(12, "Updating...\nBacking Up...", update_text=True)
 
 	#Backup
 	if os.path.isdir(parent + ".iibackup"):
@@ -464,9 +468,6 @@ def doUpdate(branch="master", theme=theme, gui=False):
 	if os.path.isdir(parent + ".iithemesbackup"):
 		shutil.rmtree(parent + ".iithemesbackup")
 	shutil.copytree(root, parent + ".iibackup/")
-
-	if gui == True:
-		d.gauge_update(25, "Updating...\nMoving Plugins...", update_text=True)
 
 	if config["installation"]["installtype"] == "portable":
 		#Move Plugins out of Plugins
@@ -493,7 +494,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 				dest = os.path.join(parent, tempThemeDir)
 				shutil.move(source, dest)
 	if gui == True:
-		d.gauge_update(38, "Updating...\nRemoving Old Files...", update_text=True)
+		d.gauge_update(25, "Updating...\nRemoving Old Files...", update_text=True)
 
 	#Delete contents of calculator
 	for filename in os.listdir(root):
@@ -507,12 +508,27 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 	if gui == True:
-		d.gauge_update(51, "Updating...\nDownloading Update...", update_text=True)
+		d.gauge_update(37, "Updating...\nDownloading Update...", update_text=True)
 
 	#download files
+	newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
+	total_length = len(newzip.content)
 	try:
 		with open(root + "newcalc.zip", "wb") as f:
-			f.write(requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip").content)
+			if total_length is None:
+				f.write(newzip.content)
+			else:
+				dl = 0
+				olddone=0
+				for data in newzip.iter_content(chunk_size=4096):
+					dl += len(data)
+					f.write(data)
+					done = int(25 * dl / total_length)
+					if done > 25:
+						done = 25
+					if olddone != done:
+						olddone = done
+						d.gauge_update(37 + done)
 	except Exception as e:
 		clear()
 		print(e)
@@ -529,7 +545,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		sys.exit("Fatal Error")
 
 	if gui == True:
-		d.gauge_update(64, "Updating...\nUnzipping...", update_text=True)
+		d.gauge_update(62, "Updating...\nUnzipping...", update_text=True)
 
 	#Unzip File
 	os.chdir(root)
@@ -547,7 +563,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 	os.remove("newcalc.zip")
 
 	if gui == True:
-		d.gauge_update(77, "Updating...\nRestoring Plugins...", update_text=True)
+		d.gauge_update(75, "Updating...\nRestoring Plugins...", update_text=True)
 
 	if config["installation"]["installtype"] == "portable":
 		#move plugins back into /plugins
@@ -573,7 +589,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		os.chdir(root)
 
 	if gui == True:
-		d.gauge_update(90, "Updating...\nVerifying Update...", update_text=True)
+		d.gauge_update(87, "Updating...\nVerifying Update...", update_text=True)
 
 	#check if all is fine
 	if not os.path.isfile("main.py") or not os.path.exists(config["paths"]["userpath"] + "/plugins"):
@@ -589,7 +605,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		d.gauge_update(100, "Updating...\nFinishing Up...", update_text=True)
 
 	#make launcher.sh executable
-	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
 		os.system("chmod +x launcher.sh")
 
 	#Load old conf vals
@@ -631,16 +647,15 @@ def cmdUpdate(theme=theme, config=config):
 def guiUpdate(theme=theme, config=config):
 	try:
 		versionnum = requests.get("https://raw.githubusercontent.com/TurboWafflz/ImaginaryInfinity-Calculator/" + config["updates"]["branch"] + "/system/version.txt", timeout=10)
-		if versionnum.status_code == 404:
-			print("Not on branch with version.txt")
-			return
-		else:
+		if versionnum.status_code == 200:
 			versionnum = versionnum.text
 			with open(config["paths"]["systemPath"] + "/version.txt") as f:
 				if version.parse(versionnum) > version.parse(f.read().rstrip("\n")):
 					upToDate = "Would you like to update?"
 				else:
 					upToDate = "You are currently up to date.\n\nWould you like to redownload the current version?"
+		else:
+			upToDate = "Would you like to update?"
 	except KeyboardInterrupt:
 		print("Cancelled")
 		return
@@ -662,19 +677,76 @@ def guiUpdate(theme=theme, config=config):
 def update():
 	if config["installation"]["installtype"] == "debian":
 		#Download
-		with open(config["paths"]["userpath"] + "iicalc.deb", "wb") as f:
-			f.write(requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager").content)
-		#Update
-		os.system("sudo apt install " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
+		deb = requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/iicalc.deb?job=debian%20packager")
+		if deb.status_code == 404:
+			print("The " + config["updates"]["branch"] + " branch is not currently creating a deb for new releases.")
+			return
+		elif deb.status_code != 200:
+			print("Error code " + str(deb.status_code))
+			return
+		else:
+			with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
+				f.write(deb.content)
+			#Update
+			os.system("sudo dpkg -i " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
+			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+			if x != "n":
+				restart()
+	elif config["installation"]["installtype"] == "arch":
+		archpkg = requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/iicalc-any.pkg.tar.zst?job=buildpkg")
+		if archpkg.status_code == 404:
+			print("The " + config["updates"]["branch"] + " branch is not currently creating an arch package for new releases.")
+			return
+		elif archpkg.status_code != 200:
+			print("Error code " + str(archpkg.status_code))
+			return
+		else:
+			with open(config["paths"]["userpath"] + "/iicalc.pkg.tar.zst", "wb") as f:
+				f.write(archpkg.content)
+			#Update
+			os.system("sudo pacman -U " + os.path.join(config["paths"]["userpath"], "iicalc.pkg.tar.zst"))
+			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+			if x != "n":
+				restart()
+	elif config["installation"]["installtype"] == "redhat":
+		rpm = requests.get("https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/iicalc.rpm?job=buildrpm")
+		if rpm.status_code == 404:
+			print("The " + config["updates"]["branch"] + " branch is not currently creating an rpm package for new releases.")
+			return
+		elif rpm.status_code != 200:
+			print("Error code " + str(rpm.status_code))
+			return
+		else:
+			with open(config["paths"]["userpath"] + "/iicalc.rpm", "wb") as f:
+				f.write(rpm.content)
+			#Update
+			os.system("sudo rpm -Uhv " + os.path.join(config["paths"]["userpath"], "iicalc.rpm"))
+			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+			if x != "n":
+				restart()
+	elif config["installation"]["installtype"] == "aur":
+		with tempfile.TemporaryDirectory() as td:
+			os.chdir(td)
+			if os.system("git clone https://aur.archlinux.org/iicalc.git") != 0:
+				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+				return
+			os.chdir("iicalc")
+			if os.system("makepkg -s") != 0:
+				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+				return
+			if os.system("sudo pacman -U *.pkg*") != 0:
+				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+				return
+		print(theme["styles"]["important"] + "Update Complete. Please restart the calculator to apply changes.")
 	elif config["installation"]["installtype"] == "AppImage":
-		print("Please download the latest AppImage here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
+		print("Please download the latest AppImage for your branch here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
 	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
-		if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+		if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
 			try:
 				guiUpdate()
 			except ExecutableNotFound as e:
 				from getpass import getpass
-				print("Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)")
+				print(theme["styles"]["error"] + "Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)" + theme["styles"]["normal"])
 				getpass("[Press Enter to use the CLI Updater]")
 				cmdUpdate()
 		elif platform.system() == "Windows":
