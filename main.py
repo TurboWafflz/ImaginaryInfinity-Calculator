@@ -77,6 +77,19 @@ else:
 		with open(configPath, "w") as configFile:
 			config.write(configFile)
 			configFile.close()
+
+		#Update config file from share config for installed
+		if os.path.exists("/usr/share/iicalc/config.ini"):
+			oldConfig = loadConfig(config)
+			config = configparser.ConfigParser().read("/usr/share/iicalc/config.ini")
+			for i in range(len(oldConfig)):
+				try:
+					config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
+				except:
+					pass
+			with open(configPath, "r+") as cf:
+				config.write(cf)
+
 	#Load config from current directory
 	except:
 		try:
@@ -266,6 +279,13 @@ def iprt(lib):
 			globals()[lib] = __import__(lib)
 		except ModuleNotFoundError:
 			pass
+
+def loadConfig(config):
+	items = []
+	for each_section in config.sections():
+		for (each_key, each_val) in config.items(each_section):
+			items.append((each_section, each_key, each_val))
+	return items
 
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
