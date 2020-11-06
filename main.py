@@ -51,6 +51,13 @@ def pingServer():
 	except requests.exceptions.ReadTimeout:
 		pass
 
+def loadConfig(config):
+	items = []
+	for each_section in config.sections():
+		for (each_key, each_val) in config.items(each_section):
+			items.append((each_section, each_key, each_val))
+	return items
+
 if args.version is False:
 	print("Importing plugins...")
 	print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
@@ -81,7 +88,8 @@ else:
 		#Update config file from share config for installed
 		if os.path.exists("/usr/share/iicalc/config.ini"):
 			oldConfig = loadConfig(config)
-			config = configparser.ConfigParser().read("/usr/share/iicalc/config.ini")
+			config = configparser.ConfigParser()
+			config.read("/usr/share/iicalc/config.ini")
 			for i in range(len(oldConfig)):
 				if oldConfig[i][1] != "installtype":
 					try:
@@ -280,13 +288,6 @@ def iprt(lib):
 			globals()[lib] = __import__(lib)
 		except ModuleNotFoundError:
 			pass
-
-def loadConfig(config):
-	items = []
-	for each_section in config.sections():
-		for (each_key, each_val) in config.items(each_section):
-			items.append((each_section, each_key, each_val))
-	return items
 
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
