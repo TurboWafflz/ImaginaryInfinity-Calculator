@@ -83,10 +83,11 @@ else:
 			oldConfig = loadConfig(config)
 			config = configparser.ConfigParser().read("/usr/share/iicalc/config.ini")
 			for i in range(len(oldConfig)):
-				try:
-					config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
-				except:
-					pass
+				if oldConfig[i][1] != "installtype":
+					try:
+						config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
+					except:
+						pass
 			with open(configPath, "r+") as cf:
 				config.write(cf)
 
