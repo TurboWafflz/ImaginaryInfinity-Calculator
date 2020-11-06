@@ -29,10 +29,17 @@ def signal(sig,config,args=""):
 		except Exception as e:
 			pass
 
+def list():
+	for section in config.sections():
+		print(theme["styles"]["important"] + section + Fore.RESET + Back.RESET + Style.NORMAL)
+		for (key, val) in config.items(section):
+			print(key + " = " + val)
+		print()
+
 #Dialog based settings editor
 def editor():
-	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku":
-		from dialog import Dialog
+	if platform.system()=="Linux" or platform.system()=="Darwin" or platform.system()=="Haiku" or "BSD" in platform.system():
+		from dialog import Dialog, ExecutableNotFound
 		#Check if config manually specified
 		if args.config != None:
 			if os.path.isfile(args.config):
@@ -64,7 +71,11 @@ def editor():
 				except:
 					print("Fatal error: Cannot load config")
 					exit()
-		d = Dialog(dialog="dialog")
+		try:
+			d = Dialog(dialog="dialog")
+		except ExecutableNotFound:
+			print(theme["styles"]["error"] + "Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)" + theme["styles"]["normal"])
+			return
 		while True:
 			#Define menu options
 			choices = [("Theme", "The colors the calculator will use"),
@@ -74,7 +85,8 @@ def editor():
 										("Safe mode", "Disable all plugins except core and settings"),
 										("Server Wakeup", "Start the index server on start"),
 										("Debug Mode", "Enable/disable debug mode"),
-										("Check for Updates", "Check for Updates on Starup")
+										("Check for Updates", "Check for Updates on Starup"),
+										("Update Channel", "Switch which branch you\'re updating from")
 										]
 
 			for plugin in plugins(False):
@@ -194,6 +206,15 @@ def editor():
 							config["startup"]["checkupdates"] = "true"
 						else:
 							config["startup"]["checkupdates"] = "false"
+
+				#Branch settings
+				elif tag == "Update Channel":
+					updatechannel = d.menu("ImaginaryInfinity Calculator Update Channel Settings", choices=[("Master", "This branch is the default stable branch"), ("Development", "This branch may have unstable beta features")])
+					if updatechannel[0] == d.OK:
+						if updatechannel[1] == "Master":
+							config["updates"]["branch"] = "master"
+						else:
+							config["updates"]["branch"] = "development"
 
 				#Close settings without modifying config
 				elif tag == "Save and exit":

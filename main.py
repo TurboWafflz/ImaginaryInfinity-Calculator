@@ -1,7 +1,9 @@
 ##ImaginaryInfinity Calculator
 ##Copyright 2020 Finian Wright
 ##https://turbowafflz.gitlab.io/iicalc.html
-print("Loading...")
+import sys
+if not "-V" in sys.argv and not "--version" in sys.argv:
+	print("Loading...")
 global cplx
 global onlineMode
 global debugMode
@@ -15,7 +17,6 @@ import time
 from math import *
 from cmath import *
 import pkgutil
-import sys
 import platform
 import os
 import requests
@@ -26,9 +27,11 @@ from threading import Thread
 from packaging import version
 from sympy import S
 import argparse
+import atexit
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
+parser.add_argument("--version", "-V", action="store_true", help="Print Version")
 args = parser.parse_args()
 
 #Make sure math is real and Python is not completely insane
@@ -47,8 +50,18 @@ def pingServer():
 		pass
 	except requests.exceptions.ReadTimeout:
 		pass
-print("Importing plugins...")
-print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
+
+def loadConfig(config):
+	items = []
+	for each_section in config.sections():
+		for (each_key, each_val) in config.items(each_section):
+			items.append((each_section, each_key, each_val))
+	return items
+
+if args.version is False:
+	print("Importing plugins...")
+	print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
+
 #Check if config manually specified
 if args.config != None:
 	if os.path.isfile(args.config):
@@ -62,7 +75,8 @@ else:
 	#Load config from ~/.iicalc
 	try:
 		home = os.path.expanduser("~")
-		print("Loading config...")
+		if args.version is False:
+			print("Loading config...")
 		config = configparser.ConfigParser()
 		config.read(home + "/.iicalc/config.ini")
 		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
@@ -70,16 +84,42 @@ else:
 		with open(configPath, "w") as configFile:
 			config.write(configFile)
 			configFile.close()
+
+		#Update config file from share config for installed
+		if os.path.exists("/usr/share/iicalc/config.ini"):
+			oldConfig = loadConfig(config)
+			config = configparser.ConfigParser()
+			config.read("/usr/share/iicalc/config.ini")
+			for i in range(len(oldConfig)):
+				if oldConfig[i][1] != "installtype":
+					try:
+						config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
+					except:
+						pass
+			with open(configPath, "r+") as cf:
+				config.write(cf)
+
 	#Load config from current directory
 	except:
 		try:
-			print("Loading portable config...")
+			if args.version is False:
+				print("Loading portable config...")
 			config = configparser.ConfigParser()
 			config.read("config.ini")
 			configPath = "config.ini"
 		except:
 			print("Fatal error: Cannot load config")
 			exit()
+
+if args.version is True:
+	if os.path.isfile(config["paths"]["systemPath"] + "/version.txt"):
+		with open(config["paths"]["systemPath"] + "/version.txt") as f:
+			print(Fore.MAGENTA + "Version " + f.read().strip() + Fore.RESET)
+		exit()
+	else:
+		print("Version file not found: " + config["paths"]["systemPath"] + "/version.txt")
+		exit()
+
 pluginPath=config["paths"]["userPath"] + "/plugins/"
 #Add system path to path to load built in plugins
 sys.path.insert(1, config["paths"]["userPath"])
@@ -167,7 +207,7 @@ elif config["startup"]["startserver"] == "yes":
 if config["startup"]["startserver"] == "ask":
 	print()
 	print()
-	if input(theme["styles"]["important"] + "Would you like to ping the server at startup to have faster access times to the plugin store? [Y/n] ").lower() == "n":
+	if input(theme["styles"]["important"] + "Would you like to ping the server at startup to have faster access times to the plugin store? [Y/n] " + theme["styles"]["normal"]).lower() == "n":
 		config["startup"]["startserver"] = "false"
 	else:
 		config["startup"]["startserver"] = "true"
@@ -240,8 +280,14 @@ else:
 
 #Import/install
 def iprt(lib):
-	os.system("pip3 install " + lib)
-	globals()[lib] = __import__(lib)
+	try:
+		globals()[lib] = __import__(lib)
+	except ModuleNotFoundError:
+		os.system("pip3 install " + lib)
+		try:
+			globals()[lib] = __import__(lib)
+		except ModuleNotFoundError:
+			pass
 
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
@@ -279,7 +325,7 @@ def main(config=config, warmupThread=warmupThread):
 				raise ValueError
 		except:
 			#Send signal and clear screen for different OSs
-			if(platform.system()=="Linux"):
+			if(platform.system()=="Linux" or "BSD" in platform.system()):
 				signal("onLinuxStart")
 				os.system("clear")
 				import readline
@@ -304,6 +350,16 @@ def main(config=config, warmupThread=warmupThread):
 					except:
 						pass;
 				print("Unknown OS, command history and line navigation not available.")
+
+		#Load line history
+		if "readline" in sys.modules:
+			try:
+				readline.read_history_file(config["paths"]["userPath"] + "/.history")
+			except FileNotFoundError:
+				pass
+			readline.set_history_length(1000)
+			atexit.register(readline.write_history_file, config["paths"]["userPath"] + "/.history")
+
 		#Display start up stuff
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read().rstrip("\n"))
 		if not upToDate:
@@ -363,6 +419,8 @@ def main(config=config, warmupThread=warmupThread):
 				eqn=calc
 				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
 					eqn=str(ans)+str(calc)
+				if cl[-1] == "+" or cl[-1] == "-" or cl[-1] == "*" or cl[-1] == "/" or cl[-1] == "^":
+					eqn=str(calc)+str(ans)
 				# if pr:
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc

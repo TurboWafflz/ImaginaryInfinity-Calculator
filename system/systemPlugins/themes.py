@@ -218,7 +218,7 @@ def dialogEditor():
 	clear()
 
 def editor():
-	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku":
+	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
 		dialogEditor()
 	else:
 		cmdEditor()
