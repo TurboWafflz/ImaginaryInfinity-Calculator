@@ -10,7 +10,12 @@ import sys
 import time
 import subprocess
 from systemPlugins.core import theme,config
-builtin = True
+import webbrowser
+import json
+
+class OAuthError(Exception):
+	pass
+
 #Loading spinner
 def loading(text):
 	for c in itertools.cycle(['|', '/', '-', '\\']):
@@ -19,14 +24,68 @@ def loading(text):
 		sys.stdout.write('\r' + text + " " + c)
 		sys.stdout.flush()
 		time.sleep(0.1)
+
+def connect():
+	webbrowser.open("https://turbowafflz.azurewebsites.net/iicalc/auth?connectCalc=true")
+	print(theme["styles"]["output"] + "If your browser does not automatically open, go to this URL: " + theme["styles"]["link"] + "https://turbowafflz.azurewebsites.net/iicalc/auth?connectCalc=true" + theme["styles"]["normal"])
+	token = input(theme["styles"]["input"] + "Please authenticate in your browser and paste the token here: " + theme["styles"]["normal"])
+	user = json.loads(requests.get("https://api.github.com/user", headers={"Authorization": "Bearer "+ token}).text)
+	if not "message" in user:
+		if input("Is this you? " + str(user["login"]) + " [Y/n] ").lower() != "n":
+			if not os.path.isdir(config["paths"]["userpath"] + "/.pluginstore"):
+				os.mkdir(config["paths"]["userPath"] + "/.pluginstore")
+			with open(config["paths"]["userpath"] + "/.pluginstore/.token", "w+") as f:
+				f.write(token)
+		else:
+			return
+	else:
+		print(theme["styles"]["error"] + "Invalid OAuth token" + theme["styles"]["normal"])
+		return
+
+def getUserInfo():
+	if os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
+		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+			user = json.loads(requests.get("https://api.github.com/user", headers={"Authorization": "Bearer "+ f.read().strip()}).text)
+		if "message" in user:
+			raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+		else:
+			return user
+	else:
+		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+
+def getUserPlugins():
+	if os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
+		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+			r = requests.post("https://turbowafflz.azurewebsites.net/iicalc/getplugins", cookies={"authToken": f.read().strip()})
+		if "OAuth Error" in r.text or "Invalid OAuth Session" in r.text:
+			raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+		else:
+			return r.text.split(",")
+	else:
+		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+
 #Download file
-def download(url, localFilename):
+def download(url, localFilename, pbarEnable=False):
 	# NOTE the stream=True parameter
 	r = requests.get(url, stream=True)
+	if "content-length" in r.headers:
+		filelength = r.headers['Content-Length']
+	else:
+		filelength = None
 	with open(localFilename, 'wb') as f:
+		if filelength != None and pbarEnable == True:
+			totaldownloaded = 0
+
+			pbar = tqdm(unit="B", total=int(filelength), unit_scale=True, unit_divisor=1024)
 		for chunk in r.iter_content(chunk_size=1024):
 			if chunk: # filter out keep-alive new chunks
+				if filelength != None and pbarEnable == True:
+					pbar.update(len(chunk))
+					totaldownloaded += len(chunk)
 				f.write(chunk)
+		if filelength != None and pbarEnable == True:
+			pbar.update(int(filelength)-totaldownloaded)
+			pbar.close()
 	return localFilename
 #Check plugin against hash
 def verify(plugin):
@@ -70,15 +129,13 @@ def update(silent=False, theme=theme):
 	t.start()
 	if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
 		os.makedirs(config["paths"]["userPath"] + "/.pluginstore")
-	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", config["paths"]["userPath"] + "/.pluginstore/tmp.ini")
-	with open(config["paths"]["userPath"] + "/.pluginstore/tmp.ini") as f:
+	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", config["paths"]["userPath"] + "/.pluginstore/index.ini", pbarEnable=True)
+	with open(config["paths"]["userPath"] + "/.pluginstore/index.ini") as f:
 		tmp = f.readlines()
 	if "The service is unavailable." in tmp:
 		print(theme["styles"]["error"] + "\nThe index is currently unavailable due to a temporary Microsoft Azure outage. Please try again later.")
 		done=True
 		return
-	else:
-		copyfile(config["paths"]["userPath"] + "/.pluginstore/tmp.ini", config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#Load index, if available
 	try:
 		index = configparser.ConfigParser()
@@ -211,7 +268,7 @@ def install(plugin):
 				else:
 					print("Error installing plugin: Invalid type")
 					return "error"
-				download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
+				download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
 				installed[plugin] = index[plugin]
 				installed[plugin]["source"] = "index"
 				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
@@ -270,7 +327,7 @@ def install(plugin):
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"
-			download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
+			download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
 			#Mark plugin as installed from index
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
@@ -328,7 +385,7 @@ def install(plugin):
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"
-			download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
+			download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
 			#Mark plugin as installed
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
@@ -593,7 +650,7 @@ def installFromFile(file):
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"
-			download(icpk[plugin]["download"], location + "/" + icpk[plugin]["filename"])
+			download(icpk[plugin]["download"], location + "/" + icpk[plugin]["filename"], pbarEnable=True)
 			installed[plugin] = icpk[plugin]
 			installed[plugin]["source"] = "icpk"
 			print("Verifying...")

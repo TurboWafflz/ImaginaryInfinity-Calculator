@@ -3,7 +3,7 @@ import colorama
 from systemPlugins.core import *
 import sys
 import platform
-builtin=True
+
 def cmdEditor():
 	print(theme["styles"]["important"] + "ImaginaryInfinity Calculator Theme Editor" + theme["styles"]["normal"])
 	foreColors = dir(colorama.Fore)
