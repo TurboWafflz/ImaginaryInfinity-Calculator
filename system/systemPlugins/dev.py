@@ -1,5 +1,4 @@
 #The dev plugin contains advanced functions not intended for most users
-builtin=True
 import os
 from systemPlugins.core import *
 from colorama import Fore, Back
@@ -39,7 +38,7 @@ def showPallate():
 	print(theme["styles"]["error"] + "Error")
 	print(theme["styles"]["important"] + "Important")
 	print(theme["styles"]["startupmessage"] + "Startup Message")
-	print(theme["styles"]["startupmessage"] + "Prompt")
+	print(theme["styles"]["prompt"] + "Prompt")
 	print(theme["styles"]["link"] + "Link")
 	print(theme["styles"]["answer"] + "Answer")
 	print(theme["styles"]["input"] + "Input")

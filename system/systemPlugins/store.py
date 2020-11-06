@@ -9,8 +9,6 @@ import sys
 import subprocess
 import re
 
-builtin=True
-
 #init
 if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
 	os.mkdir(config["paths"]["userPath"] + "/.pluginstore")

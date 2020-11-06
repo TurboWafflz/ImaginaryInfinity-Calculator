@@ -21,14 +21,13 @@ import re
 import argparse
 from packaging import version
 import tempfile
+from tqdm import tqdm
+from dialog import Dialog, ExecutableNotFound
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
 args = parser.parse_args()
 
-#Import dialog if on a supported OS
-if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
-	from dialog import Dialog, ExecutableNotFound
 #Check if config manually specified
 if args.config != None:
 	if os.path.isfile(args.config):
@@ -69,35 +68,13 @@ try:
 	print("Attempting to load user theme...")
 	theme = configparser.ConfigParser()
 	theme.read(themePath + config["appearance"]["theme"])
-	#Define style class for compatibility with legacy plugins
 	if theme["theme"]["eval"] == "false":
-		class style:
-			normal=theme["styles"]["normal"].encode("utf-8").decode("unicode_escape")
-			error=theme["styles"]["error"].encode("utf-8").decode("unicode_escape")
-			important=theme["styles"]["important"].encode("utf-8").decode("unicode_escape")
-			startupmessage=theme["styles"]["startupmessage"].encode("utf-8").decode("unicode_escape")
-			prompt=theme["styles"]["prompt"].encode("utf-8").decode("unicode_escape")
-			link=theme["styles"]["link"].encode("utf-8").decode("unicode_escape")
-			answer=theme["styles"]["answer"].encode("utf-8").decode("unicode_escape")
-			input=theme["styles"]["input"].encode("utf-8").decode("unicode_escape")
-			output=theme["styles"]["output"].encode("utf-8").decode("unicode_escape")
 		#Convert strings to the proper escape sequences
 		for s in theme["styles"]:
 			theme["styles"][str(s)] = theme["styles"][str(s)].encode("utf-8").decode("unicode_escape")
 	else:
-		class style:
-			normal=str(eval(theme["styles"]["normal"]))
-			error=str(eval(theme["styles"]["error"]))
-			important=str(eval(theme["styles"]["important"]))
-			startupmessage=str(eval(theme["styles"]["startupmessage"]))
-			prompt=str(eval(theme["styles"]["prompt"]))
-			link=str(eval(theme["styles"]["link"]))
-			answer=str(eval(theme["styles"]["answer"]))
-			input=str(eval(theme["styles"]["input"]))
-			output=str(eval(theme["styles"]["output"]))
 		#Convert strings to the proper escape sequences
 		for s in theme["styles"]:
-			#print(theme["styles"][str(s)])
 			theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
 #Load theme from system path
 except:
@@ -105,54 +82,21 @@ except:
 	try:
 		theme = configparser.ConfigParser()
 		theme.read(config["paths"]["systemPath"] + "/themes/" + config["appearance"]["theme"])
-		#Define style class for compatibility with legacy plugins
 		if theme["theme"]["eval"] == "false":
-			class style:
-				normal=theme["styles"]["normal"].encode("utf-8").decode("unicode_escape")
-				error=theme["styles"]["error"].encode("utf-8").decode("unicode_escape")
-				important=theme["styles"]["important"].encode("utf-8").decode("unicode_escape")
-				startupmessage=theme["styles"]["startupmessage"].encode("utf-8").decode("unicode_escape")
-				prompt=theme["styles"]["prompt"].encode("utf-8").decode("unicode_escape")
-				link=theme["styles"]["link"].encode("utf-8").decode("unicode_escape")
-				answer=theme["styles"]["answer"].encode("utf-8").decode("unicode_escape")
-				input=theme["styles"]["input"].encode("utf-8").decode("unicode_escape")
-				output=theme["styles"]["output"].encode("utf-8").decode("unicode_escape")
 			#Convert strings to the proper escape sequences
 			for s in theme["styles"]:
 				theme["styles"][str(s)] = theme["styles"][str(s)].encode("utf-8").decode("unicode_escape")
 		else:
-			class style:
-				normal=str(eval(theme["styles"]["normal"]))
-				error=str(eval(theme["styles"]["error"]))
-				important=str(eval(theme["styles"]["important"]))
-				startupmessage=str(eval(theme["styles"]["startupmessage"]))
-				prompt=str(eval(theme["styles"]["prompt"]))
-				link=str(eval(theme["styles"]["link"]))
-				answer=str(eval(theme["styles"]["answer"]))
-				input=str(eval(theme["styles"]["input"]))
-				output=str(eval(theme["styles"]["output"]))
 			#Convert strings to the proper escape sequences
 			for s in theme["styles"]:
-				#print(theme["styles"][str(s)])
 				theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
 	#Couldn't load theme, load default dark theme
 	except Exception as e:
 		try:
 			theme = configparser.ConfigParser()
 			theme.read(themePath + "/dark.iitheme")
-			class style:
-				normal=str(eval(theme["styles"]["normal"]))
-				error=str(eval(theme["styles"]["error"]))
-				important=str(eval(theme["styles"]["important"]))
-				startupmessage=str(eval(theme["styles"]["startupmessage"]))
-				prompt=str(eval(theme["styles"]["prompt"]))
-				link=str(eval(theme["styles"]["link"]))
-				answer=str(eval(theme["styles"]["answer"]))
-				input=str(eval(theme["styles"]["input"]))
-				output=str(eval(theme["styles"]["output"]))
 			#Convert strings to the proper escape sequences
 			for s in theme["styles"]:
-				print(theme["styles"][str(s)])
 				theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
 			print("Failed to load selected theme. Loading dark instead.")
 			print("Error: " + str(e))
@@ -161,19 +105,8 @@ except:
 			try:
 				theme = configparser.ConfigParser()
 				theme.read(config["paths"]["systemPath"] + "/themes/dark.iitheme")
-				class style:
-					normal=str(eval(theme["styles"]["normal"]))
-					error=str(eval(theme["styles"]["error"]))
-					important=str(eval(theme["styles"]["important"]))
-					startupmessage=str(eval(theme["styles"]["startupmessage"]))
-					prompt=str(eval(theme["styles"]["prompt"]))
-					link=str(eval(theme["styles"]["link"]))
-					answer=str(eval(theme["styles"]["answer"]))
-					input=str(eval(theme["styles"]["input"]))
-					output=str(eval(theme["styles"]["output"]))
 				#Convert strings to the proper escape sequences
 				for s in theme["styles"]:
-					print(theme["styles"][str(s)])
 					theme["styles"][str(s)] = str(eval(theme["styles"][str(s)]))
 				print("Failed to load selected theme. Loading dark instead.")
 				print("Error: " + str(e))
@@ -182,11 +115,32 @@ except:
 			except:
 				print("Fatal error: unable to find a useable theme")
 				exit()
-cur_builtin = None
 
 #Restart
 def restart():
+	signal("onRestart")
 	os.execl(sys.executable, sys.executable, * sys.argv)
+
+#Import/install
+def iprt(lib):
+	try:
+		globals()[lib] = __import__(lib)
+	except ModuleNotFoundError:
+		os.system("pip3 install " + lib)
+		try:
+			globals()[lib] = __import__(lib)
+		except ModuleNotFoundError:
+			pass
+
+#Wake up server to decrease wait times when accessing store
+def pingServer():
+	try:
+		requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
+	except requests.ConnectionError:
+		pass
+	except requests.exceptions.ReadTimeout:
+		pass
+
 #Help
 def chelp():
 	print("Commands:")
@@ -210,6 +164,21 @@ def chelp():
 #AllWillPerish
 def AllWillPerish():
 	return("Cheat mode active")
+
+#Check for Internet Connection
+def hasInternet():
+	try:
+		import httplib
+	except:
+		import http.client as httplib
+	conn = httplib.HTTPConnection("www.google.com", timeout=5)
+	try:
+		conn.request("HEAD", "/")
+		conn.close()
+		return True
+	except:
+		conn.close()
+		return False
 
 #Clear
 def clear():
@@ -443,56 +412,36 @@ def loadConfig():
 			items.append((each_section, each_key, each_val))
 	return items
 
+#Signals to trigger functions in plugins
+def signal(sig,args=""):
+	try:
+		nonplugins = ["__init__.py", "__pycache__", ".reqs"]
+		for plugin in os.listdir(pluginPath):
+			if not plugin in nonplugins:
+				plugin = plugin[:-3]
+				if sig in eval("dir(" + plugin + ")"):
+					exec(plugin + "." + sig + "(" + args + ")")
+	except:
+		pass
+
 def doUpdate(branch="master", theme=theme, gui=False):
 	if gui == True:
 		d = Dialog(dialog="dialog")
 		d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
 	#Establish directories
 	root = os.path.abspath(config["paths"]["userpath"]) + "/"
-	plugins = root + "plugins/"
-	themes = root + "themes/"
+	plugins = os.path.join(root, "plugins/")
+	themes = os.path.join(root, "themes/")
 	parent = str(Path(root).parent) + "/"
 	confVals = loadConfig()
-	try:
-		shutil.rmtree(parent + ".iibackup")
-	except:
-		pass
 	if gui == True:
 		d.gauge_update(12, "Updating...\nBacking Up...", update_text=True)
 
 	#Backup
-	if os.path.isdir(parent + ".iibackup"):
-		shutil.rmtree(parent + ".iibackup")
-	if os.path.isdir(parent + ".iipluginsbackup"):
-		shutil.rmtree(parent + ".iipluginsbackup")
-	if os.path.isdir(parent + ".iithemesbackup"):
-		shutil.rmtree(parent + ".iithemesbackup")
-	shutil.copytree(root, parent + ".iibackup/")
+	if os.path.isdir(os.path.join(parent, ".iibackup/")):
+		shutil.rmtree(os.path.join(parent, ".iibackup/"))
+	shutil.copytree(root, os.path.join(parent, ".iibackup/"))
 
-	if config["installation"]["installtype"] == "portable":
-		#Move Plugins out of Plugins
-		os.chdir(parent)
-		tempDir = ".iipluginsbackup"
-		os.mkdir(tempDir)
-		os.chdir(plugins)
-		files = os.listdir(".")
-		for file in files:
-			if not "__init__.py" in file:
-				source = os.path.join(plugins, file)
-				dest = os.path.join(parent, tempDir)
-				shutil.move(source, dest)
-
-		#Move Themes out of Themes
-		os.chdir(parent)
-		tempThemeDir = ".iithemesbackup"
-		os.mkdir(tempThemeDir)
-		os.chdir(themes)
-		files = os.listdir(".")
-		for file in files:
-			if not file == ".placeholder":
-				source = os.path.join(themes, file)
-				dest = os.path.join(parent, tempThemeDir)
-				shutil.move(source, dest)
 	if gui == True:
 		d.gauge_update(25, "Updating...\nRemoving Old Files...", update_text=True)
 
@@ -518,30 +467,37 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			if total_length is None:
 				f.write(newzip.content)
 			else:
-				dl = 0
-				olddone=0
-				for data in newzip.iter_content(chunk_size=4096):
-					dl += len(data)
-					f.write(data)
-					done = int(25 * dl / total_length)
-					if done > 25:
-						done = 25
-					if olddone != done:
-						olddone = done
-						d.gauge_update(37 + done)
+				if gui == True:
+					dl = 0
+					olddone=0
+					for data in newzip.iter_content(chunk_size=4096):
+						dl += len(data)
+						f.write(data)
+						done = int(25 * dl / total_length)
+						if done > 25:
+							done = 25
+						if olddone != done:
+							olddone = done
+							d.gauge_update(37 + done)
+				else:
+					totaldownloaded = 0
+					pbar = tqdm(unit="B", total=total_length, unit_scale=True, unit_divisor=1024)
+					for chunk in newzip.iter_content(chunk_size=1024):
+						if chunk:
+							pbar.update(len(chunk))
+							totaldownloaded += len(chunk)
+							f.write(chunk)
+					pbar.update(total_length-totaldownloaded)
+					pbar.close()
 	except Exception as e:
 		clear()
 		print(e)
 		print(theme["styles"]["error"] + "Fatal Error, Restoring Backup")
 		#Restore Backup
 		for f in os.listdir(parent + ".iibackup/"):
-			shutil.move(os.path.join(parent + ".iibackup", f), root)
-		os.rmdir(parent + ".iibackup")
-		if os.path.exists(parent + ".iipluginsbackup"):
-			os.rmdir(parent + ".iipluginsbackup")
-		if os.path.exists(parent + ".iithemesbackup"):
-			os.rmdir(parent + ".iithemesbackup")
-		shutil.rmtree(parent + tempDir)
+			shutil.move(os.path.join(parent, ".iibackup", f), root)
+		os.rmdir(os.path.join(parent, ".iibackup"))
+
 		sys.exit("Fatal Error")
 
 	if gui == True:
@@ -555,9 +511,9 @@ def doUpdate(branch="master", theme=theme, gui=False):
 	os.chdir("ImaginaryInfinity-Calculator-" + branch)
 
 	files = os.listdir(".")
-	source = root + "ImaginaryInfinity-Calculator-" + branch + "/"
+	source = os.path.join(root, "ImaginaryInfinity-Calculator-" + branch + "/")
 	for file in files:
-		shutil.move(source+file, root)
+		shutil.move(os.path.join(source, file), root)
 	os.chdir("..")
 	os.rmdir("ImaginaryInfinity-Calculator-" + branch)
 	os.remove("newcalc.zip")
@@ -566,39 +522,38 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		d.gauge_update(75, "Updating...\nRestoring Plugins...", update_text=True)
 
 	if config["installation"]["installtype"] == "portable":
-		#move plugins back into /plugins
-		os.chdir(parent)
-		os.chdir(tempDir)
-		files = os.listdir(".")
-		for file in files:
-			shutil.move(parent + tempDir + "/" + file, plugins)
-		os.chdir("..")
-		os.rmdir(tempDir)
-		os.chdir(root)
-		if not os.path.exists(root + "themes"):
-			os.mkdir(root + "themes")
+		#move plugins back into /plugins and themes back into /themes
+		if not os.path.exists(os.path.join(root, "themes")):
+			os.mkdir(os.path.join(root, "themes"))
 
-		#move themes back into /themes
-		os.chdir(parent)
-		os.chdir(tempThemeDir)
+		os.chdir(os.path.join(parent, ".iibackup", "plugins"))
 		files = os.listdir(".")
 		for file in files:
-			shutil.move(parent + tempThemeDir + "/" + file, themes)
-		os.chdir("..")
-		os.rmdir(tempThemeDir)
+			try:
+				shutil.move(os.path.join(parent, ".iibackup", "plugins", file), plugins)
+			except shutil.Error:
+				pass
+
+		os.chdir(os.path.join(parent, ".iibackup", "themes"))
+		files = os.listdir(".")
+		for file in files:
+			try:
+				shutil.move(os.path.join(parent, ".iibackup", "themes", file), themes)
+			except shutil.Error:
+				pass
 		os.chdir(root)
 
 	if gui == True:
 		d.gauge_update(87, "Updating...\nVerifying Update...", update_text=True)
 
 	#check if all is fine
-	if not os.path.isfile("main.py") or not os.path.exists(config["paths"]["userpath"] + "/plugins"):
+	if not os.path.isfile("main.py") or not os.path.exists(os.path.join(config["paths"]["userpath"], "plugins")):
 		#VERY BAD THINGS HAVE HAPPENED
 		print(theme["styles"]["error"] + "Fatal Error. Files not Found")
 		#Restore Backup
-		for f in os.listdir(parent + ".iibackup/"):
-			shutil.move(os.path.join(parent + ".iibackup", f), root)
-		os.rmdir(parent + ".iibackup")
+		for f in os.listdir(os.path.join(parent, ".iibackup/")):
+			shutil.move(os.path.join(parent, ".iibackup", f), root)
+		os.rmdir(os.path.join(parent, ".iibackup"))
 		sys.exit(1)
 
 	if gui == True:
@@ -740,18 +695,15 @@ def update():
 		print(theme["styles"]["important"] + "Update Complete. Please restart the calculator to apply changes.")
 	elif config["installation"]["installtype"] == "AppImage":
 		print("Please download the latest AppImage for your branch here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
-	elif config["installation"]["installtype"] == "unix" or config["installation"]["installtype"] == "portable":
-		if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
+	else:
+		if platform.system() == "Windows":
+			print("The update wizard does not support Windows. Do not start an issue as this is a problem with Windows and not a problem with iicalc.")
+			return
+		else:
 			try:
+				d = Dialog()
 				guiUpdate()
 			except ExecutableNotFound as e:
-				from getpass import getpass
 				print(theme["styles"]["error"] + "Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)" + theme["styles"]["normal"])
-				getpass("[Press Enter to use the CLI Updater]")
+				input("[Press Enter to use the CLI Updater]")
 				cmdUpdate()
-		elif platform.system() == "Windows":
-			print("The update wizard does not support Windows. Do not start an issue as this is a problem with Windows and not a problem with iicalc.")
-		else:
-			cmdUpdate()
-	else:
-		print("Invalid install type: " + config["installation"]["installtype"])

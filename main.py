@@ -42,22 +42,6 @@ if False:
 	print("There is literally no way for this message to appear unless someone tampered with the source code")
 	input("[Press enter to continue]")
 
-#Wake up server to decrease wait times when accessing store
-def pingServer():
-	try:
-		requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
-	except requests.ConnectionError:
-		pass
-	except requests.exceptions.ReadTimeout:
-		pass
-
-def loadConfig(config):
-	items = []
-	for each_section in config.sections():
-		for (each_key, each_val) in config.items(each_section):
-			items.append((each_section, each_key, each_val))
-	return items
-
 if args.version is False:
 	print("Importing plugins...")
 	print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
@@ -87,7 +71,10 @@ else:
 
 		#Update config file from share config for installed
 		if os.path.exists("/usr/share/iicalc/config.ini"):
-			oldConfig = loadConfig(config)
+			oldConfig = []
+			for each_section in config.sections():
+				for (each_key, each_val) in config.items(each_section):
+					oldConfig.append((each_section, each_key, each_val))
 			config = configparser.ConfigParser()
 			config.read("/usr/share/iicalc/config.ini")
 			for i in range(len(oldConfig)):
@@ -123,17 +110,7 @@ if args.version is True:
 pluginPath=config["paths"]["userPath"] + "/plugins/"
 #Add system path to path to load built in plugins
 sys.path.insert(1, config["paths"]["userPath"])
-#Signals to trigger functions in plugins
-def signal(sig,args=""):
-	try:
-		nonplugins = ["__init__.py", "__pycache__", ".reqs"]
-		for plugin in os.listdir(pluginPath):
-			if not plugin in nonplugins:
-				plugin = plugin[:-3]
-				if sig in eval("dir(" + plugin + ")"):
-					exec(plugin + "." + sig + "(" + args + ")")
-	except:
-		pass
+
 #Load system plugins
 if config["paths"]["systemPath"] != "none":
 	sys.path.insert(2, config["paths"]["systemPath"])
@@ -234,26 +211,6 @@ else:
 # 		cplx=False
 cplx=True
 
-#Restart
-def restart():
-	signal("onRestart")
-	os.execl(sys.executable, sys.executable, * sys.argv)
-
-#Check for Internet Connection
-def hasInternet():
-	try:
-		import httplib
-	except:
-		import http.client as httplib
-	conn = httplib.HTTPConnection("www.google.com", timeout=5)
-	try:
-		conn.request("HEAD", "/")
-		conn.close()
-		return True
-	except:
-		conn.close()
-		return False
-
 #Check if up to date
 if hasInternet() and config["startup"]["checkupdates"] == "true":
 	try:
@@ -277,17 +234,6 @@ if hasInternet() and config["startup"]["checkupdates"] == "true":
 		upToDate = True
 else:
 	upToDate = True
-
-#Import/install
-def iprt(lib):
-	try:
-		globals()[lib] = __import__(lib)
-	except ModuleNotFoundError:
-		os.system("pip3 install " + lib)
-		try:
-			globals()[lib] = __import__(lib)
-		except ModuleNotFoundError:
-			pass
 
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
