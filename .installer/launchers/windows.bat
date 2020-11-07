@@ -1,6 +1,6 @@
 @echo off
 
-SET systemPath="C:\Program Files(x86)\iicalc\"
+SET systemPath="C:\Program  Files (x86)\iicalc\"
 SET userPath="%userprofile%\.iicalc\"
 IF NOT EXIST %userPath% (
 	cls
