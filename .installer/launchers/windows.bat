@@ -2,7 +2,11 @@
 
 SET systemPath=C:\Program Files(x86)\iicalc\
 SET userPath="%userprofile%\.iicalc"
-IF NOT EXIST %userPath% (
+IF EXIST %userPath% (
+	py %systemPath%\iicalc.py
+	cmd /k
+	@echo on
+) ELSE (
 	cls
 	echo "First time setup"
 	echo
@@ -17,6 +21,3 @@ IF NOT EXIST %userPath% (
 	COPY  "%systemPath%\config.ini" "%userPath%\config.ini"
 	cls
 )
-py %systemPath%\iicalc.py
-cmd /k
-@echo on

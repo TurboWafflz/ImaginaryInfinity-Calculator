@@ -10,11 +10,11 @@ Set objShell = WScript.CreateObject("WScript.Shell")
     Set objShortCut = objShell.CreateShortcut(usersDesktop & "\ImaginaryInfinity Calculator.lnk")
 
     'What does the shortcut point to
-    objShortCut.TargetPath = "C:\Program Files (x86)\iicalc\launcher.bat"
+    objShortCut.TargetPath = "%ProgramFiles(x86)%\iicalc\launcher.bat"
 
     'Add a description
     objShortCut.Description = "ImaginaryInfinity Calculator"
-    objShortCut.IconLocation = "C:\Program Files (x86\iicalc\iicalc.ico"
+    objShortCut.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
 
     'Create the shortcut
     objShortCut.Save
@@ -28,7 +28,7 @@ ElseIf (Wscript.Arguments(0)="startmenu") Then
     path = objShell.SpecialFolders("StartMenu")
     Set link = objShell.CreateShortcut(path & "\ImaginaryInfinity Calculator.lnk")
     link.Description = "ImaginaryInfinity Calculator"
-    link.TargetPath = "C:\Program Files (x86)\iicalc\launcher.bat"
+    link.TargetPath = "%ProgramFiles(x86)%\iicalc\launcher.bat"
     link.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
     'link.WorkingDirectory = "dir"
     link.Save
