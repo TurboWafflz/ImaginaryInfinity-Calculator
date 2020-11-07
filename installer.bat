@@ -38,24 +38,24 @@ IF NOT EXIST %userPath% (
 copy %launcher% %systemPath%\iicalc.bat
 
 ::Check if systemPath in PATH
-echo ;%PATH%; | find /C /I ";C:\Program Files (x86)\iicalc\;" >> temp.txt
-set /p setpath=<temp.txt
-del /f /q temp.txt
+::echo ;%PATH%; | find /C /I ";C:\Program Files (x86)\iicalc\;" >> temp.txt
+::set /p setpath=<temp.txt
+::del /f /q temp.txt
 
 ::If systemPath not in PATH, add it
-IF %setpath%==0(
-	scripts.vbs path
-)
+::IF %setpath%==0(
+	::scripts.vbs path
+::)
 
 ::Set doskey file for command line opening of calculator
-echo iicalc=C:\Program Files (x86)\iicalc\iicalc.py>%userPath%iicalc.doskey
+::echo iicalc=C:\Program Files (x86)\iicalc\iicalc.py>%userPath%iicalc.doskey
 
 ::Add doskey path to registry
-IF NOT "%DFMT%"=="" (
-	REG ADD "HKLM\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "%DFMT% && DOSKEY /MACROFILE=\"%USERPROFILE%\.iicalc\iicalc.doskey\"" /f
-) else (
-	REG ADD "HKLM\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "DOSKEY /MACROFILE=\"%USERPROFILE%\.iicalc\iicalc.doskey\"" /f
-)
+::IF NOT "%DFMT%"=="" (
+	::REG ADD "HKLM\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "%DFMT% && DOSKEY /MACROFILE=\"%USERPROFILE%\.iicalc\iicalc.doskey\"" /f
+::) else (
+	::REG ADD "HKLM\Software\Microsoft\Command Processor" /v Autorun /t REG_SZ /d "DOSKEY /MACROFILE=\"%USERPROFILE%\.iicalc\iicalc.doskey\"" /f
+::)
 
 ::Add desktop shortcut if selected
 echo Adding desktop icon...
