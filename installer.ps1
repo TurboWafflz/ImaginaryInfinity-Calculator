@@ -23,7 +23,7 @@ if($installDesktopFile -eq "true"){
 	$DesktopPath = [Environment]::GetFolderPath("Desktop")
 	$Shortcut = $WshShell.CreateShortcut("$DesktopPath\ImaginaryInfinity Calculator.lnk")
 	$Shortcut.TargetPath = "%comspec%"
-	$Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\launcher.bat"'
+	$Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\iicalc.bat" --shortcut'
 	$Shortcut.Description = "ImaginaryInfinity Calculator"
 	$Shortcut.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
 	$Shortcut.Save()
@@ -32,7 +32,7 @@ if($installDesktopFile -eq "true"){
 mkdir $systemPath 2>$null
 mkdir "$systemPath\systemPlugins" 2>$null
 echo "Installing launcher..."
-cp $launcher "$binPath\launcher.bat" -force
+cp $launcher "$binPath\iicalc.bat" -force
 echo "Installing builtin plugins..."
 cp system\systemPlugins\* "$systemPath\systemPlugins\" -Recurse -force
 cp "themes\" "$systemPath" -Recurse -force
@@ -51,7 +51,7 @@ mkdir "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\iicalc\" 2>$null
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$env:APPDATA\Microsoft\Windows\Start Menu\Programs\iicalc\ImaginaryInfinity Calculator.lnk")
 $Shortcut.TargetPath = "%comspec%"
-$Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\launcher.bat"'
+$Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\iicalc.bat" --shortcut'
 $Shortcut.Description = "ImaginaryInfinity Calculator"
 $Shortcut.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
 $Shortcut.Save()

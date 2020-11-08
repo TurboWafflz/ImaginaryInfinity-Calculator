@@ -22,7 +22,7 @@ $binPath=$systemPath
 
 cd $DIR
 echo "Removing launcher..."
-rm "$binPath/launcher.bat" 2>$null
+rm "$binPath/iicalc.bat" 2>$null
 
 echo "Removing desktop shortcut..."
 $DesktopPath = [Environment]::GetFolderPath("Desktop")

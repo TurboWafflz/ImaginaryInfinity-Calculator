@@ -1,7 +1,6 @@
 @echo off
 SET systemPath=C:\Program Files (x86)\iicalc\
 SET userPath=%userprofile%\.iicalc\
-echo "%systemPath%\requirements.txt"
 IF NOT EXIST %userPath% (
 	cls
 	echo First time setup
@@ -17,5 +16,18 @@ IF NOT EXIST %userPath% (
 	COPY  "%systemPath%\config.ini" "%userPath%\config.ini"
 	cls
 )
-py "%systemPath%\iicalc.py"
-exit
+SET version=false
+if "%1" == "--version" (
+	SET version=true
+)
+if "%1" == "-V" (
+	SET version=true
+)
+if %version%==true (
+	py "%systemPath%\iicalc.py" -V
+) else (
+	py "%systemPath%\iicalc.py"
+	if "%1" == "--shortcut" (
+		exit
+	)
+)
