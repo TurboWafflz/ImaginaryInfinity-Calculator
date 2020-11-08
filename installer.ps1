@@ -1,4 +1,11 @@
-if (!([Security.Principal.WindowsPrinciple][Security.Principal.WindowsIndentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
+if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
+ if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) {
+  $CommandLine = "-File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
+  Start-Process -FilePath PowerShell.exe -Verb Runas -ArgumentList $CommandLine
+  Exit
+ }
+}
+
 clear
 echo "ImaginaryInfinity Calculator Installer"
 $DIR=$PSScriptRoot
@@ -6,20 +13,27 @@ $DIR=$PSScriptRoot
 $yn = Read-Host "Add desktop shortcut? [Y/n] "
 if($yn -eq "n"){$installDesktopFile="false"}else{$installDesktopFile="true"}
 $systemPath="C:\Program Files (x86)\iicalc\"
-$binPath=$systemPath
+$binPath="C:\Program Files (x86)\iicalc\"
 $config=".installer\configDefaults\windows.ini"
 $launcher=".installer\launchers\windows.bat"
 
 cd $DIR
-echo "Installing launcher..."
-cp $launcher "$binPath\iicalc.bat"
 if($installDesktopFile -eq "true"){
-	Invoke-Expression "C:\Windows\System32\Cscript.exe .\scripts.vbs desktop //nologo"
+	$WshShell = New-Object -comObject WScript.Shell
+	$DesktopPath = [Environment]::GetFolderPath("Desktop")
+	$Shortcut = $WshShell.CreateShortcut("$DesktopPath\ImaginaryInfinity Calculator.lnk")
+	$Shortcut.TargetPath = "%comspec%"
+	$Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\launcher.bat"'
+	$Shortcut.Description = "ImaginaryInfinity Calculator"
+	$Shortcut.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
+	$Shortcut.Save()
 }
 
-echo "Installing builtin plugins..."
 mkdir $systemPath 2>$null
 mkdir "$systemPath\systemPlugins" 2>$null
+echo "Installing launcher..."
+cp $launcher "$binPath\launcher.bat" -force
+echo "Installing builtin plugins..."
 cp system\systemPlugins\* "$systemPath\systemPlugins\" -Recurse -force
 cp "themes\" "$systemPath" -Recurse -force
 cp "templates\" "$systemPath" -Recurse -force
@@ -33,10 +47,16 @@ cp $config "$systemPath\config.ini" -force
 
 echo "Installing icons..."
 cp ".\iicalc.ico" "$systemPath\iicalc.ico"
-Invoke-Expression "C:\Windows\System32\Cscript.exe .\scripts.vbs startmenu //nologo"
-
-py -V > $null
-if($? -eq $false){
+mkdir "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\iicalc\" 2>$null
+$WshShell = New-Object -comObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut("$env:APPDATA\Microsoft\Windows\Start Menu\Programs\iicalc\ImaginaryInfinity Calculator.lnk")
+$Shortcut.TargetPath = "%comspec%"
+$Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\launcher.bat"'
+$Shortcut.Description = "ImaginaryInfinity Calculator"
+$Shortcut.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
+$Shortcut.Save()
+	
+if (-Not (Get-Command 'py' -errorAction SilentlyContinue)){
 	$yn = Read-Host "Python is not installed. You must install Python to run the calculator Install it now? [Y/n] "
 	if($yn -ne "n"){
 		echo "Downloading installer..."
