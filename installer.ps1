@@ -64,6 +64,7 @@ if (-Not (Get-Command 'py' -errorAction SilentlyContinue)){
 		Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.9.0/python-3.9.0-amd64.exe" -OutFile ".\python-3.9.0.exe"
 		echo "Installing Python, this make take a bit..."
 		.\python-3.9.0.exe /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
+		rm .\python-3.9.0.exe -Force
 	}
 }
 
