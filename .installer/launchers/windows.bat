@@ -1,11 +1,11 @@
 @echo off
-
-SET systemPath="C:\Program  Files (x86)\iicalc\"
-SET userPath="%userprofile%\.iicalc\"
+SET systemPath=C:\Program Files (x86)\iicalc\
+SET userPath=%userprofile%\.iicalc\
+echo "%systemPath%\requirements.txt"
 IF NOT EXIST %userPath% (
 	cls
-	echo "First time setup"
-	echo
+	echo First time setup
+	echo.
 	SET /p inst="Would you like to attempt to install required Python modules? (Y\n)"
 	IF NOT "%inst%"=="n" (
 		py -m pip install -r "%systemPath%\requirements.txt"
@@ -17,5 +17,5 @@ IF NOT EXIST %userPath% (
 	COPY  "%systemPath%\config.ini" "%userPath%\config.ini"
 	cls
 )
-py %systemPath%\iicalc.py
-@echo on
+py "%systemPath%\iicalc.py"
+exit

@@ -1,7 +1,14 @@
-if (!([Security.Principal.WindowsPrinciple][Security.Principal.WindowsIndentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
+if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
+ if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) {
+  $CommandLine = "-File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
+  Start-Process -FilePath PowerShell.exe -Verb Runas -ArgumentList $CommandLine
+  Exit
+ }
+}
+
 clear
 echo "ImaginaryInfinity Calculator Uninstaller"
-DIR=$PSScriptRoot
+$DIR=$PSScriptRoot
 
 echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 $yn = Read-Host "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
@@ -15,12 +22,15 @@ $binPath=$systemPath
 
 cd $DIR
 echo "Removing launcher..."
-rm "$binPath/iicalc.bat"
+rm "$binPath/launcher.bat" 2>$null
 
-Invoke-Expression "C:\Windows\System32\Cscript.exe .\scripts.vbs uninstall //nologo"
+echo "Removing desktop shortcut..."
+$DesktopPath = [Environment]::GetFolderPath("Desktop")
+rm "$DesktopPath\ImaginaryInfinity Calculator.lnk" 2>$null
+rm "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\iicalc\" -Recurse -Force 2>$null
 
 echo "Removing main Python script.."
-rm "$systemPath/iicalc.py"
+rm "$systemPath/iicalc.py" 2>$null
 echo "Removing builtin plugins..."
-rm $systemPath -Recurse -Force
-echo "\033[38;5;11mWarning: Removing ImaginaryInfinity Calculator does not remove the .iicalc folder in your home directory. If you want to run the portable version of ImaginaryInfinity Calculator again, you will have to delete it.\033[m"
+rm $systemPath -Recurse -Force 2>$null
+Write-Host "Warning: Removing ImaginaryInfinity Calculator does not remove the .iicalc folder in your home directory. If you want to run the portable version of ImaginaryInfinity Calculator again, you will have to delete it." -fore yellow
