@@ -11,6 +11,7 @@ echo "ImaginaryInfinity Calculator Installer"
 $DIR=$PSScriptRoot
 
 $yn = Read-Host "Add desktop shortcut? [Y/n] "
+$yn = $yn.ToLower()
 if($yn -eq "n"){$installDesktopFile="false"}else{$installDesktopFile="true"}
 $systemPath="C:\Program Files (x86)\iicalc\"
 $binPath="C:\Program Files (x86)\iicalc\"
@@ -55,9 +56,10 @@ $Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\iicalc.ba
 $Shortcut.Description = "ImaginaryInfinity Calculator"
 $Shortcut.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
 $Shortcut.Save()
-	
+
 if (-Not (Get-Command 'py' -errorAction SilentlyContinue)){
 	$yn = Read-Host "Python is not installed. You must install Python to run the calculator Install it now? [Y/n] "
+	$yn = $yn.ToLower()
 	if($yn -ne "n"){
 		echo "Downloading installer..."
 		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
