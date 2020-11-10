@@ -28,6 +28,7 @@ from packaging import version
 from sympy import S
 import argparse
 import atexit
+from statistics import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
