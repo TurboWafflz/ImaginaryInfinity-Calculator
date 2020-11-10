@@ -59,7 +59,6 @@ def editor():
 		#Load config from ~/.iicalc
 		try:
 			home = os.path.expanduser("~")
-			print("Loading config...")
 			config = configparser.ConfigParser()
 			config.read(home + "/.iicalc/config.ini")
 			config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
@@ -70,7 +69,6 @@ def editor():
 		#Load config from current directory
 		except:
 			try:
-				print("Loading portable config...")
 				config = configparser.ConfigParser()
 				config.read("config.ini")
 				configPath = "config.ini"
