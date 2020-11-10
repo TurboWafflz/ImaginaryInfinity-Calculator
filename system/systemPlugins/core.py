@@ -119,6 +119,7 @@ except:
 #Restart
 def restart():
 	signal("onRestart")
+	print("\u001b[0m" + theme["styles"]["normal"])
 	os.execl(sys.executable, sys.executable, * sys.argv)
 
 #Import/install
