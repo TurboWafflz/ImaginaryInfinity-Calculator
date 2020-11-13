@@ -3,7 +3,7 @@ ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
 command line interface is designed to resemble that of some graphing
 calculators. To preform another operation on a result, simply type the operation you wish to preform (eg. "/5" to divide the previous result by 5). To use the previous result in a new calculation, just specify the operation after the new calculation (eg. "5-" to subtract the previous result from 5).
 
-![Screenshot](iicalc.png)
+![Screenshot](iicalcscreenshot.png)
 ## Packages
 We provide a packaged version of ImaginaryInfinity calculator for some Linux distributions. They can be found below.
 

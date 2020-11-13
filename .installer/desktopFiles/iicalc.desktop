@@ -5,6 +5,6 @@ Name=ImaginaryInfinity Calculator
 Comment=Expandable calculator
 Exec=iicalc
 Terminal=true
-Icon=/usr/share/icons/iicalc.tiff
+Icon=/usr/share/icons/iicalc.png
 Categories=Education;Office;Utilities;Math;
 Keywords=calculator;math;
