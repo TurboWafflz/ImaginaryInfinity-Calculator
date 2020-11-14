@@ -124,7 +124,9 @@ then
 fi
 if [ $addMimeTypes == "true" ]
 then
-	rm /usr/share/mime/packages/iitheme.xml 2>/dev/null
+	for file in $(find /usr/share/mime -name "iitheme*"); do
+		rm "$file" 2>/dev/null
+	done
 	echo "Updating MIME type Database..."
 	update-mime-database /usr/share/mime
 fi
