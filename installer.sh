@@ -20,7 +20,7 @@ then
 	cp ".installer/deb/postinst" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/prerm" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/postrm" "iicalc-deb/DEBIAN"
-	cp ".installer/mime/iitheme.xml" "iicalc-deb/usr/share/mime/packages"
+	cp ".installer/mime/iicalc.xml" "iicalc-deb/usr/share/mime/packages"
 	chmod +x "iicalc-deb/DEBIAN/postinst"
 	chmod +x "iicalc-deb/DEBIAN/prerm"
 	systemPath="iicalc-deb/usr/share/iicalc/"
@@ -167,7 +167,7 @@ fi
 #Add MIME Types
 if [ $addMimeTypes == "true" ]
 then
-	cp ".installer/mime/iitheme.xml" "/usr/share/mime/packages"
+	cp ".installer/mime/iicalc.xml" "/usr/share/mime/packages"
 	echo "Updating MIME type Databse..."
 	update-mime-database /usr/share/mime
 fi
