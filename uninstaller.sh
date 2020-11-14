@@ -124,7 +124,7 @@ then
 fi
 if [ $addMimeTypes == "true" ]
 then
-	for file in $(find /usr/share/mime -name "iitheme*"); do
+	for file in $(find /usr/share/mime -name "iicalc*"); do
 		rm "$file" 2>/dev/null
 	done
 	echo "Updating MIME type Database..."
