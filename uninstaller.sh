@@ -8,7 +8,7 @@ if [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
-	read
+	read yn
 	if [ "$yn" != "y" ]
 	then
 		echo "Cancelled"
