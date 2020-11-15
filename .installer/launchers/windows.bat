@@ -16,18 +16,4 @@ IF NOT EXIST %userPath% (
 	COPY  "%systemPath%\config.ini" "%userPath%\config.ini"
 	cls
 )
-SET version=false
-if "%1" == "--version" (
-	SET version=true
-)
-if "%1" == "-V" (
-	SET version=true
-)
-if %version%==true (
-	py "%systemPath%\iicalc.py" -V
-) else (
-	py "%systemPath%\iicalc.py"
-	if "%1" == "--shortcut" (
-		exit
-	)
-)
+py "%systemPath%\iicalc.py" %*
