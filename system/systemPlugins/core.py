@@ -424,170 +424,253 @@ def signal(sig,args=""):
 		pass
 
 def doUpdate(branch="master", theme=theme, gui=False):
-	if gui == True:
-		d = Dialog(dialog="dialog")
-		d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
-	#Establish directories
-	root = os.path.abspath(config["paths"]["userpath"]) + "/"
-	plugins = os.path.join(root, "plugins/")
-	themes = os.path.join(root, "themes/")
-	parent = str(Path(root).parent) + "/"
-	confVals = loadConfig()
-	if gui == True:
-		d.gauge_update(12, "Updating...\nBacking Up...", update_text=True)
-
-	#Backup
-	if os.path.isdir(os.path.join(parent, ".iibackup/")):
-		shutil.rmtree(os.path.join(parent, ".iibackup/"))
-	shutil.copytree(root, os.path.join(parent, ".iibackup/"))
-
-	if gui == True:
-		d.gauge_update(25, "Updating...\nRemoving Old Files...", update_text=True)
-
-	#Delete contents of calculator
-	for filename in os.listdir(root):
-		file_path = os.path.join(root, filename)
-		try:
-			if os.path.isfile(file_path) or os.path.islink(file_path):
-				os.unlink(file_path)
-			elif os.path.isdir(file_path):
-				shutil.rmtree(file_path)
-		except Exception as e:
-			print('Failed to delete %s. Reason: %s' % (file_path, e))
-
-	if gui == True:
-		d.gauge_update(37, "Updating...\nDownloading Update...", update_text=True)
-
-	#download files
-	newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
-	total_length = len(newzip.content)
-	try:
-		with open(root + "newcalc.zip", "wb") as f:
-			if total_length is None:
-				f.write(newzip.content)
-			else:
-				if gui == True:
-					dl = 0
-					olddone=0
-					for data in newzip.iter_content(chunk_size=4096):
-						dl += len(data)
-						f.write(data)
-						done = int(25 * dl / total_length)
-						if done > 25:
-							done = 25
-						if olddone != done:
-							olddone = done
-							d.gauge_update(37 + done)
-				else:
-					totaldownloaded = 0
-					pbar = tqdm(unit="B", total=total_length, unit_scale=True, unit_divisor=1024)
-					for chunk in newzip.iter_content(chunk_size=1024):
-						if chunk:
-							pbar.update(len(chunk))
-							totaldownloaded += len(chunk)
-							f.write(chunk)
-					pbar.update(total_length-totaldownloaded)
-					pbar.close()
-	except Exception as e:
-		clear()
-		print(e)
-		print(theme["styles"]["error"] + "Fatal Error, Restoring Backup")
-		#Restore Backup
-		for f in os.listdir(parent + ".iibackup/"):
-			shutil.move(os.path.join(parent, ".iibackup", f), root)
-		os.rmdir(os.path.join(parent, ".iibackup"))
-
-		sys.exit("Fatal Error")
-
-	if gui == True:
-		d.gauge_update(62, "Updating...\nUnzipping...", update_text=True)
-
-	#Unzip File
-	os.chdir(root)
-	with zipfile.ZipFile("newcalc.zip", 'r') as z:
-		z.extractall()
-
-	os.chdir("ImaginaryInfinity-Calculator-" + branch)
-
-	files = os.listdir(".")
-	source = os.path.join(root, "ImaginaryInfinity-Calculator-" + branch + "/")
-	for file in files:
-		shutil.move(os.path.join(source, file), root)
-	os.chdir("..")
-	os.rmdir("ImaginaryInfinity-Calculator-" + branch)
-	os.remove("newcalc.zip")
-
-	if gui == True:
-		d.gauge_update(75, "Updating...\nRestoring Plugins...", update_text=True)
-
 	if config["installation"]["installtype"] == "portable":
-		#move plugins back into /plugins and themes back into /themes
-		if not os.path.exists(os.path.join(root, "themes")):
-			os.mkdir(os.path.join(root, "themes"))
+		if gui == True:
+			d = Dialog(dialog="dialog")
+			d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
+		#Establish directories
+		root = os.path.abspath(config["paths"]["userpath"]) + "/"
+		plugins = os.path.join(root, "plugins/")
+		themes = os.path.join(root, "themes/")
+		parent = str(Path(root).parent) + "/"
+		confVals = loadConfig()
+		if gui == True:
+			d.gauge_update(12, "Updating...\nBacking Up...", update_text=True)
 
-		os.chdir(os.path.join(parent, ".iibackup", "plugins"))
-		files = os.listdir(".")
-		for file in files:
+		#Backup
+		if os.path.isdir(os.path.join(parent, ".iibackup/")):
+			shutil.rmtree(os.path.join(parent, ".iibackup/"))
+		shutil.copytree(root, os.path.join(parent, ".iibackup/"))
+
+		if gui == True:
+			d.gauge_update(25, "Updating...\nRemoving Old Files...", update_text=True)
+
+		#Delete contents of calculator
+		for filename in os.listdir(root):
+			file_path = os.path.join(root, filename)
 			try:
-				shutil.move(os.path.join(parent, ".iibackup", "plugins", file), plugins)
-			except shutil.Error:
-				pass
+				if os.path.isfile(file_path) or os.path.islink(file_path):
+					os.unlink(file_path)
+				elif os.path.isdir(file_path):
+					shutil.rmtree(file_path)
+			except Exception as e:
+				print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-		os.chdir(os.path.join(parent, ".iibackup", "themes"))
-		files = os.listdir(".")
-		for file in files:
-			try:
-				shutil.move(os.path.join(parent, ".iibackup", "themes", file), themes)
-			except shutil.Error:
-				pass
-		os.chdir(root)
+		if gui == True:
+			d.gauge_update(37, "Updating...\nDownloading Update...", update_text=True)
 
-	if gui == True:
-		d.gauge_update(87, "Updating...\nVerifying Update...", update_text=True)
-
-	#check if all is fine
-	if not os.path.isfile("main.py") or not os.path.exists(os.path.join(config["paths"]["userpath"], "plugins")):
-		#VERY BAD THINGS HAVE HAPPENED
-		print(theme["styles"]["error"] + "Fatal Error. Files not Found")
-		#Restore Backup
-		for f in os.listdir(os.path.join(parent, ".iibackup/")):
-			shutil.move(os.path.join(parent, ".iibackup", f), root)
-		os.rmdir(os.path.join(parent, ".iibackup"))
-		sys.exit(1)
-
-	if gui == True:
-		d.gauge_update(100, "Updating...\nFinishing Up...", update_text=True)
-
-	#make launcher.sh executable
-	if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
-		os.system("chmod +x launcher.sh")
-
-	#Load old conf vals
-	config.read(configPath)
-	for i in range(len(confVals)):
+		#download files
+		newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
+		total_length = len(newzip.content)
 		try:
-			config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
+			with open(root + "newcalc.zip", "wb") as f:
+				if total_length is None:
+					f.write(newzip.content)
+				else:
+					if gui == True:
+						dl = 0
+						olddone=0
+						for data in newzip.iter_content(chunk_size=4096):
+							dl += len(data)
+							f.write(data)
+							done = int(25 * dl / total_length)
+							if done > 25:
+								done = 25
+							if olddone != done:
+								olddone = done
+								d.gauge_update(37 + done)
+					else:
+						totaldownloaded = 0
+						pbar = tqdm(unit="B", total=total_length, unit_scale=True, unit_divisor=1024)
+						for chunk in newzip.iter_content(chunk_size=1024):
+							if chunk:
+								pbar.update(len(chunk))
+								totaldownloaded += len(chunk)
+								f.write(chunk)
+						pbar.update(total_length-totaldownloaded)
+						pbar.close()
+		except Exception as e:
+			clear()
+			print(e)
+			print(theme["styles"]["error"] + "Fatal Error, Restoring Backup")
+			#Restore Backup
+			for f in os.listdir(parent + ".iibackup/"):
+				shutil.move(os.path.join(parent, ".iibackup", f), root)
+			os.rmdir(os.path.join(parent, ".iibackup"))
+
+			sys.exit("Fatal Error")
+
+		if gui == True:
+			d.gauge_update(62, "Updating...\nUnzipping...", update_text=True)
+
+		#Unzip File
+		os.chdir(root)
+		with zipfile.ZipFile("newcalc.zip", 'r') as z:
+			z.extractall()
+
+		os.chdir("ImaginaryInfinity-Calculator-" + branch)
+
+		files = os.listdir(".")
+		source = os.path.join(root, "ImaginaryInfinity-Calculator-" + branch + "/")
+		for file in files:
+			shutil.move(os.path.join(source, file), root)
+		os.chdir("..")
+		os.rmdir("ImaginaryInfinity-Calculator-" + branch)
+		os.remove("newcalc.zip")
+
+		if gui == True:
+			d.gauge_update(75, "Updating...\nRestoring Plugins...", update_text=True)
+
+		if config["installation"]["installtype"] == "portable":
+			#move plugins back into /plugins and themes back into /themes
+			if not os.path.exists(os.path.join(root, "themes")):
+				os.mkdir(os.path.join(root, "themes"))
+
+			os.chdir(os.path.join(parent, ".iibackup", "plugins"))
+			files = os.listdir(".")
+			for file in files:
+				try:
+					shutil.move(os.path.join(parent, ".iibackup", "plugins", file), plugins)
+				except shutil.Error:
+					pass
+
+			os.chdir(os.path.join(parent, ".iibackup", "themes"))
+			files = os.listdir(".")
+			for file in files:
+				try:
+					shutil.move(os.path.join(parent, ".iibackup", "themes", file), themes)
+				except shutil.Error:
+					pass
+			os.chdir(root)
+
+		if gui == True:
+			d.gauge_update(87, "Updating...\nVerifying Update...", update_text=True)
+
+		#check if all is fine
+		if not os.path.isfile("main.py") or not os.path.exists(os.path.join(config["paths"]["userpath"], "plugins")):
+			#VERY BAD THINGS HAVE HAPPENED
+			print(theme["styles"]["error"] + "Fatal Error. Files not Found")
+			#Restore Backup
+			for f in os.listdir(os.path.join(parent, ".iibackup/")):
+				shutil.move(os.path.join(parent, ".iibackup", f), root)
+			os.rmdir(os.path.join(parent, ".iibackup"))
+			sys.exit(1)
+
+		if gui == True:
+			d.gauge_update(100, "Updating...\nFinishing Up...", update_text=True)
+
+		#make launcher.sh executable
+		if platform.system() == "Linux" or platform.system() == "Darwin" or platform.system() == "Haiku" or "BSD" in platform.system():
+			os.system("chmod +x launcher.sh")
+
+		#Load old conf vals
+		config.read(configPath)
+		for i in range(len(confVals)):
+			try:
+				config[confVals[i][0]][confVals[i][1]] = confVals[i][2]
+			except:
+				pass
+		try:
+			with open(configPath, "r+") as cf:
+				config.write(cf)
 		except:
 			pass
-	try:
-		with open(configPath, "r+") as cf:
-			config.write(cf)
-	except:
-		pass
 
-	#yay, nothing terrible has happened
-	if gui == True:
-		d.gauge_stop()
-		d = Dialog(dialog="dialog").yesno("Update Complete. Would you like to restart?")
-		if d == "ok":
-			clear()
-			restart()
+		#yay, nothing terrible has happened
+		if gui == True:
+			d.gauge_stop()
+			d = Dialog(dialog="dialog").yesno("Update Complete. Would you like to restart?")
+			if d == "ok":
+				clear()
+				restart()
+			else:
+				clear()
 		else:
-			clear()
+			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+			if x != "n":
+				restart()
 	else:
-		x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
-		if x != "n":
-			restart()
+		if gui == True:
+			d = Dialog(dialog="dialog")
+			d.gauge_start("Updating...\nDownloading Update...", percent=0)
+		with tempfile.TemporaryDirectory() as td:
+			os.chdir(td)
+			newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
+			total_length = len(newzip.content)
+			try:
+				with open("newcalc.zip", "wb") as f:
+					if total_length is None:
+						f.write(newzip.content)
+					else:
+						if gui == True:
+							dl = 0
+							olddone=0
+							for data in newzip.iter_content(chunk_size=4096):
+								dl += len(data)
+								f.write(data)
+								done = int(50 * dl / total_length)
+								if done > 50:
+									done = 50
+								if olddone != done:
+									olddone = done
+									d.gauge_update(0 + done)
+						else:
+							totaldownloaded = 0
+							pbar = tqdm(unit="B", total=total_length, unit_scale=True, unit_divisor=1024)
+							for chunk in newzip.iter_content(chunk_size=1024):
+								if chunk:
+									pbar.update(len(chunk))
+									totaldownloaded += len(chunk)
+									f.write(chunk)
+							pbar.update(total_length-totaldownloaded)
+							pbar.close()
+			except Exception as e:
+				clear()
+				print(e)
+				sys.exit("Fatal Error")
+
+			if gui == True:
+				d.gauge_update(60, "Updating...\nUnzipping...", update_text=True)
+			with zipfile.ZipFile("newcalc.zip", 'r') as z:
+				z.extractall()
+
+			if gui == True:
+				d.gauge_update(75, "Updating...\nUpdating Files...", update_text=True)
+			os.chdir("ImaginaryInfinity-Calculator-" + branch)
+			#Update main python script
+			os.system("sudo rm " + config["paths"]["systemPath"] + "/iicalc.py")
+			os.system("sudo cp main.py " + config["paths"]["systempath"] + "/iicalc.py")
+			#Update root system files
+			if gui == True:
+				d.gauge_update(87)
+			sysFiles = os.listdir(config["paths"]["systempath"])
+			for file in os.listdir("."):
+				if file in sysFiles:
+					if file != "themes":
+						os.system("sudo rm -rf " + config["paths"]["systempath"] + file.replace(" ", "\\ "))
+						os.system("sudo cp -r " + file.replace(" ", "\\ ") + " " + config["paths"]["systemPath"] + "/")
+			#Update system files
+			if gui == True:
+				d.gauge_update(100)
+			os.chdir("system")
+			for file in os.listdir("."):
+				if file in sysFiles:
+					os.system("sudo rm -rf " + config["paths"]["systempath"] + file.replace(" ", "\\ "))
+					os.system("sudo cp -r " + file.replace(" ", "\\ ") + " " + config["paths"]["systemPath"] + "/")
+
+			if gui == True:
+				d.gauge_stop()
+				d = Dialog(dialog="dialog").yesno("Update Complete. Would you like to restart?")
+				if d == "ok":
+					clear()
+					restart()
+				else:
+					clear()
+			else:
+				x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
+				if x != "n":
+					restart()
+
 
 def cmdUpdate(theme=theme, config=config):
 	if input("Would you like to update? You are currently on the " + config["updates"]["branch"] + " branch. [y/N] ").lower() == "y":
