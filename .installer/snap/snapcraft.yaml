@@ -1,0 +1,18 @@
+name: iicalc
+version: git
+summary: ImaginaryInfinity Calculator
+description: |
+  ImaginaryInfinity Calculator is an extensible calculator written in Python.
+base: core18
+confinement: devmode
+
+
+parts:
+  iicalc:
+    plugin: python
+    python-version: python3
+    source: .
+
+apps:
+  iicalc:
+    command: ./usr/bin/iicalc.sh

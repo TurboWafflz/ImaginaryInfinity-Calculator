@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=2.3
+Type=Application
+Name=ImaginaryInfinity Calculator
+Comment=Expandable calculator
+Exec=iicalc
+Terminal=true
+Icon=/usr/share/icons/iicalc.tiff
+Categories=Education;Office;Utilities;Math;
+Keywords=calculator;math;
