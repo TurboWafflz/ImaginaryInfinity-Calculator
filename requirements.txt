@@ -1,1 +1,10 @@
-colorama==0.4.1
+pythondialog>=3.5.1
+colorama>=0.4.1
+requests>=2.23.0
+fuzzywuzzy>=0.18.0
+tqdm>=4.46.1
+py_essentials>=1.4.12
+pipreqs>=0.4.10
+packaging>=20.0
+sympy>=1.6.2
+argparse>=1.4.0

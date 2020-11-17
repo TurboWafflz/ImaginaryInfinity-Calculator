@@ -1,0 +1,16 @@
+[theme]
+name = No
+description = No
+filename = No
+builtin=No
+eval=true
+[styles]
+normal=No
+error==No
+important=No
+startupmessage=No
+prompt=No
+link=No
+answer=No
+input=No
+output=No
