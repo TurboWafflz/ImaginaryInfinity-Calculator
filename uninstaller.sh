@@ -28,7 +28,6 @@ then
 	desktopFilePath="/dev/null"
 	desktopFile="iicalc.desktop"
 	installDesktopFile="false"
-	addMimeTypes="false"
 elif [ `uname` == "Linux" ] || grep -q BSD <<< `uname`
 then
 	if [ `whoami` != "root" ]
@@ -59,12 +58,6 @@ then
 	desktopFilePath="/usr/share/applications"
 	desktopFile="iicalc.desktop"
 	installDesktopFile="true"
-	if [ -d "/usr/share/mime/packages" ]
-	then
-		addMimeTypes="true"
-	else
-		addMimeTypes="false"
-	fi
 elif [ `uname` == "Darwin" ]
 then
 	if [ `whoami` != "root" ]
@@ -95,7 +88,6 @@ then
 	desktopFilePath="/Applications/"
 	desktopFile="ImaginaryInfinity_Calculator"
 	installDesktopFile="true"
-	addMimeTypes="false"
 else
 	echo "The uninstaller does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual uninstallation (y/N)?"
@@ -111,7 +103,6 @@ else
 	echo "Where are the icons stored?"
 	read iconPath
 	installDesktopFile="false"
-	addMimeTypes="false"
 fi
 cd $DIR
 echo "Removing launcher..."
@@ -121,14 +112,6 @@ then
 	rm -rf "$desktopFilePath/$desktopFile"
 	echo "Removing icons..."
 	rm "$iconPath/iicalc.png"
-fi
-if [ $addMimeTypes == "true" ]
-then
-	for file in $(find /usr/share/mime -name "iicalc*"); do
-		rm "$file" 2>/dev/null
-	done
-	echo "Updating MIME type Database..."
-	update-mime-database /usr/share/mime
 fi
 echo "Removing main Python script.."
 rm "$systemPath/iicalc.py"

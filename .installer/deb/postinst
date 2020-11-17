@@ -6,5 +6,3 @@ if [ "$?" == "0" ]
 then
 	pip3 install python-Levenshtein
 fi
-echo "Updating MIME type Databse..."
-update-mime-database /usr/share/mime

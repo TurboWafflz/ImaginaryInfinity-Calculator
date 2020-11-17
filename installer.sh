@@ -15,12 +15,10 @@ then
 	mkdir "iicalc-deb/usr/share"
 	mkdir "iicalc-deb/usr/share/applications"
 	mkdir "iicalc-deb/usr/share/icons"
-	mkdir "iicalc-deb/usr/share/mime/packages"
 	cp ".installer/deb/control" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/postinst" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/prerm" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/postrm" "iicalc-deb/DEBIAN"
-	cp ".installer/mime/iicalc.xml" "iicalc-deb/usr/share/mime/packages"
 	chmod +x "iicalc-deb/DEBIAN/postinst"
 	chmod +x "iicalc-deb/DEBIAN/prerm"
 	systemPath="iicalc-deb/usr/share/iicalc/"
@@ -31,7 +29,6 @@ then
 	desktopFilePath="iicalc-deb/usr/share/applications"
 	desktopFile=".installer/desktopFiles/iicalc.desktop"
 	installDesktopFile="true"
-	addMimeTypes="false"
 	buildOnly="true"
 
 #Build AppImage
@@ -53,7 +50,6 @@ elif [ "$1" == "--make-appImage" ]
 		desktopFile=".installer/desktopFiles/iicalc-appImage.desktop"
 		cp "iicalc.png" "iicalc-appImage"
 		installDesktopFile="true"
-		addMimeTypes="false"
 		buildOnly="true"
 #Install for Android
 elif [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
@@ -72,7 +68,6 @@ then
 	desktopFilePath="/dev/null"
 	desktopFile=".installer/desktopFiles/iicalc.desktop"
 	installDesktopFile="false"
-	addMimeTypes="false"
 	pythonCommand="python3"
 
 #Install for Linux
@@ -98,12 +93,6 @@ then
 	desktopFilePath="/usr/share/applications"
 	desktopFile=".installer/desktopFiles/iicalc.desktop"
 	installDesktopFile="true"
-	if [ -d "/usr/share/mime/packages" ]
-	then
-		addMimeTypes="true"
-	else
-		addMimeTypes="false"
-	fi
 	pythonCommand="python3"
 
 #Install for MacOS
@@ -129,7 +118,6 @@ then
 	desktopFilePath="/Applications/"
 	desktopFile=".installer/desktopFiles/ImaginaryInfinity_Calculator"
 	installDesktopFile="true"
-	addMimeTypes="false"
 	pythonCommand="python3"
 else
 	echo "The installer does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
@@ -148,7 +136,6 @@ else
 	echo "What command do you use to start Python 3?"
 	read pythonCommand
 	installDesktopFile="false"
-	addMimeTypes="false"
 	cp .installer/launchers/unix.sh .installer/launchers/custom.sh
 	launcher=".installer/launchers/custom.sh"
 	cat "$launcher" | sed "s'systemPath=\"/usr/share/iicalc/\"'systemPath=$systemPath'" > $launcher
@@ -163,13 +150,6 @@ then
 	cp -r $desktopFile $desktopFilePath
 	echo "Installing icons..."
 	cp iicalc.png "$iconPath"
-fi
-#Add MIME Types
-if [ $addMimeTypes == "true" ]
-then
-	cp ".installer/mime/iicalc.xml" "/usr/share/mime/packages"
-	echo "Updating MIME type Databse..."
-	update-mime-database /usr/share/mime
 fi
 #Warn about missing Python if installing
 if [ "$buildOnly" != "true" ]
