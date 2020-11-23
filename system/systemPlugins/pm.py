@@ -678,7 +678,7 @@ def info(plugin):
 		print("Description: " + index[plugin]["description"])
 		print("Author: " + index[plugin]["maintainer"])
 		print("Version: " + index[plugin]["description"])
-		print("Rating: " + index[plugin]["rating"] + "(" + index[plugin]["ratings"] + ")")
+		print("Votes: " + index[plugin]["rating"])
 		#print("Screened: " + index[plugin]["approved"])
 	#Show info from local install file if not available in index
 	elif installed.has_section(plugin):
@@ -686,7 +686,7 @@ def info(plugin):
 		print("Description: " + index[plugin]["description"])
 		print("Author: " + index[plugin]["maintainer"])
 		print("Version: " + index[plugin]["description"])
-		print("Rating: " + index[plugin]["rating"] + "(" + index[plugin]["ratings"] + ")")
+		print("Votes: " + index[plugin]["rating"])
 		#print("Screened: " + index[plugin]["approved"])
 	#Couldn't find the plugin from any source
 	else:
