@@ -8,6 +8,7 @@ from systemPlugins import pm
 import sys
 import subprocess
 import re
+import json
 
 #init
 if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
@@ -86,7 +87,7 @@ def uninstall(filename, plugin):
 		print("Invalid type: " + installed[plugin]["type"])
 	#Confirmation Box
 	d = Dialog(dialog="dialog")
-	if d.yesno("Would you like to uninstall " + filename + "?", height=0, width=0) == d.OK:
+	if d.yesno("Would you like to uninstall " + filename + "?", height=None, width=None) == d.OK:
 		#Delete file
 		os.remove(installpath)
 		#Remove section in installed
@@ -103,7 +104,22 @@ def uninstall(filename, plugin):
 #Plugin rating function
 def ratePlugin(plugin):
 	d = Dialog(dialog="dialog")
-	d.msgbox("Coming soon")
+	if os.path.isfile(config["paths"]["userpath"] + "/.pluginstore/.token"):
+		rating = d.radiolist("Voting for " + plugin + " (Space to select option)", choices=[("Upvote", "Upvotes this plugin", True), ("Downvote", "Downvotes this plugin", False)])
+		if rating[0] == d.OK:
+			if rating[1] == "Upvote":
+				rating = 1
+			else:
+				rating = -1
+			with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+				response = requests.post("https://turbowafflz.azurewebsites.net/iicalc/rate/" + plugin, data={"vote": rating}, cookies={"authToken": f.read().strip()})
+				d.msgbox(response.text)
+		else:
+			return
+	else:
+		clear()
+		pm.connect()
+		ratePlugin(plugin)
 
 #download plugins
 def download(plugin_name, bulk=False):
