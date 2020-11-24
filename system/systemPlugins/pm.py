@@ -53,6 +53,37 @@ def getUserInfo():
 	else:
 		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
 
+#Plugin rating function
+def rate(plugin):
+	plugin = str(plugin)
+	index = configparser.ConfigParser()
+	index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
+	installed = configparser.ConfigParser()
+	installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+	if plugin in installed.sections():
+		if os.path.isfile(config["paths"]["userpath"] + "/.pluginstore/.token"):
+			rating = 0
+			while rating != "1" and rating != "2":
+				rating = input("Upvote (1) or Downvote (2)? ")
+			if rating == "2":
+				rating = -1
+			else:
+				rating = 1
+			with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+				response = requests.post("https://turbowafflz.azurewebsites.net/iicalc/rate/" + plugin, data={"vote": rating}, cookies={"authToken": f.read().strip()})
+				print(response.text)
+		else:
+			clear()
+			pm.connect()
+			rate(plugin)
+	elif plugin in index.sections():
+		if input("You must install a plugin to rate it. Install " + plugin + "? [Y/n] ").lower() != "n":
+			install(plugin)
+		else:
+			print("Cancelled")
+	else:
+		print("Plugin " + plugin + " does not exist")
+
 def getUserPlugins():
 	if os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
 		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
@@ -701,4 +732,5 @@ def help():
 	print("pm.info(\"<plugin>\") - Show info about a package")
 	print("pm.upgrade() - Install all available updates")
 	print("pm.remove(\"<plugin>\") - Remove an installed package")
+	print("pm.rate(\"<plugin>\") - Rate an installed plugin")
 	print("pm.installFromFile(\"<filename>\") - Install a packages from a local *.icpk file")
