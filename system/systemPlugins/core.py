@@ -424,6 +424,23 @@ def signal(sig,args=""):
 	except:
 		pass
 
+#Function for plugins to set variable
+def setCoreVariable(varname, value):
+	varname = str(varname)
+	#valid var name
+	if varname.isidentifier():
+		try:
+			#safety to not overwrite functions
+			if varname not in globals(sys.modules["__main__"]):
+				vars(sys.modules["__main__"])[varname] = value
+				return 0
+			else:
+				return 1
+		except:
+			return 1
+	else:
+		return 1
+
 def doUpdate(branch="master", theme=theme, gui=False):
 	if config["installation"]["installtype"] == "portable":
 		if gui == True:
