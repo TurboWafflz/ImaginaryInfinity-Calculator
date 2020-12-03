@@ -167,7 +167,7 @@ else:
 			exit()
 
 #Verify that config has correct sections
-if not (config.has_section("paths") and config.has_section("dev") and config.has_section("startup") and config.has_section("updates") and config.has_section("appearance") and config.has_section("installation")):
+if not (config.has_section("paths") and config.has_section("dev") and config.has_section("startup") and config.has_section("updates") and config.has_section("appearance") and config.has_section("installation") and config.has_section("system")):
 	if input("The config at " + configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(str(Path(configPath).parent) + "/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
 		#Restore config
 		try:
@@ -452,10 +452,17 @@ def main(config=config, warmupThread=warmupThread):
 					clear()
 					pr=0
 				eqn=calc
-				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
-					eqn=str(ans)+str(calc)
-				if cl[-1] == "+" or cl[-1] == "-" or cl[-1] == "*" or cl[-1] == "/" or cl[-1] == "^":
-					eqn=str(calc)+str(ans)
+				#ability to disable subtraction from last answer
+				if config["system"]["subtractfromlast"] == "true":
+					if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
+						eqn=str(ans)+str(calc)
+					if cl[-1] == "+" or cl[-1] == "-" or cl[-1] == "*" or cl[-1] == "/" or cl[-1] == "^":
+						eqn=str(calc)+str(ans)
+				else:
+					if cl[0] == "+" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
+						eqn=str(ans)+str(calc)
+					if cl[-1] == "+" or cl[-1] == "*" or cl[-1] == "/" or cl[-1] == "^":
+						eqn=str(calc)+str(ans)
 				# if pr:
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc

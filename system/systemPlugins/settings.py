@@ -85,7 +85,8 @@ def editor():
 									("Server Wakeup", "Start the index server on start"),
 									("Debug Mode", "Enable/disable debug mode"),
 									("Check for Updates", "Check for Updates on Starup"),
-									("Update Channel", "Switch which branch you\'re updating from")
+									("Update Channel", "Switch which channel you\'re updating from"),
+									("Subtraction from last answer", "Toggle subtraction from last answer")
 									]
 
 		for plugin in plugins(False):
@@ -216,6 +217,15 @@ def editor():
 						config["updates"]["branch"] = "master"
 					else:
 						config["updates"]["branch"] = "development"
+
+			#Subtraction settings
+			elif tag == "Subtraction from last answer":
+				subtract = d.menu("ImaginaryInfinity Calculator Subtraction Settings", choices=[("On", "Calculator will subtract if \'-\' is first"), ("Off", "Calculator won\'t subtract if \'-\' is first")])
+				if subtract[0] == d.OK:
+					if subtract[1] == "On":
+						config["system"]["subtractfromlast"] = "true"
+					else:
+						config["system"]["subtractfromlast"] = "false"
 
 			#Close settings without modifying config
 			elif tag == "Save and exit":
