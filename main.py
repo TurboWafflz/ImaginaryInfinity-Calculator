@@ -21,6 +21,7 @@ import platform
 import os
 import requests
 import json
+import shutil
 import configparser
 import subprocess
 from threading import Thread
@@ -30,6 +31,7 @@ import argparse
 import atexit
 from statistics import *
 import statistics # for help(statistics)
+from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
@@ -52,7 +54,13 @@ if args.version is False:
 if args.config != None:
 	if os.path.isfile(args.config):
 		config = configparser.ConfigParser()
-		config.read(args.config)
+		#test if config is broken
+		try:
+			if config.read(args.config) == []:
+				raise FileNotFoundError
+		except Exception as e:
+			print("Error in config file at " + args.config + ": " + str(e) + ". Exiting")
+			exit()
 		configPath = args.config
 	else:
 		print("Invalid config file location specified: " + args.config)
@@ -64,9 +72,47 @@ else:
 		if args.version is False:
 			print("Loading config...")
 		config = configparser.ConfigParser()
-		config.read(home + "/.iicalc/config.ini")
-		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+		#test if config is broken
+		try:
+			if config.read(home + "/.iicalc/config.ini") == []:
+				raise FileNotFoundError("Config file not found")
+		except Exception as e:
+			if input("The config at " + home + "/.iicalc/config.ini is broken. Restore the last backup? (" + time.ctime(os.stat(home + "/.iicalc/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
+				#Restore config
+				try:
+					os.remove(home + "/.iicalc/config.ini")
+				except:
+					pass
+				shutil.copyfile(home + "/.iicalc/config.ini.save", home + "/.iicalc/config.ini")
+				try:
+					config = configparser.ConfigParser()
+					if config.read(home + "/.iicalc/config.ini") == []:
+						raise FileNotFoundError("Config file not found")
+				except Exception as e:
+					print("Error: " + str(e) + ". Exiting")
+					exit()
+			else:
+				print("Fatal Error: " + str(e))
+				exit()
+
 		configPath = home + "/.iicalc/config.ini"
+
+		if not config.has_section("paths"):
+			if input("The config at " + configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(str(Path(configPath).parent) + "/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
+				#Restore config
+				try:
+					os.remove(configPath)
+				except:
+					pass
+				shutil.copyfile(str(Path(configPath).parent) + "/config.ini.save", configPath)
+				try:
+					config = configparser.ConfigParser()
+					if config.read(configPath) == []:
+						raise FileNotFoundError("Config file not found")
+				except Exception as e:
+					print("Error: " + str(e) + ". Exiting")
+					exit()
+		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
 		with open(configPath, "w") as configFile:
 			config.write(configFile)
 			configFile.close()
@@ -89,15 +135,52 @@ else:
 				config.write(cf)
 
 	#Load config from current directory
-	except:
+	except Exception as e:
 		try:
 			if args.version is False:
 				print("Loading portable config...")
 			config = configparser.ConfigParser()
-			config.read("config.ini")
+			try:
+				if config.read("config.ini") == []:
+					raise FileNotFoundError("Config file not found")
+			except Exception as e:
+				if input("The config at ./config.ini is broken. Restore the last backup? (" + time.ctime(os.stat("config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
+					#Restore config
+					try:
+						os.remove("config.ini")
+					except:
+						pass
+					shutil.copyfile("config.ini.save", "config.ini")
+					try:
+						config = configparser.ConfigParser()
+						if config.read("config.ini") == []:
+							raise FileNotFoundError("Config file not found")
+					except Exception as e:
+						print("Error: " + str(e) + ". Exiting")
+						exit()
+				else:
+					print("Fatal Error: " + str(e))
+					exit()
 			configPath = "config.ini"
 		except:
 			print("Fatal error: Cannot load config")
+			exit()
+
+#Verify that config has correct sections
+if not (config.has_section("paths") and config.has_section("dev") and config.has_section("startup") and config.has_section("updates") and config.has_section("appearance") and config.has_section("installation")):
+	if input("The config at " + configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(str(Path(configPath).parent) + "/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
+		#Restore config
+		try:
+			os.remove(configPath)
+		except:
+			pass
+		shutil.copyfile(str(Path(configPath).parent) + "/config.ini.save", configPath)
+		try:
+			config = configparser.ConfigParser()
+			if config.read(configPath) == []:
+				raise FileNotFoundError("Config file not found")
+		except Exception as e:
+			print("Error: " + str(e) + ". Exiting")
 			exit()
 
 if args.version is True:
@@ -199,6 +282,10 @@ if config["startup"]["startserver"] == "true":
 	warmupThread.start()
 else:
 	warmupThread = None
+
+#Backup config file
+with open(str(Path(configPath).parent) + "/config.ini.save", "w") as f:
+	config.write(f)
 
 # #Complex toggle
 # def complex(onOff):
