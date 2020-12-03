@@ -18,7 +18,6 @@ then
 	cp ".installer/deb/control" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/postinst" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/prerm" "iicalc-deb/DEBIAN"
-	cp ".installer/deb/postrm" "iicalc-deb/DEBIAN"
 	chmod +x "iicalc-deb/DEBIAN/postinst"
 	chmod +x "iicalc-deb/DEBIAN/prerm"
 	systemPath="iicalc-deb/usr/share/iicalc/"
