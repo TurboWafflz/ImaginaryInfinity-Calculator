@@ -708,7 +708,7 @@ def info(plugin):
 		print("Name: " + plugin)
 		print("Description: " + index[plugin]["description"])
 		print("Author: " + index[plugin]["maintainer"])
-		print("Version: " + index[plugin]["description"])
+		print("Version: " + index[plugin]["version"])
 		print("Votes: " + index[plugin]["rating"])
 		#print("Screened: " + index[plugin]["approved"])
 	#Show info from local install file if not available in index
