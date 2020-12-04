@@ -23,6 +23,7 @@ from packaging import version
 import tempfile
 from tqdm import tqdm
 from dialog import Dialog, ExecutableNotFound
+#import inspect
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
@@ -425,21 +426,20 @@ def signal(sig,args=""):
 		pass
 
 #Function for plugins to set variable
-def setCoreVariable(varname, value):
-	varname = str(varname)
+#def setCoreVariable(varname, value):
 	#valid var name
-	if varname.isidentifier():
-		try:
-			#safety to not overwrite functions
-			if varname not in globals(sys.modules["__main__"]):
-				vars(sys.modules["__main__"])[varname] = value
-				return 0
-			else:
-				return 1
-		except:
-			return 1
-	else:
-		return 1
+#	if varname.isidentifier():
+#		try:
+			#safety to not overwrite plugins
+#			if varname not in inspect.stack()[1][0].f_globals:
+#				vars(sys.modules["__main__"])[varname] = value
+#				return 0
+#			else:
+#				return "Module exists"
+#		except Exception as e:
+#			return "Error: " + str(e)
+#	else:
+#		return "Invalid variable name"
 
 def doUpdate(branch="master", theme=theme, gui=False):
 	if config["installation"]["installtype"] == "portable":
