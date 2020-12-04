@@ -15,10 +15,10 @@ def configMod(section, key, value, config=config):
 	config[section][key] = value
 	with open(configPath, "w") as configFile:
 		config.write(configFile)
-		configFile.close()
+	signal("onSettingsSaved")
 	print("Config file updated. Some changes may require a restart to take effect.")
 
-def signal(sig,config,args=""):
+def settingsSignal(sig,config,args=""):
 	for plugin in os.listdir(config["paths"]["userPath"] + "/plugins/"):
 		try:
 			plugin = plugin[:-3]
@@ -237,7 +237,7 @@ def editor():
 			elif tag == "Exit without saving":
 				break
 			else:
-				config = signal("settingsPopup", config, "\"" + tag + "\"")
+				config = settingsSignal("settingsPopup", config, "\"" + tag + "\"")
 
 		else:
 			code = d.yesno("Save changes?")
@@ -250,6 +250,7 @@ def editor():
 			break
 	#Prompt to restart to apply settings
 	if tag == "Save and exit":
+		signal("onSettingsSaved")
 		restartbox = Dialog(dialog="dialog").yesno("Your settings have been saved. Some settings may require a restart to take effect. Would you like to restart?", width=0, height=0)
 		if restartbox == "ok":
 			clear()
