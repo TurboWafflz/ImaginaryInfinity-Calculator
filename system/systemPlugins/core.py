@@ -115,6 +115,23 @@ except:
 				print("Fatal error: unable to find a useable theme")
 				exit()
 
+#import plugins for signal function
+plugins = os.listdir(pluginPath)
+try:
+	plugins.remove("core.py")
+	plugins.remove("settings.py")
+	plugins.remove("__init__.py")
+except:
+	pass
+for plugin in plugins:
+	if plugin[-3:] == ".py":
+		try:
+			exec("from plugins import " + plugin[:-3])
+		except KeyboardInterrupt:
+			print("Cancelled loading of " + plugin )
+		except Exception as e:
+			pass
+
 #Restart
 def restart():
 	signal("onRestart")
@@ -422,7 +439,7 @@ def signal(sig,args=""):
 				plugin = plugin[:-3]
 				if sig in eval("dir(" + plugin + ")"):
 					exec(plugin + "." + sig + "(" + args + ")")
-	except:
+	except Exception as e:
 		pass
 
 #Function for plugins to set variable
