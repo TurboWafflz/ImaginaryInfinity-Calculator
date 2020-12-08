@@ -14,6 +14,7 @@ This is a guide on how to create and submit a standardized plugin.
 	- [Updating your plugin](#updatePlugin)
 	- [Deleting a plugin](#deletePlugin)
 	- [Rating a plugin](#ratePlugin)
+	- [Any problems?](#problems)
 ----
 
 ### Making a plugin <a name="makePlugin"></a>
@@ -133,3 +134,6 @@ If you find a plugin that violates our [guidelines]("guidelines.md"), you can re
 
 #### Rating a plugin<a name="ratePlugin"></a>
 There are 2 ways to rate a plugin. The first way is to go to the plugin's page (find it at [https://turbowafflz.azurewebsites.net/iicalc/browse](https://turbowafflz.azurewebsites.net/iicalc/browse)) and hit the upvote or downvote button. You must be authenticated to do this. The 2nd way is through the calculator. Start the calculator and run `pm.connect()` if you haven't done that already. Follow the steps and once you're authenticated, you can either run `pm.rate("pluginname")`, or by going to the plugin's store page, accessed with `store.store()`.
+
+#### Any problems?<a name="problems"></a>
+Did you get an error or encounter something broken? Start an issue at [https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues](https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues)
