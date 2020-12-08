@@ -89,7 +89,9 @@ The calculator can be installed on Windows using the provided powershell script.
 ## Plugins
 New functionality can easily be added by placing Python files with additional functions in the plugins directory or by downloading plugins from the store. To access a function added by a plugin, type `[plugin].[function]()`. For example, if you wanted to run the function `egg` from the plugin `food`, you would type `food.egg()`. Arguments placed in the parentheses will be passed to the function.
 ##### Plugin Documentation
+- [Making a standardized plugin](docs/makingStandardPlugin.md)
 - [Adding custom config settings](docs/addSettings.md)
+- [Plugin Guidelines](docs/guidelines.md)
 
 **Note:**
 Functions in the `core` plugin can be accessed without specifying `core`.
