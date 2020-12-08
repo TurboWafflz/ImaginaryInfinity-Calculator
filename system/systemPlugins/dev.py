@@ -33,7 +33,7 @@ def switchBranch(branch):
 #         exit()
 #     else:
 #         print("Sorry, this command is only available in online mode")
-def showPallate():
+def showPalette():
 	print(theme["styles"]["normal"] + "Normal")
 	print(theme["styles"]["error"] + "Error")
 	print(theme["styles"]["important"] + "Important")
