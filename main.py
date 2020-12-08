@@ -537,7 +537,7 @@ def main(config=config, warmupThread=warmupThread):
 		exit()
 	#Catch errors and display nice message
 	except Exception as e:
-		signal("onFatalError")
+		signal("onFatalError", str(e))
 		print(theme["styles"]["error"])
 		print("==============")
 		print("= Fatal error=")
