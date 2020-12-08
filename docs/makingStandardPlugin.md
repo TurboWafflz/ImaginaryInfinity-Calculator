@@ -8,6 +8,7 @@ This is a guide on how to create and submit a standardized plugin.
 	- [Running code on calcuator start](#onStart)
 	- [Printing Information](#print)
 	- [Handling special events](#signalEvents)
+	- [Debugging your plugin](#debug)
 2. [Submitting a plugin](#submitPlugin)
 ----
 
@@ -93,4 +94,6 @@ def onError(err):
 		print(theme["styles"]["error"] + "Whatever you tried to do includes an undefined variable")
 ```
 
+#### Debugging your plugin<a name="debug"></a>
+While debugging your plugin a simple error type may not be enough; you may need a traceback. To get the full traceback, you can change `debug` in the `dev` section of the config file to `true`. You can do this manually, with `settings.editor()` in the calculator, or with `settings.configMod("dev", "debug", "true")`.
 
