@@ -495,7 +495,7 @@ def main(config=config, warmupThread=warmupThread):
 					pr=0
 				except:
 					#Couldn't execute, display error
-					signal("onError", str(e))
+					signal("onError", type(e).__name__)
 					if pr:
 						print(theme["styles"]["error"] + "Error: " + str(e) + theme["styles"]["normal"])
 						if config["dev"]["debug"] == "true":
@@ -537,7 +537,7 @@ def main(config=config, warmupThread=warmupThread):
 		exit()
 	#Catch errors and display nice message
 	except Exception as e:
-		signal("onFatalError", str(e))
+		signal("onFatalError", type(e).__name__)
 		print(theme["styles"]["error"])
 		print("==============")
 		print("= Fatal error=")
