@@ -72,10 +72,10 @@ The calculator will send a signal to plugins when certain events happen. This ca
  - `onStarted` - Activated once calculator is fully started
  - `onReady` - Activated once calculator is ready for user input
  - `onInput` - Activated when user inputs something, like a calculation (passes the input as an argument)
- - `onError` - Activated on error (passes the exception as an argument)
+ - `onError` - Activated on error (passes the exception type as an argument)
  - `onPrintAnswer` - Activated when the answer is printed
  - `onEofExit` - Activated when a user exits the calculator by pressing Ctrl + D
- - `onFatalError` - Activated when the calculator encountered a fatal error and cannot continue (passes the exception as an argument)
+ - `onFatalError` - Activated when the calculator encountered a fatal error and cannot continue (passes the exception type as an argument)
  - `onSettingsSaved` - Activated when the settings have been saved and the config file has been updated
 
  An example of the use of these signals can be found here:
@@ -86,4 +86,11 @@ def onLinuxStart():
 
 def onWindowsStart():
 	print(theme["styles"]["output"] + "Ew, Windows")
+
+#Since this passes an argument, you must add an argument in the function
+def onError(err):
+	if err == NameError:
+		print(theme["styles"]["error"] + "Whatever you tried to do includes an undefined variable")
 ```
+
+
