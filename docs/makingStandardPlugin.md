@@ -12,10 +12,10 @@ This is a guide on how to create and submit a standardized plugin.
 ----
 
 ### Making a plugin <a name="makePlugin"></a>
-##### Choosing a filename <a name="filename"></a>
+#### Choosing a filename <a name="filename"></a>
 - First, you make your new plugin file. For this example, we'll be using the `discordrpc` plugin. Make a new python file preferably named to something relevant to your plugin. We'll be choosing the filename `discordrpc.py` for this.
 
-##### Importing features from core <a name="importCore"></a>
+#### Importing features from core <a name="importCore"></a>
 - If you want to make use of some features from the `core.py` file, you can just import them. For instance, we want to import the current theme if the plugin is printing stuff and the config if the plugin is [configurable](addSettings.md), so at the top of our python file, we will put
 ```py
 from systemPlugins.core import config, theme
@@ -25,7 +25,7 @@ If you want to import anything else from core, you can just add it to the list o
 from systemPlugins.core import config, theme, restart
 ```
 
-##### Running code on calculator start <a name="onStart"></a>
+#### Running code on calculator start <a name="onStart"></a>
 If you want to run some code when the calculator is started, for instance, asking the user what their name is to adjust the config, you can just put the code underneath all of your imports in the python file. Example:
 ```py
 from systemPlugins.core import config, theme, restart
@@ -34,7 +34,7 @@ from systemPlugins.core import config, theme, restart
 name = input("Input your name here: ")
 ```
 
-##### Printing Information <a name="print"></a>
+#### Printing Information <a name="print"></a>
 If you are doing anything involving printing, like taking input or just using `print()`, you should make it display with the user's theme's color for that type of output. To see the current color palette, you can type `dev.showPalette()` in the calculator. The available styles can be found below:
  - Normal - No styling
  - Error - Error Styling
@@ -59,7 +59,7 @@ importantVariable = "YOU BETTER PAY ATTENTION TO ME BECAUSE THIS IS VERY IMPORTA
 print(theme["styles"]["important"] + importantVariable)
 ```
 
-##### Handling special events <a name="signalEvents"></a>
+#### Handling special events <a name="signalEvents"></a>
 The calculator will send a signal to plugins when certain events happen. This can be taken advantage of by making a function in your plugin with the same name as the signal name. Some signals take arguments, so that you can do something with the data. Available signal names can be found below:
  - `onRestart` - Activated when the calculator restarts
  - `onPluginsLoaded` - Activated when all plugins have been loaded
