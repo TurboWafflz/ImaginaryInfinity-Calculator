@@ -89,7 +89,7 @@ The calculator can be installed on Windows using the provided powershell script.
 ## Plugins
 New functionality can easily be added by placing Python files with additional functions in the plugins directory or by downloading plugins from the store. To access a function added by a plugin, type `[plugin].[function]()`. For example, if you wanted to run the function `egg` from the plugin `food`, you would type `food.egg()`. Arguments placed in the parentheses will be passed to the function.
 ##### Plugin Documentation
-- [Adding custom config settings](addSettings.md)
+- [Adding custom config settings](docs/addSettings.md)
 
 **Note:**
 Functions in the `core` plugin can be accessed without specifying `core`.
@@ -165,7 +165,7 @@ starting number
 - theme(s)
 
 #### Submitting a plugin
-You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth). The plugin must fit the guidelines which can be found [here](guidelines.md). Violating these guidelines may result in your plugins being removed and a permanent ban from submitting plugins.
+You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth). The plugin must fit the guidelines which can be found [here](docs/guidelines.md). Violating these guidelines may result in your plugins being removed and a permanent ban from submitting plugins.
 
 **Disclaimer:** Even though we try to filter out malware, we cannot catch everything. We are not responsible for any damage caused by using user-created content. By using ImaginaryInfinity Calculator or any of it's services, you agree that no contributers to ImaginaryInfinity Calculator are responsible for any harm or damage caused by the usage of user-created content.
 
