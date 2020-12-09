@@ -32,7 +32,7 @@ This package can be installed using pacman, with `sudo pacman -U iicalc-any.pkg.
 #### Red Hat
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=buildrpm) (iicalc.rpm)
 
-This package can be installed or updated on Red Hat based systems, like Fedora and CentOS, using rpm, with `sudo rpm -Uhv iicalc.rpm`
+This package can be installed or updated on Red Hat based systems, like Fedora and CentOS, using rpm, with `sudo rpm -Uhv https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=buildrpm`
 
 #### AppImage
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
