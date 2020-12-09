@@ -1,5 +1,5 @@
-# Making and submitting a standardized plugin
-This is a guide on how to create and submit a standardized plugin.
+# Making and submitting a standardized plugin or theme
+This is a guide on how to create and submit a standardized plugin or theme.
 
 ## Table of Contents
 1. [Making a plugin](#makePlugin)
@@ -9,7 +9,10 @@ This is a guide on how to create and submit a standardized plugin.
 	- [Printing Information](#print)
 	- [Handling special events](#signalEvents)
 	- [Debugging your plugin](#debug)
-2. [Publishing your plugin to the store](#publishPlugin)
+2. [Making a theme](#makeTheme)
+	- [Manually making a theme](#manualTheme)
+	- [Using a tool](#themeTools)
+3. [Publishing your plugin to the store](#publishPlugin)
 	- [Submitting a plugin](#submitPlugin)
 	- [Updating your plugin](#updatePlugin)
 	- [Deleting a plugin](#deletePlugin)
@@ -42,6 +45,7 @@ name = input("Input your name here: ")
 
 #### Printing Information <a name="print"></a>
 If you are doing anything involving printing, like taking input or just using `print()`, you should make it display with the user's theme's color for that type of output. To see the current color palette, you can type `dev.showPalette()` in the calculator. The available styles can be found below:
+<a name="themevalues"></a>
  - Normal - No styling
  - Error - Error Styling
  - Important - Important Text Styling
@@ -102,6 +106,71 @@ def onError(err):
 
 #### Debugging your plugin<a name="debug"></a>
 While debugging your plugin a simple error type may not be enough; you may need a traceback. To get the full traceback, you can change `debug` in the `dev` section of the config file to `true`. You can do this manually, with `settings.editor()` in the calculator, or with `settings.configMod("dev", "debug", "true")`.
+
+----
+
+### Making a theme<a name="makeTheme"></a>
+Users can make custom themes for iicalc. This is a guide on how to create them.
+
+#### Manually making a theme<a href="manualTheme"></a>
+A theme file has a basic structure. You have the section that tells all of the information about the theme and the section that defines the actual colors. Themes currently support the use of colorama colors and ANSI colors. First, make a new theme file with the `.iitheme` extension. We'll call ours `test.iitheme`. Now, open the theme file in an editor and paste this theme template into it, replacing `NAME` and `DESCRIPTION` with the values that you are using.
+
+```ini
+[theme]
+name = NAME
+description = DESCRIPTION
+ansi = false
+
+[styles]
+normal = No
+error = No
+important = No
+startupmessage = No
+prompt = No
+link = No
+answer = No
+input = No
+output = No
+```
+
+If you are using ANSI colors, change `ansi` to `true`, if not, leave it as `false`. Not for the fun part, the colors. You can either use ANSI colors, or if you're going for something more basic, you can use colorama. Replace every instance of `No` with the corresponding color that you would like for that value. [Here is a list of what every value is for](#themevalues). Here are 2 examples, one for colorama and one for ANSI:
+
+**Colorama:**
+```ini
+[styles]
+normal = colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
+error = colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
+important = colorama.Fore.MAGENTA + colorama.Back.RESET + colorama.Style.BRIGHT
+startupmessage = colorama.Fore.YELLOW + colorama.Back.RESET + colorama.Style.NORMAL
+prompt = colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.BRIGHT
+link = colorama.Fore.BLUE + colorama.Back.RESET + colorama.Style.BRIGHT
+answer = colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.NORMAL
+input = colorama.Fore.CYAN + colorama.Back.RESET + colorama.Style.NORMAL
+output = colorama.Fore.WHITE + colorama.Back.RESET + colorama.Style.NORMAL
+```
+
+**ANSI:**
+```ini
+[styles]
+normal = \u001b[38;5;238m\u001b[48;5;19m
+error = \u001b[38;5;197m\u001b[48;5;201m
+important = \u001b[38;5;236m\u001b[48;5;47m
+startupmessage = \u001b[38;5;21m\u001b[48;5;39m
+prompt = \u001b[38;5;227m\u001b[48;5;126m
+link = \u001b[38;5;26m\u001b[48;5;137m
+answer = \u001b[38;5;225m\u001b[48;5;237m
+input = \u001b[38;5;178m\u001b[48;5;36m
+output = \u001b[38;5;143m\u001b[48;5;225m
+```
+
+While ANSI gives more power over the colors, colorama is simpler, so it's up for you to decide which best fits your needs. If you're interested in ANSI, I've found [this](https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html) article fairly useful in getting you started.
+
+#### Using a tool<a href="themeTools"></a>
+If you don't want to manually make a theme, or you want to have more control by using ANSI, but just can't understand that, there are some tools to help you in making themes. I've included a list below of some good ones.
+
+- Builtin `themes.cmdEditor()` command - good for making themes from a command line, no ANSI support.
+- Builtin `themes.dialogEditor()` command - good for making themes utilizing `dialog`, will not work on Windows. No ANSI support.
+- `themegui` plugin. This plugin can be installed with `pm.install("themegui")` or through `store.store()`. This plugin uses Tkinter and has adjustable RGB values with a preview. This plugin also has ANSI support.
 
 ----
 

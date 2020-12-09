@@ -67,7 +67,7 @@ try:
 	print("Attempting to load user theme...")
 	theme = configparser.ConfigParser()
 	theme.read(themePath + config["appearance"]["theme"])
-	if theme["theme"]["eval"] == "false":
+	if theme["theme"]["ansi"] == "true":
 		#Convert strings to the proper escape sequences
 		for s in theme["styles"]:
 			theme["styles"][str(s)] = theme["styles"][str(s)].encode("utf-8").decode("unicode_escape")
@@ -81,7 +81,7 @@ except:
 	try:
 		theme = configparser.ConfigParser()
 		theme.read(config["paths"]["systemPath"] + "/themes/" + config["appearance"]["theme"])
-		if theme["theme"]["eval"] == "false":
+		if theme["theme"]["ansi"] == "true":
 			#Convert strings to the proper escape sequences
 			for s in theme["styles"]:
 				theme["styles"][str(s)] = theme["styles"][str(s)].encode("utf-8").decode("unicode_escape")

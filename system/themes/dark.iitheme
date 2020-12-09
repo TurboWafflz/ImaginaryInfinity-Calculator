@@ -2,7 +2,7 @@
 name = Dark
 description = The default theme, for use on terminals with a dark background.
 builtin=true
-eval=true
+ansi=false
 [styles]
 normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT

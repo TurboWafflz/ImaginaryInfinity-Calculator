@@ -60,6 +60,7 @@ def cmdEditor():
 	print("Styles: " + str(styles))
 	openTheme["theme"]["name"] = input("Theme name: ")
 	openTheme["theme"]["description"] = input("Theme description: ")
+	openTheme["theme"]["ansi"] = "false"
 	Fore = input("Normal foreground: ")
 	Back = input("Normal background: ")
 	Style = input("Normal style: ")
@@ -200,6 +201,7 @@ def dialogEditor():
 	print(answers)
 	openTheme["theme"]["name"] = answers[0][1][0]
 	openTheme["theme"]["description"] = answers[0][1][1]
+	openTheme["theme"]["ansi"] = "false"
 
 	openTheme["styles"]["normal"] = "colorama.Fore." + answers[1][1][0].upper() + " + colorama.Back." + answers[1][1][1].upper() + " + colorama.Style." + answers[1][1][2].upper()
 	openTheme["styles"]["error"] = "colorama.Fore." + answers[2][1][0].upper() + " + colorama.Back." + answers[2][1][1].upper() + " + colorama.Style." + answers[2][1][2].upper()
