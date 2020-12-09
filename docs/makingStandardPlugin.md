@@ -112,7 +112,7 @@ While debugging your plugin a simple error type may not be enough; you may need 
 ### Making a theme<a name="makeTheme"></a>
 Users can make custom themes for iicalc. This is a guide on how to create them.
 
-#### Manually making a theme<a href="manualTheme"></a>
+#### Manually making a theme<a name="manualTheme"></a>
 A theme file has a basic structure. You have the section that tells all of the information about the theme and the section that defines the actual colors. Themes currently support the use of colorama colors and ANSI colors. First, make a new theme file with the `.iitheme` extension. We'll call ours `test.iitheme`. Now, open the theme file in an editor and paste this theme template into it, replacing `NAME` and `DESCRIPTION` with the values that you are using.
 
 ```ini
@@ -165,7 +165,7 @@ output = \u001b[38;5;143m\u001b[48;5;225m
 
 While ANSI gives more power over the colors, colorama is simpler, so it's up for you to decide which best fits your needs. If you're interested in ANSI, I've found [this](https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html) article fairly useful in getting you started.
 
-#### Using a tool<a href="themeTools"></a>
+#### Using a tool<a name="themeTools"></a>
 If you don't want to manually make a theme, or you want to have more control by using ANSI, but just can't understand that, there are some tools to help you in making themes. I've included a list below of some good ones.
 
 - Builtin `themes.cmdEditor()` command - good for making themes from a command line, no ANSI support.
