@@ -200,7 +200,7 @@ def update(silent=False, theme=theme):
 			print("Error installing plugin: Invalid type")
 			return "error"
 		#Make sure plugin file exists
-		if os.path.exists(location +  "/" + installed[plugin]["filename"]) or os.path.exists(location + "/" + installed[plugin]["filename"] + ".disabled"):
+		if os.path.exists(location +  "/" + installed[plugin]["filename"]):
 			#Check if an update is available
 			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]) and not silent:
 				updates = updates + 1
@@ -214,8 +214,8 @@ def update(silent=False, theme=theme):
 				if installed[plugin]["verified"] != "true" and not silent:
 					reinstall = reinstall + 1
 					print("\n" + plugin + " is damaged and should be reinstalled")
-		#Plugin missing, mark as unverified
-		else:
+		#Plugin missing, mark as unverified if not disabled
+		elif not os.path.exists(location + "/" + installed[plugin]["filename"] + ".disabled"):
 			print("File not found: " + location +  "/" + installed[plugin]["filename"])
 			print("\n" + plugin + " is missing and needs to be reinstalled")
 			reinstall = reinstall + 1
@@ -475,7 +475,10 @@ def remove(plugin):
 		try:
 			os.remove(location + "/" + installed[plugin]["filename"])
 		except:
-			pass
+			try:
+				os.remove(location + "/" + installed[plugin]["filename"] + ".disabled")
+			except:
+				pass
 		#Remove plugin from installed list
 		installed.remove_section(plugin)
 		print("Done")
@@ -537,7 +540,7 @@ def upgrade():
 				if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
 					install(plugin)
 					reinstall = reinstall + 1
-		else:
+		elif not os.path.exists(location + "/" + installed[plugin]["filename"] + ".disabled"):
 			#Plugin file is missing, offer to reinstall it
 			print("File not found: " + location + "/" + installed[plugin]["filename"])
 			if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
