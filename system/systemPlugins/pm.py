@@ -196,7 +196,7 @@ def update(silent=False, theme=theme):
 			print("Error installing plugin: Invalid type")
 			return "error"
 		#Make sure plugin file exists
-		if os.path.exists(location +  "/" + installed[plugin]["filename"]):
+		if os.path.exists(location +  "/" + installed[plugin]["filename"]) or os.path.exists(location + "/" + installed[plugin]["filename"] + ".disabled"):
 			#Check if an update is available
 			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]) and not silent:
 				updates = updates + 1
