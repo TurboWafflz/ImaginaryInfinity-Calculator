@@ -175,7 +175,6 @@ def chelp():
 	print("plugins() - Lists all plugins")
 	print("update() - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins")
 	print("pm.help() - Package Manager Help")
-	print("help(statistics) - statistics help")
 	print("store.store() - Plugin Store")
 	print("quit() - Quit ImaginaryInfinity Calculator")
 

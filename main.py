@@ -29,8 +29,6 @@ from packaging import version
 from sympy import S
 import argparse
 import atexit
-from statistics import *
-import statistics # for help(statistics)
 from pathlib import Path
 
 parser = argparse.ArgumentParser()
