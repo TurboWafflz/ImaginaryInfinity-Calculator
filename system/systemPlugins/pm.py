@@ -160,7 +160,11 @@ def update(silent=False, theme=theme):
 	t.start()
 	if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
 		os.makedirs(config["paths"]["userPath"] + "/.pluginstore")
-	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", config["paths"]["userPath"] + "/.pluginstore/index.ini", pbarEnable=True)
+	try:
+		download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", config["paths"]["userPath"] + "/.pluginstore/index.ini", pbarEnable=True)
+	except KeyboardInterrupt:
+		done = True
+		return
 	with open(config["paths"]["userPath"] + "/.pluginstore/index.ini") as f:
 		tmp = f.readlines()
 	if "The service is unavailable." in tmp:
