@@ -24,5 +24,11 @@ If applicable, add screenshots to help explain your problem.
 -  OS Version: [e.g. 20.04]
 -  Python 3 Version: [e.g. 3.8]
 
+**Mobile (please complete the following information):**
+- Device: [e.g. Galaxy S8]
+- OS: [e.g. Android 9]
+- Termux Version (Found in the app info): [e.g. 0.101]
+- Python 3 Version: [e.g. 3.8]
+
 **Additional context**
 Add any other context about the problem here.
