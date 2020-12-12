@@ -118,6 +118,38 @@ then
 	desktopFile=".installer/desktopFiles/ImaginaryInfinity_Calculator"
 	installDesktopFile="true"
 	pythonCommand="python3"
+
+#Install for MacOS
+elif [ `uname` == "NetBSD" ]
+then
+		if [ `whoami` != "root" ]
+		then
+			echo "Root access is required to install ImaginaryInfinity Calculator."
+			sudo $DIR/${0##*/}
+			exit
+		fi
+		echo "The installer has detected that you are using NetBSD, is this correct? (Y/n)"
+		read yn
+		if [ "$yn" == "n" ]
+		then
+			exit
+		fi
+		echo "Installing required packages from pkgsrc..."
+		pkg_add python38
+		pkg_add py38-expat
+		pkg_add readline
+		pkg_add py38-readline
+		echo "Installing pip..."
+		python3 -m ensurepip
+		systemPath="/usr/share/iicalc/"
+		binPath="/usr/bin/"
+		config=".installer/configDefaults/unix.ini"
+		launcher=".installer/launchers/unix.sh"
+		iconPath="/usr/share/iicalc/"
+		desktopFilePath="/Applications/"
+		desktopFile=".installer/desktopFiles/ImaginaryInfinity_Calculator"
+		installDesktopFile="true"
+		pythonCommand="python3"
 else
 	echo "The installer does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual installation (y/N)?"
