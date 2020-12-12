@@ -26,7 +26,7 @@ import configparser
 import subprocess
 from threading import Thread
 from packaging import version
-from sympy import S
+import decimal
 import argparse
 import atexit
 from pathlib import Path
@@ -465,13 +465,19 @@ def main(config=config, warmupThread=warmupThread):
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
 				#Evaluate command
-				#Test if eqn contains floating point number and is not a function
-				if len(re.findall("[a-zA-Z]+\([^\)]*\)(\.[^\)]*\))?", eqn)) == 0 and len(re.findall("[0-9]\.[0-9]", eqn)) >= 1:
+				#Test if eqn is not a function
+				if len(re.findall("[a-zA-Z]+\([^\)]*\)(\.[^\)]*\))?", eqn)) == 0:
 					#Is an equation
 					try:
-						ans = S(eqn)
-						if "." in str(ans):
-							ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
+						# Surround every number that appears to be a decimal or integer with `decimal.Decimal('<value>')` to fix floating point arithmetic errors
+						decimaleqn = re.sub(r"(((?<=[\s(*/^+-])[-]?|^[-]|^)([0-9]*[.])?[0-9]+)", r"decimal.Decimal('\1')", eqn)
+						try:
+							ans = eval(str(decimaleqn))
+						except decimal.Overflow:
+							#If decimal value is too big for the decimal to handle, fall back to normal eval
+							ans = eval(str(eqn))
+						# if "." in str(ans):
+						# 	ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
 					except:
 						try:
 							ans=eval(str(eqn))
