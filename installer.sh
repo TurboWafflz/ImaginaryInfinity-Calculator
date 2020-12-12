@@ -144,7 +144,7 @@ then
 		systemPath="/usr/share/iicalc/"
 		binPath="/usr/bin/"
 		config=".installer/configDefaults/unix.ini"
-		launcher=".installer/launchers/unix.sh"
+		launcher=".installer/launchers/netbsd.sh"
 		iconPath="/usr/share/iicalc/"
 		desktopFilePath="/Applications/"
 		desktopFile=".installer/desktopFiles/ImaginaryInfinity_Calculator"
