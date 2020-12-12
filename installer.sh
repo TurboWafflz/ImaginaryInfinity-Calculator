@@ -215,7 +215,7 @@ cp $config "$systemPath/config.ini"
 if [ "$buildOnly" != "true" ]
 then
 	"$pythonCommand" -m pip --version 1> /dev/null 2> /dev/null
-	if [ "$?" != "0" && ]
+	if [ "$?" != "0" ]
 	then
 		echo ""
 		echo -e "\033[0;31mPip does not seem to be installed. Before running the calculator, please install pip.\033[0m"
