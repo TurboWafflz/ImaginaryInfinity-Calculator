@@ -28,7 +28,7 @@ then
 	desktopFilePath="/dev/null"
 	desktopFile="iicalc.desktop"
 	installDesktopFile="false"
-elif [ `uname` == "Linux" ] || grep -q BSD <<< `uname`
+elif [ `uname` == "Linux" ]
 then
 	if [ `whoami` != "root" ]
 	then
@@ -88,6 +88,40 @@ then
 	desktopFilePath="/Applications/"
 	desktopFile="ImaginaryInfinity_Calculator"
 	installDesktopFile="true"
+
+#Install for NetBSD
+elif [ `uname` == "NetBSD" ]
+then
+	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
+	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
+	read yn
+	if [ "$yn" != "y" ]
+	then
+		echo "Cancelled"
+		exit
+	fi
+	if [ `whoami` != "root" ]
+	then
+		echo "Root access is required to uninstall ImaginaryInfinity Calculator."
+		sudo $DIR/${0##*/}
+		exit
+	fi
+	echo "The uninstaller has detected that you are using NetBSD, is this correct? (Y/n)"
+	read yn
+	if [ "$yn" == "n" ]
+	then
+		exit
+	fi
+	systemPath="/usr/share/iicalc/"
+	binPath="/usr/bin/"
+	config=".installer/configDefaults/unix.ini"
+	launcher=".installer/launchers/netbsd.sh"
+	iconPath="/usr/share/icons"
+	desktopFilePath="/usr/share/applications"
+	desktopFile=".installer/desktopFiles/iicalc.desktop"
+	installDesktopFile="true"
+	pythonCommand="python3.8"
+
 else
 	echo "The uninstaller does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual uninstallation (y/N)?"
