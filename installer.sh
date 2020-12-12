@@ -190,7 +190,7 @@ then
 		echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3-pip"
 		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3-pip"
 		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add py3-pip"
-		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python-pip"
+		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -Syu python-pip"
 		echo -e "On MacOS, download the get-pip.py installer: \033[33mcurl https://bootstrap.pypa.io/get-pip.py -o get-pip.py\033[0m and then run: \033[33mpython3 get-pip.py\033[0m"
 	else
 		echo "Installing Python modules..."
