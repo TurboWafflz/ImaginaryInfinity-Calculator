@@ -150,7 +150,72 @@ then
 		desktopFile=".installer/desktopFiles/iicalc.desktop"
 		installDesktopFile="true"
 		pythonCommand="python3.8"
-
+elif [ `uname` == "OpenBSD" ]
+then
+	if [ `whoami` != "root" ]
+	then
+		echo "Root access is required to install ImaginaryInfinity Calculator."
+		sudo $DIR/${0##*/}
+		exit
+	fi
+	echo "The installer has detected that you are using OpenBSD, is this correct? (Y/n)"
+	read yn
+	if [ "$yn" == "n" ]
+	then
+		exit
+	fi
+	echo "Installing required packages from pkgsrc..."
+	pkg_add -r python
+	pip3 > /dev/null
+	if [ "$?" != "0" ]
+	then
+		pkg_add -r curl
+		curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+		python3 get-pip.py
+		rm get-pip.py
+	fi
+	systemPath="/usr/share/iicalc/"
+	binPath="/usr/bin/"
+	config=".installer/configDefaults/unix.ini"
+	launcher=".installer/launchers/unix.sh"
+	iconPath="/usr/share/icons"
+	desktopFilePath="/usr/share/applications"
+	desktopFile=".installer/desktopFiles/iicalc.desktop"
+	installDesktopFile="true"
+	pythonCommand="python3"
+elif [ `uname` == "FreeBSD" ]
+then
+	if [ `whoami` != "root" ]
+	then
+		echo "Root access is required to install ImaginaryInfinity Calculator."
+		sudo $DIR/${0##*/}
+		exit
+	fi
+	echo "The installer has detected that you are using FreeBSD, is this correct? (Y/n)"
+	read yn
+	if [ "$yn" == "n" ]
+	then
+		exit
+	fi
+	echo "Installing required packages from pkgsrc..."
+	pkg install python3
+	pip3 > /dev/null
+	if [ "$?" != "0" ]
+	then
+		pkg install curl
+		curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+		python3 get-pip.py
+		rm get-pip.py
+	fi
+	systemPath="/usr/share/iicalc/"
+	binPath="/usr/bin/"
+	config=".installer/configDefaults/unix.ini"
+	launcher=".installer/launchers/unix.sh"
+	iconPath="/usr/share/icons"
+	desktopFilePath="/usr/share/applications"
+	desktopFile=".installer/desktopFiles/iicalc.desktop"
+	installDesktopFile="true"
+	pythonCommand="python3"
 else
 	echo "The installer does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual installation (y/N)?"
