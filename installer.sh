@@ -119,7 +119,7 @@ then
 	installDesktopFile="true"
 	pythonCommand="python3"
 
-#Install for MacOS
+#Install for NetBSD
 elif [ `uname` == "NetBSD" ]
 then
 		if [ `whoami` != "root" ]
@@ -140,16 +140,17 @@ then
 		pkg_add readline
 		pkg_add py38-readline
 		echo "Installing pip..."
-		python3 -m ensurepip
+		python3.8 -m ensurepip
 		systemPath="/usr/share/iicalc/"
 		binPath="/usr/bin/"
 		config=".installer/configDefaults/unix.ini"
 		launcher=".installer/launchers/netbsd.sh"
-		iconPath="/usr/share/iicalc/"
-		desktopFilePath="/Applications/"
-		desktopFile=".installer/desktopFiles/ImaginaryInfinity_Calculator"
+		iconPath="/usr/share/icons"
+		desktopFilePath="/usr/share/applications"
+		desktopFile=".installer/desktopFiles/iicalc.desktop"
 		installDesktopFile="true"
 		pythonCommand="python3.8"
+
 else
 	echo "The installer does not currently support your operating system. You can install the calculator by manually specifying the required paths, however this is only recommended for experienced users."
 	echo "Would you like to start manual installation (y/N)?"
@@ -214,7 +215,7 @@ cp $config "$systemPath/config.ini"
 if [ "$buildOnly" != "true" ]
 then
 	"$pythonCommand" -m pip --version 1> /dev/null 2> /dev/null
-	if [ "$?" != "0"  ]
+	if [ "$?" != "0" && ]
 	then
 		echo ""
 		echo -e "\033[0;31mPip does not seem to be installed. Before running the calculator, please install pip.\033[0m"
