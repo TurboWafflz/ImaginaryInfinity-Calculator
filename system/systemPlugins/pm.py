@@ -10,7 +10,12 @@ import sys
 import time
 import subprocess
 from systemPlugins.core import theme,config
-builtin = True
+import webbrowser
+import json
+
+class OAuthError(Exception):
+	pass
+
 #Loading spinner
 def loading(text):
 	for c in itertools.cycle(['|', '/', '-', '\\']):
@@ -19,14 +24,99 @@ def loading(text):
 		sys.stdout.write('\r' + text + " " + c)
 		sys.stdout.flush()
 		time.sleep(0.1)
+
+def connect():
+	webbrowser.open("https://turbowafflz.azurewebsites.net/iicalc/auth?connectCalc=true")
+	print(theme["styles"]["output"] + "If your browser does not automatically open, go to this URL: " + theme["styles"]["link"] + "https://turbowafflz.azurewebsites.net/iicalc/auth?connectCalc=true" + theme["styles"]["normal"])
+	token = input(theme["styles"]["input"] + "Please authenticate in your browser and paste the token here: " + theme["styles"]["normal"])
+	user = json.loads(requests.get("https://api.github.com/user", headers={"Authorization": "Bearer "+ token}).text)
+	if not "message" in user:
+		if input("Is this you? " + str(user["login"]) + " [Y/n] ").lower() != "n":
+			if not os.path.isdir(config["paths"]["userpath"] + "/.pluginstore"):
+				os.mkdir(config["paths"]["userPath"] + "/.pluginstore")
+			with open(config["paths"]["userpath"] + "/.pluginstore/.token", "w+") as f:
+				f.write(token)
+		else:
+			return
+	else:
+		print(theme["styles"]["error"] + "Invalid OAuth token" + theme["styles"]["normal"])
+		return
+
+def getUserInfo():
+	if os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
+		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+			user = json.loads(requests.get("https://api.github.com/user", headers={"Authorization": "Bearer "+ f.read().strip()}).text)
+		if "message" in user:
+			raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+		else:
+			return user
+	else:
+		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+
+#Plugin rating function
+def rate(plugin):
+	plugin = str(plugin)
+	index = configparser.ConfigParser()
+	index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
+	installed = configparser.ConfigParser()
+	installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+	if plugin in installed.sections():
+		if os.path.isfile(config["paths"]["userpath"] + "/.pluginstore/.token"):
+			rating = 0
+			while rating != "1" and rating != "2":
+				rating = input("Upvote (1) or Downvote (2)? ")
+			if rating == "2":
+				rating = -1
+			else:
+				rating = 1
+			with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+				response = requests.post("https://turbowafflz.azurewebsites.net/iicalc/rate/" + plugin, data={"vote": rating}, cookies={"authToken": f.read().strip()})
+				print(response.text)
+		else:
+			clear()
+			pm.connect()
+			rate(plugin)
+	elif plugin in index.sections():
+		if input("You must install a plugin to rate it. Install " + plugin + "? [Y/n] ").lower() != "n":
+			install(plugin)
+		else:
+			print("Cancelled")
+	else:
+		print("Plugin " + plugin + " does not exist")
+
+def getUserPlugins():
+	if os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
+		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+			r = requests.post("https://turbowafflz.azurewebsites.net/iicalc/getplugins", cookies={"authToken": f.read().strip()})
+		if "OAuth Error" in r.text or "Invalid OAuth Session" in r.text:
+			raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+		else:
+			return r.text.split(",")
+	else:
+		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+
 #Download file
-def download(url, localFilename):
+def download(url, localFilename, pbarEnable=False):
 	# NOTE the stream=True parameter
 	r = requests.get(url, stream=True)
+	if "content-length" in r.headers:
+		filelength = r.headers['Content-Length']
+	else:
+		filelength = None
 	with open(localFilename, 'wb') as f:
+		if filelength != None and pbarEnable == True:
+			totaldownloaded = 0
+
+			pbar = tqdm(unit="B", total=int(filelength), unit_scale=True, unit_divisor=1024)
 		for chunk in r.iter_content(chunk_size=1024):
 			if chunk: # filter out keep-alive new chunks
+				if filelength != None and pbarEnable == True:
+					pbar.update(len(chunk))
+					totaldownloaded += len(chunk)
 				f.write(chunk)
+		if filelength != None and pbarEnable == True:
+			pbar.update(int(filelength)-totaldownloaded)
+			pbar.close()
 	return localFilename
 #Check plugin against hash
 def verify(plugin):
@@ -70,15 +160,17 @@ def update(silent=False, theme=theme):
 	t.start()
 	if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
 		os.makedirs(config["paths"]["userPath"] + "/.pluginstore")
-	download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", config["paths"]["userPath"] + "/.pluginstore/tmp.ini")
-	with open(config["paths"]["userPath"] + "/.pluginstore/tmp.ini") as f:
+	try:
+		download("https://turbowafflz.azurewebsites.net/iicalc/plugins/index", config["paths"]["userPath"] + "/.pluginstore/index.ini", pbarEnable=True)
+	except KeyboardInterrupt:
+		done = True
+		return
+	with open(config["paths"]["userPath"] + "/.pluginstore/index.ini") as f:
 		tmp = f.readlines()
 	if "The service is unavailable." in tmp:
 		print(theme["styles"]["error"] + "\nThe index is currently unavailable due to a temporary Microsoft Azure outage. Please try again later.")
 		done=True
 		return
-	else:
-		copyfile(config["paths"]["userPath"] + "/.pluginstore/tmp.ini", config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	#Load index, if available
 	try:
 		index = configparser.ConfigParser()
@@ -122,8 +214,8 @@ def update(silent=False, theme=theme):
 				if installed[plugin]["verified"] != "true" and not silent:
 					reinstall = reinstall + 1
 					print("\n" + plugin + " is damaged and should be reinstalled")
-		#Plugin missing, mark as unverified
-		else:
+		#Plugin missing, mark as unverified if not disabled
+		elif not os.path.exists(location + "/" + installed[plugin]["filename"] + ".disabled"):
 			print("File not found: " + location +  "/" + installed[plugin]["filename"])
 			print("\n" + plugin + " is missing and needs to be reinstalled")
 			reinstall = reinstall + 1
@@ -211,7 +303,7 @@ def install(plugin):
 				else:
 					print("Error installing plugin: Invalid type")
 					return "error"
-				download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
+				download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
 				installed[plugin] = index[plugin]
 				installed[plugin]["source"] = "index"
 				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
@@ -270,7 +362,7 @@ def install(plugin):
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"
-			download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
+			download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
 			#Mark plugin as installed from index
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
@@ -328,7 +420,7 @@ def install(plugin):
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"
-			download(index[plugin]["download"], location + "/" + index[plugin]["filename"])
+			download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
 			#Mark plugin as installed
 			installed[plugin] = index[plugin]
 			installed[plugin]["source"] = "index"
@@ -383,7 +475,10 @@ def remove(plugin):
 		try:
 			os.remove(location + "/" + installed[plugin]["filename"])
 		except:
-			pass
+			try:
+				os.remove(location + "/" + installed[plugin]["filename"] + ".disabled")
+			except:
+				pass
 		#Remove plugin from installed list
 		installed.remove_section(plugin)
 		print("Done")
@@ -445,7 +540,7 @@ def upgrade():
 				if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
 					install(plugin)
 					reinstall = reinstall + 1
-		else:
+		elif not os.path.exists(location + "/" + installed[plugin]["filename"] + ".disabled"):
 			#Plugin file is missing, offer to reinstall it
 			print("File not found: " + location + "/" + installed[plugin]["filename"])
 			if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
@@ -593,7 +688,7 @@ def installFromFile(file):
 			else:
 				print("Error installing plugin: Invalid type")
 				return "error"
-			download(icpk[plugin]["download"], location + "/" + icpk[plugin]["filename"])
+			download(icpk[plugin]["download"], location + "/" + icpk[plugin]["filename"], pbarEnable=True)
 			installed[plugin] = icpk[plugin]
 			installed[plugin]["source"] = "icpk"
 			print("Verifying...")
@@ -620,8 +715,8 @@ def info(plugin):
 		print("Name: " + plugin)
 		print("Description: " + index[plugin]["description"])
 		print("Author: " + index[plugin]["maintainer"])
-		print("Version: " + index[plugin]["description"])
-		print("Rating: " + index[plugin]["rating"] + "(" + index[plugin]["ratings"] + ")")
+		print("Version: " + index[plugin]["version"])
+		print("Votes: " + index[plugin]["rating"])
 		#print("Screened: " + index[plugin]["approved"])
 	#Show info from local install file if not available in index
 	elif installed.has_section(plugin):
@@ -629,7 +724,7 @@ def info(plugin):
 		print("Description: " + index[plugin]["description"])
 		print("Author: " + index[plugin]["maintainer"])
 		print("Version: " + index[plugin]["description"])
-		print("Rating: " + index[plugin]["rating"] + "(" + index[plugin]["ratings"] + ")")
+		print("Votes: " + index[plugin]["rating"])
 		#print("Screened: " + index[plugin]["approved"])
 	#Couldn't find the plugin from any source
 	else:
@@ -644,4 +739,5 @@ def help():
 	print("pm.info(\"<plugin>\") - Show info about a package")
 	print("pm.upgrade() - Install all available updates")
 	print("pm.remove(\"<plugin>\") - Remove an installed package")
+	print("pm.rate(\"<plugin>\") - Rate an installed plugin")
 	print("pm.installFromFile(\"<filename>\") - Install a packages from a local *.icpk file")

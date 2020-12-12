@@ -3,7 +3,7 @@ ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
 command line interface is designed to resemble that of some graphing
 calculators. To preform another operation on a result, simply type the operation you wish to preform (eg. "/5" to divide the previous result by 5). To use the previous result in a new calculation, just specify the operation after the new calculation (eg. "5-" to subtract the previous result from 5).
 
-![Screenshot](iicalc.png)
+![Screenshot](iicalcscreenshot.png)
 ## Packages
 We provide a packaged version of ImaginaryInfinity calculator for some Linux distributions. They can be found below.
 
@@ -32,13 +32,29 @@ This package can be installed using pacman, with `sudo pacman -U iicalc-any.pkg.
 #### Red Hat
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=buildrpm) (iicalc.rpm)
 
-This package can be installed or updated on Red Hat based systems, like Fedora and CentOS, using rpm, with `sudo rpm -Uhv iicalc.rpm`
+This package can be installed or updated on Red Hat based systems, like Fedora and CentOS, using rpm, with `sudo rpm -Uhv https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=buildrpm`
 
 #### AppImage
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
 
 Just make executable and run on many Linux distributions
 
+----
+
+## Installation
+
+The advantages of using an installed version of the calculator is that you can launch it from anywhere in a terminal, just by running the `iicalc` command. Installing it also adds a shortcut to your start menu, and if you're on Windows, you have the option to add a desktop shortcut.
+
+#### Portable Mode
+The calculator can be run without any installation on any device that supports Python 3. Just clone the repository and in the directory that  you cloned it to, run `python3 main.py`, or replace `python3` with your operating system's python command. (Windows is `py`, Android is `python`, etc.)
+
+#### Linux/MacOS/Android installation
+ImaginaryInfinity Calculator can be installed on Linux by installing the package for your operating system. If your operating system doesn't have a package or you don't want to install a package, you can use the installer script. Just go to the directory where you downloaded the calculator and run `bash installer.sh` in your terminal to install the calculator. The calculator can be easily uninstalled by running `bash uninstaller.sh` in the same directory.
+
+#### Windows Installation
+The calculator can be installed on Windows using the provided powershell script. First, search `powershell` in the windows start menu, right click it, and run it as administrator. Then run `Set-ExecutionPolicy Unrestricted`, and type "Y" to say yes. This makes it so that the installer script can run. Now, navigate to the directory where you downloaded the calculator, and run `.\installer.ps1`. The calculator can be easily uninstalled by opening a powershell session and running `.\uninstaller.ps1` in the same directory.
+
+----
 
 ## Supported platforms
 **ImaginaryInfinity Calculator fully supports the following platforms:**
@@ -59,7 +75,7 @@ Just make executable and run on many Linux distributions
 	- Start an issue on GitHub and we may improve support for your OS
 
 **ImaginaryInfinity Calculator has been tested to work on these platforms:**
-- Ubuntu
+- Debian/Ubuntu
 - Arch Linux
 - OpenBSD
 - FreeBSD
@@ -73,7 +89,9 @@ Just make executable and run on many Linux distributions
 ## Plugins
 New functionality can easily be added by placing Python files with additional functions in the plugins directory or by downloading plugins from the store. To access a function added by a plugin, type `[plugin].[function]()`. For example, if you wanted to run the function `egg` from the plugin `food`, you would type `food.egg()`. Arguments placed in the parentheses will be passed to the function.
 ##### Plugin Documentation
-- [Adding custom config settings](addSettings.md)
+- [Making a standardized plugin or theme](docs/makingStandardPlugin.md)
+- [Adding custom config settings](docs/addSettings.md)
+- [Plugin Guidelines](docs/guidelines.md)
 
 **Note:**
 Functions in the `core` plugin can be accessed without specifying `core`.
@@ -149,7 +167,7 @@ starting number
 - theme(s)
 
 #### Submitting a plugin
-You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth). The plugin must fit the guidelines which can be found [here](guidelines.md). Violating these guidelines may result in your plugins being removed and a permanent ban from submitting plugins.
+You can submit a plugin to the store by clicking [here](https://turbowafflz.azurewebsites.net/iicalc/auth). The plugin must fit the guidelines which can be found [here](docs/guidelines.md). Violating these guidelines may result in your plugins being removed and a permanent ban from submitting plugins.
 
 **Disclaimer:** Even though we try to filter out malware, we cannot catch everything. We are not responsible for any damage caused by using user-created content. By using ImaginaryInfinity Calculator or any of it's services, you agree that no contributers to ImaginaryInfinity Calculator are responsible for any harm or damage caused by the usage of user-created content.
 

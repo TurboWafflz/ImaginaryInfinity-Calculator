@@ -8,7 +8,7 @@ if [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
 	echo "If you are having a problem with the calculator, please start an issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator"
 	echo "Are you sure you want to uninstall ImaginaryInfinity Calculator? (y/N)"
-	read
+	read yn
 	if [ "$yn" != "y" ]
 	then
 		echo "Cancelled"
@@ -137,7 +137,6 @@ else
 	echo "Where are the icons stored?"
 	read iconPath
 	installDesktopFile="false"
-
 fi
 cd $DIR
 echo "Removing launcher..."
@@ -146,7 +145,7 @@ if [ $installDesktopFile == "true" ]
 then
 	rm -rf "$desktopFilePath/$desktopFile"
 	echo "Removing icons..."
-	rm "$iconPath/iicalc.tiff"
+	rm "$iconPath/iicalc.png"
 fi
 echo "Removing main Python script.."
 rm "$systemPath/iicalc.py"

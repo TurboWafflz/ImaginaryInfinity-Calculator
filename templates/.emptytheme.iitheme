@@ -3,10 +3,10 @@ name = No
 description = No
 filename = No
 builtin=No
-eval=true
+ansi=false
 [styles]
 normal=No
-error==No
+error=No
 important=No
 startupmessage=No
 prompt=No

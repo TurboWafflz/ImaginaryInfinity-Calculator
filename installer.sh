@@ -181,7 +181,7 @@ if [ $installDesktopFile == "true" ]
 then
 	cp -r $desktopFile $desktopFilePath
 	echo "Installing icons..."
-	cp iicalc.tiff "$iconPath"
+	cp iicalc.png "$iconPath"
 fi
 #Warn about missing Python if installing
 if [ "$buildOnly" != "true" ]
@@ -192,6 +192,7 @@ then
 		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3"
 		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add python3"
 		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python"
+		echo "On MacOS, download the latest Python installer from https://www.python.org/downloads/mac-osx/"
 		echo "On Android based operating systems (In Termux) run: pkg install python"
 	fi
 fi
@@ -222,7 +223,8 @@ then
 		echo "On Debian based operating systems (Ubuntu, Raspbian, Debian, etc.) run: sudo apt install python3-pip"
 		echo "On Red Hat based operating systems (Fedora, CentOS, Red Hat Enterprise Linux, etc.) run: sudo dnf install python3-pip"
 		echo "On Alpine based operating systems (PostmarketOS, Alpine Linux, etc.) run: sudo apk add py3-pip"
-		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -S python-pip"
+		echo "On Arch based operating systems (Arch Linux, Manjaro, TheShellOS) run: sudo pacman -Syu python-pip"
+		echo -e "On MacOS, download the get-pip.py installer: \033[33mcurl https://bootstrap.pypa.io/get-pip.py -o get-pip.py\033[0m and then run: \033[33mpython3 get-pip.py\033[0m"
 	else
 		echo "Installing Python modules..."
 		"$pythonCommand" -m pip install -r requirements.txt
