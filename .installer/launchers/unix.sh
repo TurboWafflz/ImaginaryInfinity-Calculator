@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 systemPath="/usr/share/iicalc/"
 userPath="$HOME/.iicalc"
+python=python3
 if [ ! -d "$userPath" ]
 then
 	clear
