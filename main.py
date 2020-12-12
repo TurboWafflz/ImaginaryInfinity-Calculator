@@ -21,6 +21,7 @@ import platform
 import os
 import requests
 import json
+import shutil
 import configparser
 import subprocess
 from threading import Thread
@@ -28,6 +29,7 @@ from packaging import version
 from sympy import S
 import argparse
 import atexit
+from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
@@ -42,22 +44,6 @@ if False:
 	print("There is literally no way for this message to appear unless someone tampered with the source code")
 	input("[Press enter to continue]")
 
-#Wake up server to decrease wait times when accessing store
-def pingServer():
-	try:
-		requests.get("http://turbowafflz.azurewebsites.net", timeout=1)
-	except requests.ConnectionError:
-		pass
-	except requests.exceptions.ReadTimeout:
-		pass
-
-def loadConfig(config):
-	items = []
-	for each_section in config.sections():
-		for (each_key, each_val) in config.items(each_section):
-			items.append((each_section, each_key, each_val))
-	return items
-
 if args.version is False:
 	print("Importing plugins...")
 	print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
@@ -66,7 +52,13 @@ if args.version is False:
 if args.config != None:
 	if os.path.isfile(args.config):
 		config = configparser.ConfigParser()
-		config.read(args.config)
+		#test if config is broken
+		try:
+			if config.read(args.config) == []:
+				raise FileNotFoundError
+		except Exception as e:
+			print("Error in config file at " + args.config + ": " + str(e) + ". Exiting")
+			exit()
 		configPath = args.config
 	else:
 		print("Invalid config file location specified: " + args.config)
@@ -78,16 +70,57 @@ else:
 		if args.version is False:
 			print("Loading config...")
 		config = configparser.ConfigParser()
-		config.read(home + "/.iicalc/config.ini")
-		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+		#test if config is broken
+		try:
+			if config.read(home + "/.iicalc/config.ini") == []:
+				raise FileNotFoundError("Config file not found")
+		except Exception as e:
+			if input("The config at " + home + "/.iicalc/config.ini is broken. Restore the last backup? (" + time.ctime(os.stat(home + "/.iicalc/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
+				#Restore config
+				try:
+					os.remove(home + "/.iicalc/config.ini")
+				except:
+					pass
+				shutil.copyfile(home + "/.iicalc/config.ini.save", home + "/.iicalc/config.ini")
+				try:
+					config = configparser.ConfigParser()
+					if config.read(home + "/.iicalc/config.ini") == []:
+						raise FileNotFoundError("Config file not found")
+				except Exception as e:
+					print("Error: " + str(e) + ". Exiting")
+					exit()
+			else:
+				print("Fatal Error: " + str(e))
+				exit()
+
 		configPath = home + "/.iicalc/config.ini"
+
+		if not config.has_section("paths"):
+			if input("The config at " + configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(str(Path(configPath).parent) + "/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
+				#Restore config
+				try:
+					os.remove(configPath)
+				except:
+					pass
+				shutil.copyfile(str(Path(configPath).parent) + "/config.ini.save", configPath)
+				try:
+					config = configparser.ConfigParser()
+					if config.read(configPath) == []:
+						raise FileNotFoundError("Config file not found")
+				except Exception as e:
+					print("Error: " + str(e) + ". Exiting")
+					exit()
+		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
 		with open(configPath, "w") as configFile:
 			config.write(configFile)
 			configFile.close()
 
 		#Update config file from share config for installed
 		if os.path.exists("/usr/share/iicalc/config.ini"):
-			oldConfig = loadConfig(config)
+			oldConfig = []
+			for each_section in config.sections():
+				for (each_key, each_val) in config.items(each_section):
+					oldConfig.append((each_section, each_key, each_val))
 			config = configparser.ConfigParser()
 			config.read("/usr/share/iicalc/config.ini")
 			for i in range(len(oldConfig)):
@@ -100,15 +133,52 @@ else:
 				config.write(cf)
 
 	#Load config from current directory
-	except:
+	except Exception as e:
 		try:
 			if args.version is False:
 				print("Loading portable config...")
 			config = configparser.ConfigParser()
-			config.read("config.ini")
+			try:
+				if config.read("config.ini") == []:
+					raise FileNotFoundError("Config file not found")
+			except Exception as e:
+				if input("The config at ./config.ini is broken. Restore the last backup? (" + time.ctime(os.stat("config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
+					#Restore config
+					try:
+						os.remove("config.ini")
+					except:
+						pass
+					shutil.copyfile("config.ini.save", "config.ini")
+					try:
+						config = configparser.ConfigParser()
+						if config.read("config.ini") == []:
+							raise FileNotFoundError("Config file not found")
+					except Exception as e:
+						print("Error: " + str(e) + ". Exiting")
+						exit()
+				else:
+					print("Fatal Error: " + str(e))
+					exit()
 			configPath = "config.ini"
 		except:
 			print("Fatal error: Cannot load config")
+			exit()
+
+#Verify that config has correct sections
+if not (config.has_section("paths") and config.has_section("dev") and config.has_section("startup") and config.has_section("updates") and config.has_section("appearance") and config.has_section("installation") and config.has_section("system")):
+	if input("The config at " + configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(str(Path(configPath).parent) + "/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
+		#Restore config
+		try:
+			os.remove(configPath)
+		except:
+			pass
+		shutil.copyfile(str(Path(configPath).parent) + "/config.ini.save", configPath)
+		try:
+			config = configparser.ConfigParser()
+			if config.read(configPath) == []:
+				raise FileNotFoundError("Config file not found")
+		except Exception as e:
+			print("Error: " + str(e) + ". Exiting")
 			exit()
 
 if args.version is True:
@@ -123,17 +193,7 @@ if args.version is True:
 pluginPath=config["paths"]["userPath"] + "/plugins/"
 #Add system path to path to load built in plugins
 sys.path.insert(1, config["paths"]["userPath"])
-#Signals to trigger functions in plugins
-def signal(sig,args=""):
-	try:
-		nonplugins = ["__init__.py", "__pycache__", ".reqs"]
-		for plugin in os.listdir(pluginPath):
-			if not plugin in nonplugins:
-				plugin = plugin[:-3]
-				if sig in eval("dir(" + plugin + ")"):
-					exec(plugin + "." + sig + "(" + args + ")")
-	except:
-		pass
+
 #Load system plugins
 if config["paths"]["systemPath"] != "none":
 	sys.path.insert(2, config["paths"]["systemPath"])
@@ -221,6 +281,10 @@ if config["startup"]["startserver"] == "true":
 else:
 	warmupThread = None
 
+#Backup config file
+with open(str(Path(configPath).parent) + "/config.ini.save", "w") as f:
+	config.write(f)
+
 # #Complex toggle
 # def complex(onOff):
 # 	global cplx
@@ -233,26 +297,6 @@ else:
 # 		pr=0
 # 		cplx=False
 cplx=True
-
-#Restart
-def restart():
-	signal("onRestart")
-	os.execl(sys.executable, sys.executable, * sys.argv)
-
-#Check for Internet Connection
-def hasInternet():
-	try:
-		import httplib
-	except:
-		import http.client as httplib
-	conn = httplib.HTTPConnection("www.google.com", timeout=5)
-	try:
-		conn.request("HEAD", "/")
-		conn.close()
-		return True
-	except:
-		conn.close()
-		return False
 
 #Check if up to date
 if hasInternet() and config["startup"]["checkupdates"] == "true":
@@ -277,17 +321,6 @@ if hasInternet() and config["startup"]["checkupdates"] == "true":
 		upToDate = True
 else:
 	upToDate = True
-
-#Import/install
-def iprt(lib):
-	try:
-		globals()[lib] = __import__(lib)
-	except ModuleNotFoundError:
-		os.system("pip3 install " + lib)
-		try:
-			globals()[lib] = __import__(lib)
-		except ModuleNotFoundError:
-			pass
 
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
@@ -417,10 +450,17 @@ def main(config=config, warmupThread=warmupThread):
 					clear()
 					pr=0
 				eqn=calc
-				if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
-					eqn=str(ans)+str(calc)
-				if cl[-1] == "+" or cl[-1] == "-" or cl[-1] == "*" or cl[-1] == "/" or cl[-1] == "^":
-					eqn=str(calc)+str(ans)
+				#ability to disable subtraction from last answer
+				if config["system"]["subtractfromlast"] == "true":
+					if cl[0] == "+" or cl[0] == "-" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
+						eqn=str(ans)+str(calc)
+					if cl[-1] == "+" or cl[-1] == "-" or cl[-1] == "*" or cl[-1] == "/" or cl[-1] == "^":
+						eqn=str(calc)+str(ans)
+				else:
+					if cl[0] == "+" or cl[0] == "*" or cl[0] == "/" or cl[0] == "^":
+						eqn=str(ans)+str(calc)
+					if cl[-1] == "+" or cl[-1] == "*" or cl[-1] == "/" or cl[-1] == "^":
+						eqn=str(calc)+str(ans)
 				# if pr:
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
@@ -453,7 +493,7 @@ def main(config=config, warmupThread=warmupThread):
 					pr=0
 				except:
 					#Couldn't execute, display error
-					signal("onError", str(e))
+					signal("onError", type(e).__name__)
 					if pr:
 						print(theme["styles"]["error"] + "Error: " + str(e) + theme["styles"]["normal"])
 						if config["dev"]["debug"] == "true":
@@ -495,7 +535,7 @@ def main(config=config, warmupThread=warmupThread):
 		exit()
 	#Catch errors and display nice message
 	except Exception as e:
-		signal("onFatalError")
+		signal("onFatalError", type(e).__name__)
 		print(theme["styles"]["error"])
 		print("==============")
 		print("= Fatal error=")

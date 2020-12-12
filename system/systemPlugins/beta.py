@@ -3,7 +3,7 @@ from functools import reduce
 from math import gcd
 import colorama
 import math
-builtin=True
+
 class style:
 	normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 	error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
