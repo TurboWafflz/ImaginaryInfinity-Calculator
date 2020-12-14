@@ -407,7 +407,9 @@ def main(config=config, warmupThread=warmupThread):
 				messages=messagesFile.readlines()
 				msg = messages[randint(0,len(messages)-1)]
 				print(theme["styles"]["startupmessage"] + msg + theme["styles"]["normal"])
-		except:
+		except Exception as e:
+			import traceback
+			traceback.print_exc()
 			print("Could not find messages file")
 		# if(platform.system()=="Windows"):
 		# 	print(style.important + "Eww, Windows")
