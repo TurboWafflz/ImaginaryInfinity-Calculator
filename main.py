@@ -418,8 +418,10 @@ def main(config=config, warmupThread=warmupThread):
 		print('')
 		calc=''
 		if args.viewstoreplugin != None:
+			pm.update()
 			store.pluginpage(args.viewstoreplugin, uri=True)
 		elif args.installpmplugin != None:
+			pm.update()
 			pm.install(args.installpmplugin, prompt=True)
 		signal("onStarted")
 		#Main loop
