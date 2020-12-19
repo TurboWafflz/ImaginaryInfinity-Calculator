@@ -79,6 +79,7 @@ The calculator can be installed on Windows using the provided powershell script.
 - Arch Linux
 - OpenBSD
 - FreeBSD
+- NetBSD
 - Red Hat Linux
 - Alpine Linux
 - Android (Termux)
