@@ -277,6 +277,10 @@ cp messages.txt "$systemPath"
 cp system/version.txt "$systemPath"
 cp README-online "$systemPath"
 cp $config "$systemPath/config.ini"
+#Add custom URI scheme if supported
+if type xdg-mime > /dev/null; then
+	xdg-mime default iicalc.desktop x-scheme-handler/iicalc
+fi
 #Install Python modules if installing
 if [ "$buildOnly" != "true" ]
 then
