@@ -34,6 +34,8 @@ from pathlib import Path
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
 parser.add_argument("--version", "-V", action="store_true", help="Print Version")
+parser.add_argument("--viewstoreplugin", type=str, help="View plugin on store page. For custom iicalc:// URI")
+parser.add_argument("--installpmplugin", type=str, help="Prompt to install plugin with pm. For custom iicalc:// URI")
 args = parser.parse_args()
 
 #Make sure math is real and Python is not completely insane
@@ -415,6 +417,10 @@ def main(config=config, warmupThread=warmupThread):
 		ans=0
 		print('')
 		calc=''
+		if args.viewstoreplugin != None:
+			store.pluginpage(args.viewstoreplugin, uri=True)
+		elif args.installpmplugin != None:
+			pm.install(args.installpmplugin, prompt=True)
 		signal("onStarted")
 		#Main loop
 		while True:

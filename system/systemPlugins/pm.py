@@ -231,7 +231,7 @@ def update(silent=False, theme=theme):
 		print("Run 'pm.upgrade()' to apply these changes")
 	done = True
 #Install a plugin
-def install(plugin):
+def install(plugin, prompt=False):
 
 	#update(silent=True)
 	#Load index, if available
@@ -266,6 +266,9 @@ def install(plugin):
 	if installed.has_section(plugin) and not verified == "false":
 		#Newer version available, update
 		if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
+			if prompt == True:
+				if input(plugin + " has an update available. Update it? [y/N] ").lower() != "y":
+					return
 			print("Updating " + plugin + "...")
 			try:
 				print("Installing dependencies...")
@@ -328,6 +331,9 @@ def install(plugin):
 			print(plugin + " is already installed and has no update available")
 	#Plugin has failed verification, reinstall it
 	elif verified != "true" and installed.has_section(plugin):
+		if prompt == True:
+			if input(plugin + " is damaged and should be reinstalled. Install it? [y/N] ").lower() != "y":
+				return
 		print("Redownloading damaged package " + plugin + "...")
 		try:
 			print("Installing dependencies...")
@@ -385,6 +391,9 @@ def install(plugin):
 			installed[plugin]["verified"] = "true"
 	#Plugin is not installed, install it
 	elif index.has_section(plugin):
+		if prompt == True:
+			if input("Install " + plugin + "? [y/N] ").lower() != "y":
+				return
 		print("Downloading " + plugin + "...")
 		try:
 			print("Installing dependencies...")

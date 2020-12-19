@@ -202,8 +202,10 @@ def download(plugin_name, bulk=False):
 		d.msgbox("Successfully downloaded " + plugin_name, height=None, width=None)
 
 #Plugin page
-def pluginpage(plugin, cache=None):
+def pluginpage(plugin, cache=None, uri=False):
 	d = Dialog(dialog="dialog")
+	if uri == True:
+		index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 	if len(index.sections()) == 0:
 		d.msgbox("Index not available. Please connect to the internet and restart the store")
 		store(False)
@@ -243,6 +245,8 @@ def pluginpage(plugin, cache=None):
 		uninstall(index[plugin]["filename"], plugin)
 	elif x[0] == d.CANCEL and cache != None:
 		search(True, cache[0])
+	elif x[0] == d.CANCEL and cache == None:
+		clear()
 
 #Menu to list all plugins
 def pluginmenu():

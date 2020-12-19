@@ -8,6 +8,8 @@ from dialog import Dialog, ExecutableNotFound
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
+parser.add_argument("--viewstoreplugin", type=str, help="View plugin on store page. For custom iicalc:// URI")
+parser.add_argument("--installpmplugin", type=str, help="Prompt to install plugin with pm. For custom iicalc:// URI")
 args = parser.parse_args()
 
 #Modify Configuration file
