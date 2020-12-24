@@ -270,6 +270,42 @@ def install(plugin, prompt=False):
 				if input(plugin + " has an update available. Update it? [y/N] ").lower() != "y":
 					return
 			print("Updating " + plugin + "...")
+			# Calculator version testing for plugin compatibilities
+			try:
+				#Parse calcversion to find the operator and version
+				calcversion = index[plugin_name]["calcversion"]
+				if calcversion[1] in ["<", ">", "="]:
+					calcversiontype = calcversion[:2]
+					calcversion = calcversion[2:]
+				else:
+					calcversiontype = calcversion[:1]
+					calcversion = calcversion[1:]
+				#Get current calculator version
+				with open(config["paths"]["systemPath"] + "/version.txt") as f:
+					currentversion = f.read().strip()
+				#Iterate through available operators and check to see if the current version of the calculator satisfys that version
+				if calcversiontype == "==":
+					if version.parse(calcversion) != version.parse(currentversion):
+						if input("The plugin " + plugin_name + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+				elif calcversiontype == ">=":
+					if not version.parse(currentversion) >= version.parse(calcversion):
+						if input("The plugin " + plugin_name + " is meant for versions greater than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+				elif calcversiontype == "<=":
+					if not version.parse(currentversion) <= version.parse(calcversion):
+						if input("The plugin " + plugin_name + " is meant for versions less than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+				elif calcversiontype == ">":
+					if not version.parse(currentversion) > version.parse(calcversion):
+						if input("The plugin " + plugin_name + " is meant for versions greater than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+				elif calcversiontype == "<":
+					if not version.parse(currentversion) < version.parse(calcversion):
+						if input("The plugin " + plugin_name + " is meant for versions less than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+			except KeyError:
+				pass
 			try:
 				print("Installing dependencies...")
 				dependencies = index[plugin]["depends"].split(",")
@@ -291,7 +327,7 @@ def install(plugin, prompt=False):
 						try:
 							subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
 						except:
-							print("Dependency not unsatisfyable: " + dependency)
+							print("Dependency unsatisfyable: " + dependency)
 							return
 					elif dependency != "none":
 						print("Dependency unsatisfyable: " + dependency)
