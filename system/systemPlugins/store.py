@@ -9,6 +9,7 @@ import sys
 import subprocess
 import re
 import json
+from packaging import version
 
 #init
 if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
@@ -130,6 +131,63 @@ def download(plugin_name, bulk=False):
 		file_name = themePath + index[plugin_name]["filename"]
 	else:
 		print("Invalid type: " + index[plugin_name]["type"])
+
+	# Calculator version testing for plugin compatibilities
+	try:
+		#Parse calcversion to find the operator and version
+		calcversion = index[plugin_name]["calcversion"]
+		if calcversion[1] in ["<", ">", "="]:
+			calcversiontype = calcversion[:2]
+			calcversion = calcversion[2:]
+		else:
+			calcversiontype = calcversion[:1]
+			calcversion = calcversion[1:]
+		#Get current calculator version
+		with open(config["paths"]["systemPath"] + "/version.txt") as f:
+			currentversion = f.read().strip()
+		#Iterate through available operators and check to see if the current version of the calculator satisfys that version
+		if calcversiontype == "==":
+			versiond = Dialog()
+			if version.parse(calcversion) != version.parse(currentversion):
+				if bulk == False:
+					if versiond.yesno("The plugin " + plugin_name + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway?", width=0, height=0) == versiond.CANCEL:
+						return
+				else:
+					versiond.msgbox("The plugin " + plugin_name + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave.")
+		elif calcversiontype == ">=":
+			versiond = Dialog()
+			if not version.parse(currentversion) >= version.parse(calcversion):
+				if bulk == False:
+					if versiond.yesno("The plugin " + plugin_name + " is meant for versions greater than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway?", width=0, height=0) == versiond.CANCEL:
+						return
+				else:
+					versiond.msgbox("The plugin " + plugin_name + " is meant for versions greater than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave.", width=0, height=0)
+		elif calcversiontype == "<=":
+			versiond = Dialog()
+			if not version.parse(currentversion) <= version.parse(calcversion):
+				if bulk == False:
+					if versiond.yesno("The plugin " + plugin_name + " is meant for versions less than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway?", width=0, height=0) == versiond.CANCEL:
+						return
+				else:
+					versiond.msgbox("The plugin " + plugin_name + " is meant for versions less than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave.", width=0, height=0)
+		elif calcversiontype == ">":
+			versiond = Dialog()
+			if not version.parse(currentversion) > version.parse(calcversion):
+				if bulk == False:
+					if versiond.yesno("The plugin " + plugin_name + " is meant for versions greater than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway?", width=0, height=0) == versiond.CANCEL:
+						return
+				else:
+					versiond.msgbox("The plugin " + plugin_name + " is meant for versions greater than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave.", width=0, height=0)
+		elif calcversiontype == "<":
+			versiond = Dialog()
+			if not version.parse(currentversion) < version.parse(calcversion):
+				if bulk == False:
+					if versiond.yesno("The plugin " + plugin_name + " is meant for versions less than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway?", width=0, height=0) == versiond.CANCEL:
+						return
+				else:
+					versiond.msgbox("The plugin " + plugin_name + " is meant for versions less than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave.", width=0, height=0)
+	except KeyError:
+		pass
 	d = Dialog(dialog="dialog")
 	d.add_persistent_args(["--title", "Downloading " + plugin_name])
 	#Progress gauge
