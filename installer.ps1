@@ -24,7 +24,7 @@ if($installDesktopFile -eq "true"){
 	$DesktopPath = [Environment]::GetFolderPath("Desktop")
 	$Shortcut = $WshShell.CreateShortcut("$DesktopPath\ImaginaryInfinity Calculator.lnk")
 	$Shortcut.TargetPath = "%comspec%"
-	$Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\iicalc.bat" --shortcut'
+	$Shortcut.Arguments = '/c start "" CALL "C:\Windows\iicalc.bat" --shortcut'
 	$Shortcut.Description = "ImaginaryInfinity Calculator"
 	$Shortcut.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
 	$Shortcut.Save()
@@ -33,10 +33,10 @@ if($installDesktopFile -eq "true"){
 mkdir $systemPath 2>$null
 mkdir "$systemPath\systemPlugins" 2>$null
 echo "Installing launcher..."
-cp $launcher "$binPath\iicalc.bat" -force
+cp $launcher "C:\Windows\iicalc.bat" -force
 echo "Installing builtin plugins..."
 cp system\systemPlugins\* "$systemPath\systemPlugins\" -Recurse -force
-cp "themes\" "$systemPath" -Recurse -force
+cp "system\themes\" "$systemPath" -Recurse -force
 cp "templates\" "$systemPath" -Recurse -force
 echo "Installing main Python script.."
 cp main.py "$systemPath\iicalc.py" -force
@@ -52,7 +52,7 @@ mkdir "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\iicalc\" 2>$null
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$env:APPDATA\Microsoft\Windows\Start Menu\Programs\iicalc\ImaginaryInfinity Calculator.lnk")
 $Shortcut.TargetPath = "%comspec%"
-$Shortcut.Arguments = '/c start "" CALL "C:\Program Files (x86)\iicalc\iicalc.bat" --shortcut'
+$Shortcut.Arguments = '/c start "" CALL "C:\Windows\iicalc.bat" --shortcut'
 $Shortcut.Description = "ImaginaryInfinity Calculator"
 $Shortcut.IconLocation = "C:\Program Files (x86)\iicalc\iicalc.ico"
 $Shortcut.Save()
@@ -64,11 +64,13 @@ if (-Not (Get-Command 'py' -errorAction SilentlyContinue)){
 		echo "Downloading installer..."
 		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 		Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.9.0/python-3.9.0-amd64.exe" -OutFile ".\python-3.9.0.exe"
-		echo "Installing Python, this make take a bit..."
-		.\python-3.9.0.exe /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
-		rm .\python-3.9.0.exe -Force
+		echo "Installing Python, please rerun the installer once completed by running .\installer.ps1"
+		.\python-3.9.0.exe InstallAllUsers=0 PrependPath=1 Include_test=0
+	}else{
+		echo "Please install python https://python.org"
 	}
+}else{
+	rm .\python-3.9.0.exe -Force 2>$null
+	echo "Installing Python modules..."
+	py -m pip install -r requirements.txt
 }
-
-echo "Installing Python modules..."
-py -m pip install -r requirements.txt
