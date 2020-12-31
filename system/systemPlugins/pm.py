@@ -231,7 +231,7 @@ def update(silent=False, theme=theme):
 		print("Run 'pm.upgrade()' to apply these changes")
 	done = True
 #Install a plugin
-def install(plugin):
+def install(plugin, prompt=False):
 
 	#update(silent=True)
 	#Load index, if available
@@ -266,7 +266,46 @@ def install(plugin):
 	if installed.has_section(plugin) and not verified == "false":
 		#Newer version available, update
 		if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
+			if prompt == True:
+				if input(plugin + " has an update available. Update it? [y/N] ").lower() != "y":
+					return
 			print("Updating " + plugin + "...")
+			# Calculator version testing for plugin compatibilities
+			try:
+				#Parse calcversion to find the operator and version
+				calcversion = index[plugin_name]["calcversion"]
+				if calcversion[1] in ["<", ">", "="]:
+					calcversiontype = calcversion[:2]
+					calcversion = calcversion[2:]
+				else:
+					calcversiontype = calcversion[:1]
+					calcversion = calcversion[1:]
+				#Get current calculator version
+				with open(config["paths"]["systemPath"] + "/version.txt") as f:
+					currentversion = f.read().strip()
+				#Iterate through available operators and check to see if the current version of the calculator satisfys that version
+				if calcversiontype == "==":
+					if version.parse(calcversion) != version.parse(currentversion):
+						if input("The plugin " + plugin_name + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+				elif calcversiontype == ">=":
+					if not version.parse(currentversion) >= version.parse(calcversion):
+						if input("The plugin " + plugin_name + " is meant for versions greater than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+				elif calcversiontype == "<=":
+					if not version.parse(currentversion) <= version.parse(calcversion):
+						if input("The plugin " + plugin_name + " is meant for versions less than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+				elif calcversiontype == ">":
+					if not version.parse(currentversion) > version.parse(calcversion):
+						if input("The plugin " + plugin_name + " is meant for versions greater than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+				elif calcversiontype == "<":
+					if not version.parse(currentversion) < version.parse(calcversion):
+						if input("The plugin " + plugin_name + " is meant for versions less than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+							return
+			except KeyError:
+				pass
 			try:
 				print("Installing dependencies...")
 				dependencies = index[plugin]["depends"].split(",")
@@ -288,7 +327,7 @@ def install(plugin):
 						try:
 							subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
 						except:
-							print("Dependency not unsatisfyable: " + dependency)
+							print("Dependency unsatisfyable: " + dependency)
 							return
 					elif dependency != "none":
 						print("Dependency unsatisfyable: " + dependency)
@@ -328,6 +367,9 @@ def install(plugin):
 			print(plugin + " is already installed and has no update available")
 	#Plugin has failed verification, reinstall it
 	elif verified != "true" and installed.has_section(plugin):
+		if prompt == True:
+			if input(plugin + " is damaged and should be reinstalled. Install it? [y/N] ").lower() != "y":
+				return
 		print("Redownloading damaged package " + plugin + "...")
 		try:
 			print("Installing dependencies...")
@@ -385,6 +427,9 @@ def install(plugin):
 			installed[plugin]["verified"] = "true"
 	#Plugin is not installed, install it
 	elif index.has_section(plugin):
+		if prompt == True:
+			if input("Install " + plugin + "? [y/N] ").lower() != "y":
+				return
 		print("Downloading " + plugin + "...")
 		try:
 			print("Installing dependencies...")
