@@ -8,4 +8,4 @@ Terminal=true
 Icon=/usr/share/icons/iicalc.png
 Categories=Education;Office;Utilities;Math;
 Keywords=calculator;math;
-MimeType=x-scheme-handler/iicalc;
+#MimeType=x-scheme-handler/iicalc;
