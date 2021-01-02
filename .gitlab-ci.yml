@@ -39,7 +39,8 @@ buildpkg:
     - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git
     - git add .
     - git commit -m "Update"
-    - git push aur master
+    - git show-ref
+    - git push aur main
     - cd ..
 
   artifacts:
