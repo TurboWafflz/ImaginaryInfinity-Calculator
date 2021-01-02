@@ -664,9 +664,15 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			if gui == True:
 				d.gauge_update(75, "Updating...\nUpdating Files...", update_text=True)
 			os.chdir("ImaginaryInfinity-Calculator-" + branch)
+			#detect sudo
+			if shutil.which("sudo") is None:
+				sudo = ""
+			else:
+				sudo = "sudo "
+
 			#Update main python script
-			os.system("sudo rm " + config["paths"]["systemPath"] + "/iicalc.py")
-			os.system("sudo cp main.py " + config["paths"]["systempath"] + "/iicalc.py")
+			os.system(sudo + "rm " + config["paths"]["systemPath"] + "/iicalc.py")
+			os.system(sudo + "cp main.py " + config["paths"]["systempath"] + "/iicalc.py")
 			#Update root system files
 			if gui == True:
 				d.gauge_update(87)
@@ -674,16 +680,16 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			for file in os.listdir("."):
 				if file in sysFiles:
 					if file != "themes":
-						os.system("sudo rm -rf " + config["paths"]["systempath"] + file.replace(" ", "\\ "))
-						os.system("sudo cp -r " + file.replace(" ", "\\ ") + " " + config["paths"]["systemPath"] + "/")
+						os.system(sudo + "rm -rf " + config["paths"]["systempath"] + file.replace(" ", "\\ "))
+						os.system(sudo + "cp -r " + file.replace(" ", "\\ ") + " " + config["paths"]["systemPath"] + "/")
 			#Update system files
 			if gui == True:
 				d.gauge_update(100)
 			os.chdir("system")
 			for file in os.listdir("."):
 				if file in sysFiles:
-					os.system("sudo rm -rf " + config["paths"]["systempath"] + file.replace(" ", "\\ "))
-					os.system("sudo cp -r " + file.replace(" ", "\\ ") + " " + config["paths"]["systemPath"] + "/")
+					os.system(sudo + "rm -rf " + config["paths"]["systempath"] + file.replace(" ", "\\ "))
+					os.system(sudo + "cp -r " + file.replace(" ", "\\ ") + " " + config["paths"]["systemPath"] + "/")
 
 			if gui == True:
 				d.gauge_stop()
