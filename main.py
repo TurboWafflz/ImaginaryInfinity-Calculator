@@ -324,6 +324,17 @@ if hasInternet() and config["startup"]["checkupdates"] == "true":
 else:
 	upToDate = True
 
+#Import/install
+def iprt(lib):
+	try:
+		globals()[lib] = __import__(lib)
+	except ModuleNotFoundError:
+		os.system("pip3 install " + lib)
+		try:
+			globals()[lib] = __import__(lib)
+		except ModuleNotFoundError:
+			pass
+
 #Calculator itself
 def main(config=config, warmupThread=warmupThread):
 	# if config["startup"]["firststart"] == "true":
