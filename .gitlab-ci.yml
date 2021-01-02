@@ -41,7 +41,7 @@ buildpkg:
     - git add .
     - git commit -m "Update"
     - git show-ref
-    - git push aur main
+    - git push aur master
     - cd ..
 
   artifacts:
