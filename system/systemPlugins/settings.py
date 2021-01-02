@@ -213,7 +213,7 @@ def editor():
 
 			#Branch settings
 			elif tag == "Update Channel":
-				updatechannel = d.menu("ImaginaryInfinity Calculator Update Channel Settings", choices=[("Master", "This channel is the default stable channel"), ("Development", "This channel may have unstable beta features")])
+				updatechannel = d.menu("ImaginaryInfinity Calculator Update Channel Settings", choices=[("Master", "This channel is the default stable channel"), ("Development", "This channel may have unstable beta features")], width=0, height=0)
 				if updatechannel[0] == d.OK:
 					if updatechannel[1] == "Master":
 						config["updates"]["branch"] = "master"

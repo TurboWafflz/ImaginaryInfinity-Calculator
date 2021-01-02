@@ -297,11 +297,6 @@ then
 	else
 		echo "Installing Python modules..."
 		"$pythonCommand" -m pip install -r requirements.txt
-		gcc -v 1> /dev/null 2> /dev/null
-		if [ "$?" == "0" ]
-		then
-			"$pythonCommand" -m pip install python-Levenshtein
-		fi
 	fi
 fi
 #Finish building deb

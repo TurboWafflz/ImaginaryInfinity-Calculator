@@ -103,6 +103,8 @@ except:
 			print("Error: " + str(e))
 			input("[Press enter to continue]")
 		except Exception as e:
+			import traceback
+			traceback.print_exc()
 			try:
 				theme = configparser.ConfigParser()
 				theme.read(config["paths"]["systemPath"] + "/themes/dark.iitheme")
@@ -139,17 +141,6 @@ def restart():
 	signal("onRestart")
 	print("\u001b[0m" + theme["styles"]["normal"])
 	os.execl(sys.executable, sys.executable, * sys.argv)
-
-#Import/install
-def iprt(lib):
-	try:
-		globals()[lib] = __import__(lib)
-	except ModuleNotFoundError:
-		os.system("pip3 install " + lib)
-		try:
-			globals()[lib] = __import__(lib)
-		except ModuleNotFoundError:
-			pass
 
 #Wake up server to decrease wait times when accessing store
 def pingServer():
