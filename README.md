@@ -60,7 +60,6 @@ The calculator can be installed on Windows using the provided powershell script.
 **ImaginaryInfinity Calculator fully supports the following platforms:**
 - **Linux**
 	- Primary development and testing OS. Should have the best support
-- **Web** (repl.it)
 - **Android**
 	- Termux support covers all or most features including installation.
 
