@@ -37,11 +37,11 @@ buildpkg:
     - chmod -R 757 /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalcaur
     - cd iicalcaur
     - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
-    - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git
+#    - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git
     - git add .
     - git commit -m "Update"
     - git show-ref
-    - git push aur master
+    - git push
     - cd ..
 
   artifacts:
