@@ -31,7 +31,7 @@ buildpkg:
     - chmod +x debtoap
     - bash debtoap -u
     - bash debtoap -p iicalc.deb
-    - makedir -p iicalcaur
+    - mkdir -p iicalcaur
 #    - git clone ssh://aur@aur.archlinux.org/iicalc.git iicalcaur
 #    - cd iicalcaur && git checkout master && git fetch && git config pull.rebase true && git update-ref -d refs/remotes/origin/master && git pull && cd ..
 #    - rm -f iicalcaur/*
@@ -39,7 +39,7 @@ buildpkg:
     - chmod -R 757 /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalcaur
     - cd iicalcaur
     - git init
-    - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git
+    - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git && git fetch origin master
     - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
     - git add .
     - git commit -m "Update"
