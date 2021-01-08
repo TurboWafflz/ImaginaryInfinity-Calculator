@@ -65,12 +65,15 @@ if (-Not (Get-Command 'py' -errorAction SilentlyContinue)){
 		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 		Invoke-WebRequest -Uri "https://www.python.org/ftp/python/3.9.0/python-3.9.0-amd64.exe" -OutFile ".\python-3.9.0.exe"
 		echo "Installing Python, please rerun the installer once completed by running .\installer.ps1"
+		Read-Host "[Press enter to continue]"
 		.\python-3.9.0.exe InstallAllUsers=0 PrependPath=1 Include_test=0
 	}else{
 		echo "Please install python https://python.org"
+		Read-Host "[Press enter to continue]"
 	}
 }else{
 	rm .\python-3.9.0.exe -Force 2>$null
 	echo "Installing Python modules..."
 	py -m pip install -r requirements.txt
+	Read-Host "Installation complete. Press enter to continue."
 }
