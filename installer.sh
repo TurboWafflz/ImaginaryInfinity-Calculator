@@ -109,11 +109,11 @@ then
 	then
 		exit
 	fi
-	systemPath="/usr/share/iicalc/"
-	binPath="/usr/bin/"
-	config=".installer/configDefaults/unix.ini"
-	launcher=".installer/launchers/unix.sh"
-	iconPath="/usr/share/iicalc/"
+	systemPath="/usr/local/share/iicalc/"
+	binPath="/usr/local/bin/"
+	config=".installer/configDefaults/macos.ini"
+	launcher=".installer/launchers/macos.sh"
+	iconPath="/usr/local/share/iicalc/"
 	desktopFilePath="/Applications/"
 	desktopFile=".installer/desktopFiles/ImaginaryInfinity_Calculator"
 	installDesktopFile="true"
