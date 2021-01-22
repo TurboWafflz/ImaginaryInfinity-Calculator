@@ -67,7 +67,7 @@ The calculator can be installed on Windows using the provided powershell script.
 - **Haiku**
 	- Haiku will regain full support once I upgrade my testing VM to the latest version
 - **MacOS**
-	- MacOS support is untested as I do not currently have access to a Mac
+	- MacOS 10.13 has been tested to work
 - **Windows**
 	- Windows support receives much less testing than other platforms
 - **Any other OS that can run Python 3**
