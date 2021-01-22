@@ -80,13 +80,13 @@ then
 	then
 		exit
 	fi
-	systemPath="/usr/share/iicalc/"
-	binPath="/usr/bin/"
+	systemPath="/usr/local/share/iicalc/"
+	binPath="/usr/local/bin/"
 	config=".installer/configDefaults/unix.ini"
 	launcher=".installer/launchers/unix.sh"
-	iconPath="/usr/share/iicalc/"
+	iconPath="/usr/local/share/iicalc/"
 	desktopFilePath="/Applications/"
-	desktopFile="ImaginaryInfinity_Calculator"
+	desktopFile="ImaginaryInfinity Calculator.app"
 	installDesktopFile="true"
 
 #Install for NetBSD
