@@ -115,7 +115,7 @@ then
 	launcher=".installer/launchers/macos.sh"
 	iconPath="/usr/local/share/iicalc/"
 	desktopFilePath="/Applications/"
-	desktopFile=".installer/desktopFiles/ImaginaryInfinity_Calculator"
+	desktopFile=".installer/desktopFiles/ImaginaryInfinity Calculator.app"
 	installDesktopFile="true"
 	pythonCommand="python3"
 
@@ -244,7 +244,7 @@ cp -v $launcher "$binPath/iicalc"
 #Install desktop file if requested
 if [ $installDesktopFile == "true" ]
 then
-	cp -r $desktopFile $desktopFilePath
+	cp -r "$desktopFile" "$desktopFilePath"
 	echo "Installing icons..."
 	cp iicalc.png "$iconPath"
 fi
