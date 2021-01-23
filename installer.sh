@@ -114,8 +114,8 @@ then
 	config=".installer/configDefaults/macos.ini"
 	launcher=".installer/launchers/macos.sh"
 	iconPath="/usr/local/share/iicalc/"
-	desktopFilePath="/Applications/"
-	desktopFile=".installer/desktopFiles/ImaginaryInfinity Calculator.app"
+	desktopFilePath="/Applications/ImaginaryInfinity Calculator.app"
+	desktopFile=".installer/desktopFiles/iicalc.app"
 	installDesktopFile="true"
 	pythonCommand="python3"
 
@@ -244,9 +244,39 @@ cp -v $launcher "$binPath/iicalc"
 #Install desktop file if requested
 if [ $installDesktopFile == "true" ]
 then
-	cp -r "$desktopFile" "$desktopFilePath"
 	echo "Installing icons..."
-	cp iicalc.png "$iconPath"
+	if [ `uname` == "Darwin" ]; then
+		iconSource="$DIR/iicalc.png"
+		iconDestination="$DIR/$desktopFile"
+		icon=/tmp/`basename $iconSource`
+		rsrc=/tmp/icon.rsrc
+
+		# Create icon from the iconSource
+		cp $iconSource $icon
+
+		# Add icon to image file, meaning use itself as the icon
+		sips -i $icon
+
+		# Take that icon and put it into a rsrc file
+		DeRez -only icns $icon > $rsrc
+
+		# Apply the rsrc file to
+		SetFile -a C $iconDestination
+
+		touch $iconDestination/$'Icon\r'
+		Rez -append $rsrc -o $iconDestination/Icon?
+		SetFile -a V $iconDestination/Icon?
+
+		#osascript -e 'tell application "Finder" to quit'
+		#osascript -e 'delay 2'
+		#osascript -e 'tell application "Finder" to activate'
+
+		rm $rsrc $icon
+	else
+		cp iicalc.png "$iconPath"
+	fi
+
+	cp -r "$desktopFile" "$desktopFilePath"
 fi
 #Warn about missing Python if installing
 if [ "$buildOnly" != "true" ]
