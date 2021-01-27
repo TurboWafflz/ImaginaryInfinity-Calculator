@@ -78,7 +78,7 @@ class settings:
 		if tag == "Discord Rich Presence":
 			richPresencMenu = d.menu("Discord Rich Presence", choices=[("Enable", "Enable Discord RPC"), ("Disable", "Disable Discord RPC")])
 			if richPresencMenu[0] == d.OK:
-				//User selected ok instead of cancel
+				# User selected ok instead of cancel
 				if richPresencMenu[1] == "Enable":
 					config["discord"]["enableRPC"] = "true"
 				else:
@@ -86,7 +86,7 @@ class settings:
 		elif tag == "Dynamic RPC":
 			dynamicRPCMenu = d.menu("Update Discord RPC with your last done calculation", choices=[("Enable", "Enable Dynamic RPC"), ("Disable", "Disable Dynamic RPC")])
 			if dynamicRPCMenu[0] == d.OK:
-				//User selected ok instead of cancel
+				# User selected ok instead of cancel
 				if dynamicRPCMenu[1] == "Enable":
 					config["discord"]["dynamicPresence"] = "true"
 				else:
