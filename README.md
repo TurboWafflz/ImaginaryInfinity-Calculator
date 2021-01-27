@@ -82,6 +82,7 @@ The calculator can be installed on Windows using the provided powershell script.
 - Red Hat Linux
 - Alpine Linux
 - Android (Termux)
+- MacOS Catalina 10.15.7
 - Windows 10
 
 <hr style="border: 1px solid white">
