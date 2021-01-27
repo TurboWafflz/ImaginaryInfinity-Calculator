@@ -133,7 +133,7 @@ input = No
 output = No
 ```
 
-If you are using ANSI colors, change `ansi` to `true`, if not, leave it as `false`. Not for the fun part, the colors. You can either use ANSI colors, or if you're going for something more basic, you can use colorama. Replace every instance of `No` with the corresponding color that you would like for that value. [Here is a list of what every value is for](#themevalues). Here are 2 examples, one for colorama and one for ANSI:
+If you are using ANSI colors, change `ansi` to `true`, if not, leave it as `false`. Now for the fun part, the colors. You can either use ANSI colors, or if you're going for something more basic, you can use colorama. Replace every instance of `No` with the corresponding color that you would like for that value. [Here is a list of what every value is for](#themevalues). Here are 2 examples, one for colorama and one for ANSI:
 
 **Colorama:**
 ```ini
@@ -190,7 +190,8 @@ If you don't want to manually make a theme, or you want to have more control by 
 	- **Linux**: Navigate to the directory where the file is located in your terminal, and type `sha512sum file.py`, replacing file.py with your filename.
 	- **MacOS**: Navigate to the directory where the file is located in your terminal, and type `shasum -a 512 file.py`, replacing file.py with your filename
 	- **Windows**: Open PowerShell. Navigate to the directory where the file is located, and type `Get-FileHash file.py | Format-List`, replacing file.py with your filename. Now copy the value after `Hash:`
-12. **Maintainers:** You can add maintainers by their Github usernames. You are added automatically as a maintainer. If you do not press enter after typing a name, it will not be counted as a maintainer, though you can add or remove maintainers later on.
+12. **Calculator Version:** This is where you put the calculator version requirements that are needed for your plugin to run. For example, if your plugin only runs on version 1.5.6 and below, you would select `Less than or equal to` in the drop down menu and type 1.5.6 in the text box.
+13. **Maintainers:** You can add maintainers by their Github usernames. You are added automatically as a maintainer. If you do not press enter after typing a name, it will not be counted as a maintainer, though you can add or remove maintainers later on.
 
 #### Updating your plugin<a name="updatePlugin"></a>
 Once you want to update your plugin, you can go to [https://turbowafflz.gitlab.io/updateplugin.html](https://turbowafflz.gitlab.io/updateplugin.html) or click the "Update an existing plugin" button on the index portal. The same process applies for uploading a plugin, but with something to ease the proccess. If you type your plugin name into the name input and click the "Autofill" button, it will autofill the applicable information. Note that this make take a minute if the server went to sleep. You should increase the version number and recalculate the file hash and make and necessary changes, and then hit the submit button.
