@@ -10,9 +10,11 @@ calculators.
 	- Primary development and testing OS. Should have the best support
 - **Haiku**
 
-**ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **MacOS X**
-	- MacOS support is untested as I do not currently have access to a Mac
+	- The default program has full MacOS support. (Plugins not tested, yet...)
+		- (Test performed on January 28, 2021 on MacOS 10.15.7 running Python 3.8.5)
+
+**ImaginaryInfinity Calculator has partial support for the following platforms:**
 - **Windows**
 	- Windows support receives much less testing than other platforms
 - **Any other OS that can run Python 3**
