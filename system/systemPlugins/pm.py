@@ -12,6 +12,7 @@ import subprocess
 from systemPlugins.core import theme,config
 import webbrowser
 import json
+from pkg_resources import Requirement
 
 class OAuthError(Exception):
 	pass
@@ -262,6 +263,7 @@ def install(plugin, prompt=False):
 		dependencies = index[plugin]["depends"]
 	except:
 		index[plugin]["depends"] = "none"
+
 	#Plugin is already installed
 	if installed.has_section(plugin) and not verified == "false":
 		#Newer version available, update
@@ -270,42 +272,18 @@ def install(plugin, prompt=False):
 				if input(plugin + " has an update available. Update it? [y/N] ").lower() != "y":
 					return
 			print("Updating " + plugin + "...")
+
 			# Calculator version testing for plugin compatibilities
-			try:
-				#Parse calcversion to find the operator and version
-				calcversion = index[plugin_name]["calcversion"]
-				if calcversion[1] in ["<", ">", "="]:
-					calcversiontype = calcversion[:2]
-					calcversion = calcversion[2:]
-				else:
-					calcversiontype = calcversion[:1]
-					calcversion = calcversion[1:]
-				#Get current calculator version
-				with open(config["paths"]["systemPath"] + "/version.txt") as f:
-					currentversion = f.read().strip()
-				#Iterate through available operators and check to see if the current version of the calculator satisfys that version
-				if calcversiontype == "==":
-					if version.parse(calcversion) != version.parse(currentversion):
-						if input("The plugin " + plugin_name + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
-							return
-				elif calcversiontype == ">=":
-					if not version.parse(currentversion) >= version.parse(calcversion):
-						if input("The plugin " + plugin_name + " is meant for versions greater than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
-							return
-				elif calcversiontype == "<=":
-					if not version.parse(currentversion) <= version.parse(calcversion):
-						if input("The plugin " + plugin_name + " is meant for versions less than or equal to " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
-							return
-				elif calcversiontype == ">":
-					if not version.parse(currentversion) > version.parse(calcversion):
-						if input("The plugin " + plugin_name + " is meant for versions greater than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
-							return
-				elif calcversiontype == "<":
-					if not version.parse(currentversion) < version.parse(calcversion):
-						if input("The plugin " + plugin_name + " is meant for versions less than " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
-							return
-			except KeyError:
-				pass
+			#Parse calcversion to find the operator and version
+			calcversion = index[plugin]["calcversion"]
+			#Get current calculator version
+			with open(config["paths"]["systemPath"] + "/version.txt") as f:
+				currentversion = f.read().strip()
+			#check to see if the current version of the calculator satisfys plugin required version
+			if not currentversion in Requirement.parse(calcversion):
+				if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+					return False
+
 			try:
 				print("Installing dependencies...")
 				dependencies = index[plugin]["depends"].split(",")
@@ -342,6 +320,7 @@ def install(plugin, prompt=False):
 				else:
 					print("Error installing plugin: Invalid type")
 					return "error"
+
 				download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
 				installed[plugin] = index[plugin]
 				installed[plugin]["source"] = "index"
@@ -371,6 +350,18 @@ def install(plugin, prompt=False):
 			if input(plugin + " is damaged and should be reinstalled. Install it? [y/N] ").lower() != "y":
 				return
 		print("Redownloading damaged package " + plugin + "...")
+
+		# Calculator version testing for plugin compatibilities
+		#Parse calcversion to find the operator and version
+		calcversion = index[plugin]["calcversion"]
+		#Get current calculator version
+		with open(config["paths"]["systemPath"] + "/version.txt") as f:
+			currentversion = f.read().strip()
+		#check to see if the current version of the calculator satisfys plugin required version
+		if not currentversion in Requirement.parse(calcversion):
+			if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+				return False
+
 		try:
 			print("Installing dependencies...")
 			dependencies = index[plugin]["depends"].split(",")
@@ -431,6 +422,18 @@ def install(plugin, prompt=False):
 			if input("Install " + plugin + "? [y/N] ").lower() != "y":
 				return
 		print("Downloading " + plugin + "...")
+
+		# Calculator version testing for plugin compatibilities
+		#Parse calcversion to find the operator and version
+		calcversion = index[plugin]["calcversion"]
+		#Get current calculator version
+		with open(config["paths"]["systemPath"] + "/version.txt") as f:
+			currentversion = f.read().strip()
+		#check to see if the current version of the calculator satisfys plugin required version
+		if not currentversion in Requirement.parse(calcversion):
+			if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+				return False
+
 		try:
 			print("Installing dependencies...")
 			dependencies = index[plugin]["depends"].split(",")
@@ -576,21 +579,21 @@ def upgrade():
 			#Check plugin update time against the latest version
 			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
 				#print("Updating " + plugin + "...")
-				install(plugin)
-				updates = updates + 1
+				if install(plugin) != False:
+					updates = updates + 1
 			#Plugin is marked as unverified, offer to reinstall it
 			elif installed[plugin]["verified"] == "false":
 				print("Hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
 				print("Expected: " + index[plugin]["hash"])
 				if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
-					install(plugin)
-					reinstall = reinstall + 1
+					if install(plugin) != False:
+						reinstall = reinstall + 1
 		elif not os.path.exists(location + "/" + installed[plugin]["filename"] + ".disabled"):
 			#Plugin file is missing, offer to reinstall it
 			print("File not found: " + location + "/" + installed[plugin]["filename"])
 			if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
-				install(plugin)
-				reinstall = reinstall + 1
+				if install(plugin) != False:
+					reinstall = reinstall + 1
 	print("Done:")
 	print(str(updates) + " packages updated")
 	print(str(reinstall) + " damaged packages reinstalled")
