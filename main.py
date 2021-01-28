@@ -470,6 +470,10 @@ def main(config=config, warmupThread=warmupThread):
 				if calc == 'clear':
 					clear()
 					pr=0
+				if calc == "restart()":
+					if "readline" in sys.modules:
+						readline.set_history_length(1000)
+						readline.write_history_file(config["paths"]["userPath"] + "/.history")
 				eqn=calc
 				#ability to disable subtraction from last answer
 				if config["system"]["subtractfromlast"] == "true":
