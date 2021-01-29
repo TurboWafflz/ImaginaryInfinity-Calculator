@@ -18,4 +18,4 @@ All of the guidelines for submitting plugins can be found here. We reserve the r
 
 - Purposely spreading false information will result in a warning and the plugin being taken down until it is updated to fit the guidelines.
 
-- Telemitry without consent will result in a warning and the plugin being taken down until it is updated to fit the guidelines.
+- Telemetry without consent will result in a warning and the plugin being taken down until it is updated to fit the guidelines.
