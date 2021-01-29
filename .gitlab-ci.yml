@@ -13,7 +13,7 @@ debian packager:
     paths:
       - iicalc.deb
   only:
-    - development
+    - master
 buildpkg:
   image: archlinux:latest
   stage: buildpkg
@@ -48,7 +48,7 @@ buildpkg:
     paths:
       - iicalc-any.pkg.tar.zst
   only:
-    - development
+    - master
 makerpm:
   image: ubuntu:latest
   stage: makerpm
@@ -70,7 +70,7 @@ makerpm:
     paths:
       - iicalcunbuilt.rpm
   only:
-    - development
+    - master
 buildrpm:
   image: fedora:latest
   stage: buildrpm
@@ -87,7 +87,7 @@ buildrpm:
     paths:
       - iicalc.rpm
   only:
-    - development
+    - master
 AppImage packager:
     stage: AppImage packager
     script:
@@ -98,4 +98,4 @@ AppImage packager:
         paths:
             - ImaginaryInfinity_Calculator-x86_64.AppImage
     only:
-        - development
+        - master
