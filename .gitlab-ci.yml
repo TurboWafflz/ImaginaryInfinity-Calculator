@@ -39,7 +39,7 @@ buildpkg:
     - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
 #    - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git
     - git add .
-    - git commit -m "Update"
+    - git commit -m "$CI_COMMIT_MESSAGE"
     - git show-ref
     - git push
     - cd ..
