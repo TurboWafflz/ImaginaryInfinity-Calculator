@@ -190,7 +190,7 @@ If you don't want to manually make a theme, or you want to have more control by 
 	- **Linux**: Navigate to the directory where the file is located in your terminal, and type `sha512sum file.py`, replacing file.py with your filename.
 	- **MacOS**: Navigate to the directory where the file is located in your terminal, and type `shasum -a 512 file.py`, replacing file.py with your filename
 	- **Windows**: Open PowerShell. Navigate to the directory where the file is located, and type `Get-FileHash file.py | Format-List`, replacing file.py with your filename. Now copy the value after `Hash:`
-12. **Calculator Version:** This is where you put the calculator version requirements that are needed for your plugin to run. For example, if your plugin only runs on version 1.5.6 and below, you would select `Less than or equal to` in the drop down menu and type 1.5.6 in the text box.
+12. **Calculator Version:** This is where you put the calculator version requirements that are needed for your plugin to run. For example, if your plugin only runs on version 1.5.6 and below, you would type `<=1.5.6` in the text box. You can add multiple requirements by separating them with commas. To view more about the types of version specification you can do, look at the documentation for [PEP 440](https://www.python.org/dev/peps/pep-0440/#version-specifiers)
 13. **Maintainers:** You can add maintainers by their Github usernames. You are added automatically as a maintainer. If you do not press enter after typing a name, it will not be counted as a maintainer, though you can add or remove maintainers later on.
 
 #### Updating your plugin<a name="updatePlugin"></a>
