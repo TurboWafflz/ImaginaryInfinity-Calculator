@@ -7,10 +7,10 @@ calculators. To preform another operation on a result, simply type the operation
 ## Packages
 We provide a packaged version of ImaginaryInfinity calculator for some Linux distributions. They can be found below.
 
-![Pipeline](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/badges/master/pipeline.svg)
+![Pipeline](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/badges/development/pipeline.svg)
 
 #### Debian/Ubuntu
-[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/master/raw/iicalc.deb?job=debian%20packager) (iicalc.deb)
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager) (iicalc.deb)
 
 This package can be installed with apt, gdebi, qapt, etc.
 
@@ -18,24 +18,24 @@ This package can be installed with apt, gdebi, qapt, etc.
 You can install the AUR package or download the package below. To install from the AUR:
 
 ```bash
-git clone https://aur.archlinux.org/iicalc.git && cd iicalc
+git clone https://aur.archlinux.org/iicalc-beta.git && cd iicalc
 makepkg -s
 sudo pacman -U *.pkg*
 ```
 
 Or you can install it with the below package:
 
-[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/master/raw/iicalc-any.pkg.tar.zst?job=buildpkg) (iicalc-any.pkg.tar.zst)
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc-any.pkg.tar.zst?job=buildpkg) (iicalc-any.pkg.tar.zst)
 
 This package can be installed using pacman, with `sudo pacman -U iicalc-any.pkg.tar.zst`
 
 #### Red Hat
-[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/master/raw/iicalc.rpm?job=buildrpm) (iicalc.rpm)
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=buildrpm) (iicalc.rpm)
 
-This package can be installed or updated on Red Hat based systems, like Fedora and CentOS, using rpm, with `sudo rpm -Uhv https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/master/raw/iicalc.rpm?job=buildrpm`
+This package can be installed or updated on Red Hat based systems, like Fedora and CentOS, using rpm, with `sudo rpm -Uhv https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=buildrpm`
 
 #### AppImage
-[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/mastert/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
 
 Just make executable and run on many Linux distributions
 
