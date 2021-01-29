@@ -812,7 +812,7 @@ def update():
 		print("Please download the latest AppImage for your branch here: https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/" + config["updates"]["branch"] + "/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager")
 	else:
 		if platform.system() == "Windows":
-			print("The update wizard does not support Windows. Do not start an issue as this is a problem with Windows and not a problem with iicalc.")
+			print("The updater does not support Windows. Do not start an issue as this is a problem with Windows and not a problem with iicalc.")
 			return
 		else:
 			try:
