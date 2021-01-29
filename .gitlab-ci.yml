@@ -33,7 +33,7 @@ buildpkg:
     - bash debtoap -pb iicalc.deb
     - git clone ssh://aur@aur.archlinux.org/iicalc-beta.git iicalcaur
     - cd iicalcaur && git checkout master && git fetch && git config pull.rebase false && git pull && cd ..
-    - cp -v /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalc/* iicalcaur/
+    - cp -v /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalc-beta/* iicalcaur/
     - chmod -R 757 /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalcaur
     - cd iicalcaur
     - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
