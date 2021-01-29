@@ -1,10 +1,101 @@
-image: ubuntu:latest
+stages:
+  - debian packager
+  - buildpkg
+  - makerpm
+  - buildrpm
+  - AppImage packager
 debian packager:
-    stage: build
+  image: ubuntu:latest
+  stage: debian packager
+  script:
+    - ./installer.sh --make-deb
+  artifacts:
+    paths:
+      - iicalc.deb
+  only:
+    - master
+buildpkg:
+  image: archlinux:latest
+  stage: buildpkg
+  before_script:
+    - pacman -Sy bash binutils fakeroot pkgfile wget openssh sudo git --noconfirm --needed
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - ssh-keyscan -v -t rsa,dsa,ecdsa,ed25519 aur.archlinux.org >>~/.ssh/known_hosts
+    - chmod 700 ~/.ssh
+    - git config --global user.name "TabulateJarl8"
+    - git config --global user.email "tabulatejarl8@gmail.com"
+  script:
+    - wget 'https://raw.githubusercontent.com/TabulateJarl8/files/master/debtoap'
+    - chmod +x debtoap
+    - bash debtoap -u
+    - bash debtoap -p iicalc.deb
+    - git clone ssh://aur@aur.archlinux.org/iicalc.git iicalcaur
+    - cd iicalcaur && git checkout master && git fetch && git config pull.rebase false && git pull && cd ..
+    - cp -v /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalc/* iicalcaur/
+    - chmod -R 757 /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalcaur
+    - cd iicalcaur
+    - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
+#    - git remote add aur ssh://aur@aur.archlinux.org/iicalc.git
+    - git add .
+    - git commit -m "$CI_COMMIT_MESSAGE"
+    - git show-ref
+    - git push
+    - cd ..
+
+  artifacts:
+    paths:
+      - iicalc-any.pkg.tar.zst
+  only:
+    - master
+makerpm:
+  image: ubuntu:latest
+  stage: makerpm
+  before_script:
+    - apt update
+    - export DEBIAN_FRONTEND=noninteractive
+    - ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+    - apt install -y tzdata
+    - dpkg-reconfigure --frontend noninteractive tzdata
+    - apt install -y alien
+  script:
+    - mkdir tmp
+    - dpkg-deb -R iicalc.deb tmp
+    - sed -i -E "s/debian/redhat/" tmp/usr/share/iicalc/config.ini
+    - dpkg-deb -b tmp iicalc-rpm.deb
+    - alien --scripts -r iicalc-rpm.deb
+    - mv iicalc*.rpm iicalcunbuilt.rpm
+  artifacts:
+    paths:
+      - iicalcunbuilt.rpm
+  only:
+    - master
+buildrpm:
+  image: fedora:latest
+  stage: buildrpm
+  before_script:
+    - dnf -y install rpmrebuild wget
+    - wget https://raw.githubusercontent.com/TabulateJarl8/files/master/rpmrebuild.sh
+    - rm /usr/lib/rpmrebuild/rpmrebuild.sh
+    - cp rpmrebuild.sh /usr/lib/rpmrebuild/rpmrebuild.sh
+    - chmod +rwx /usr/lib/rpmrebuild/rpmrebuild.sh
+  script:
+    - rpmrebuild -pe -n iicalcunbuilt.rpm
+    - mv /root/rpmbuild/RPMS/noarch/iicalc*.rpm ./iicalc.rpm
+  artifacts:
+    paths:
+      - iicalc.rpm
+  only:
+    - master
+AppImage packager:
+    stage: AppImage packager
     script:
-        - ./installer.sh --make-deb
+        - apt update
+        - apt install -y file
+        - ./installer.sh --make-appImage
     artifacts:
         paths:
-            - iicalc.deb
+            - ImaginaryInfinity_Calculator-x86_64.AppImage
     only:
-        - development
+        - master

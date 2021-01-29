@@ -1,9 +1,0 @@
-[tool]
-[tool.poetry]
-authors = ["Your Name <you@example.com>"]
-name = "plugins"
-version = "0.0.0"
-[tool.poetry.dependencies]
-colorama = "==0.4.1"
-python = "^3.7"
-lib = "^3.0"

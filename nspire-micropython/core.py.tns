@@ -131,3 +131,6 @@ def isPrime(num, printResult=True):
 		if(printResult):
 			print("False")
 		return(False)
+#Root
+def root(n,num):
+	return(num**(1/n))

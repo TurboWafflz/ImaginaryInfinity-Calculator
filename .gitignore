@@ -2,6 +2,13 @@ __pycache__
 plugins/__pycache__
 plugins/tw.py
 .update.log
-plugins.egg-info
-poetry.lock
-pyproject.toml
+.pluginstore
+iicalc-deb
+iicalc.deb
+iicalc-appImage
+ImaginaryInfinity_Calculator-x86_64.AppImage
+appimagetool
+plugins/
+.history
+themes/
+config.ini.save
