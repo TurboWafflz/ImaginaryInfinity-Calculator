@@ -755,10 +755,10 @@ def update():
 			print("Error code " + str(deb.status_code))
 			return
 		else:
-			with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
+			with tempfile.NamedTemporaryFile() as f:
 				f.write(deb.content)
-			#Update
-			os.system("sudo dpkg -i " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
+				#Update
+				os.system("sudo dpkg -i " + f.name)
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
@@ -771,10 +771,10 @@ def update():
 			print("Error code " + str(archpkg.status_code))
 			return
 		else:
-			with open(config["paths"]["userpath"] + "/iicalc.pkg.tar.zst", "wb") as f:
+			with tempfile.NamedTemporaryFile() as f:
 				f.write(archpkg.content)
-			#Update
-			os.system("sudo pacman -U " + os.path.join(config["paths"]["userpath"], "iicalc.pkg.tar.zst"))
+				#Update
+				os.system("sudo pacman -U " + f.name)
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
@@ -787,17 +787,25 @@ def update():
 			print("Error code " + str(rpm.status_code))
 			return
 		else:
-			with open(config["paths"]["userpath"] + "/iicalc.rpm", "wb") as f:
+			with tempfile.NamedTemporaryFile() as f:
 				f.write(rpm.content)
-			#Update
-			os.system("sudo rpm -Uhv " + os.path.join(config["paths"]["userpath"], "iicalc.rpm"))
+				#Update
+				os.system("sudo rpm -Uhv " + f.name)
+
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
 	elif config["installation"]["installtype"] == "aur":
+		if config["updates"]["branch"] == "master":
+			cloneCommand = "git clone https://aur.archlinux.org/iicalc.git"
+		elif config["updates"]["branch"] == "development":
+			cloneCommand = "git clone https://aur.archlinux.org/iicalc-beta.git"
+		else:
+			print("Branch is not \'master\' or \'development\', terminating...")
+			return
 		with tempfile.TemporaryDirectory() as td:
 			os.chdir(td)
-			if os.system("git clone https://aur.archlinux.org/iicalc.git") != 0:
+			if os.system(cloneCommand) != 0:
 				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
 				return
 			os.chdir("iicalc")
