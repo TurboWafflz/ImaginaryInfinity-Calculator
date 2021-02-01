@@ -761,7 +761,9 @@ def update():
 				f.write(deb.content)
 				#Update
 				print("Updating the Debian version of ImaginaryInfinity Calculator requires root privileges")
-				os.system("sudo dpkg -i " + f.name)
+				if os.system("sudo dpkg -i " + f.name) != 0:
+					print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+					return
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
@@ -778,7 +780,9 @@ def update():
 				f.write(archpkg.content)
 				#Update
 				print("Updating the Arch Linux version of ImaginaryInfinity Calculator requires root privileges")
-				os.system("sudo pacman -U " + f.name)
+				if os.system("sudo pacman -U " + f.name) != 0:
+					print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+					return
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
 				restart()
@@ -795,7 +799,9 @@ def update():
 				f.write(rpm.content)
 				#Update
 				print("Updating the RedHat/Fedora version of ImaginaryInfinity Calculator requires root privileges")
-				os.system("sudo rpm -Uhv " + f.name)
+				if os.system("sudo rpm -Uhv " + f.name) != 0:
+					print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
+					return
 
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
@@ -804,7 +810,7 @@ def update():
 		if config["updates"]["branch"] == "master":
 			cloneCommand = "git clone https://aur.archlinux.org/iicalc.git"
 		elif config["updates"]["branch"] == "development":
-			cloneCommand = "git clone https://aur.archlinux.org/iicalc-beta.git"
+			cloneCommand = "git clone https://aur.archlinux.org/iicalc-beta.git iicalc"
 		else:
 			print("Branch is not \'master\' or \'development\', terminating...")
 			return
