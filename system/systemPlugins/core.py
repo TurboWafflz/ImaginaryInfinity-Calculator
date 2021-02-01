@@ -671,6 +671,8 @@ def doUpdate(branch="master", theme=theme, gui=False):
 				sudo = "sudo "
 
 			#Update main python script
+			if not sudo == "":
+				print("Updating the installed version of ImaginaryInfinity Calculator requires root privileges")
 			os.system(sudo + "rm " + config["paths"]["systemPath"] + "/iicalc.py")
 			os.system(sudo + "cp main.py " + config["paths"]["systempath"] + "/iicalc.py")
 			#Update root system files
@@ -758,6 +760,7 @@ def update():
 			with open(config["paths"]["userpath"] + "/iicalc.deb", "wb") as f:
 				f.write(deb.content)
 			#Update
+			print("Updating the Debian version of ImaginaryInfinity Calculator requires root privileges")
 			os.system("sudo dpkg -i " + os.path.join(config["paths"]["userpath"], "iicalc.deb"))
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
@@ -774,6 +777,7 @@ def update():
 			with open(config["paths"]["userpath"] + "/iicalc.pkg.tar.zst", "wb") as f:
 				f.write(archpkg.content)
 			#Update
+			print("Updating the Arch Linux version of ImaginaryInfinity Calculator requires root privileges")
 			os.system("sudo pacman -U " + os.path.join(config["paths"]["userpath"], "iicalc.pkg.tar.zst"))
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
@@ -790,6 +794,7 @@ def update():
 			with open(config["paths"]["userpath"] + "/iicalc.rpm", "wb") as f:
 				f.write(rpm.content)
 			#Update
+			print("Updating the RedHat/Fedora version of ImaginaryInfinity Calculator requires root privileges")
 			os.system("sudo rpm -Uhv " + os.path.join(config["paths"]["userpath"], "iicalc.rpm"))
 			x = input(theme["styles"]["important"] + "Update Complete. Would you like to restart? [Y/n] ")
 			if x != "n":
@@ -804,6 +809,7 @@ def update():
 			if os.system("makepkg -s") != 0:
 				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
 				return
+			print("Updating the Arch Linux version of ImaginaryInfinity Calculator requires root privileges")
 			if os.system("sudo pacman -U *.pkg*") != 0:
 				print(theme["styles"]["error"] + "Fatal Error, exiting." + theme["styles"]["normal"])
 				return
