@@ -1,5 +1,5 @@
 ##ImaginaryInfinity Calculator
-##Copyright 2020 Finian Wright
+##Copyright 2020-2021 Finian Wright and Connor Sample
 ##https://turbowafflz.gitlab.io/iicalc.html
 import sys
 if not "-V" in sys.argv and not "--version" in sys.argv:
@@ -410,7 +410,7 @@ def main(config=config, warmupThread=warmupThread):
 		print(Fore.BLACK + Back.WHITE + "ImaginaryInfinity Calculator v" + open(config["paths"]["systemPath"] + "/version.txt").read().rstrip("\n"))
 		if not upToDate:
 			print(Fore.WHITE + Back.MAGENTA + "Update available!")
-		print(theme["styles"]["normal"] + "Copyright 2020 Finian Wright")
+		print(theme["styles"]["normal"] + "Copyright 2020-2021 Finian Wright and Connor Sample")
 		print(theme["styles"]["link"] + "https://turbowafflz.gitlab.io/iicalc.html" + theme["styles"]["normal"])
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
