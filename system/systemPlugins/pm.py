@@ -280,7 +280,7 @@ def install(plugin, prompt=False):
 			with open(config["paths"]["systemPath"] + "/version.txt") as f:
 				currentversion = f.read().strip()
 			#check to see if the current version of the calculator satisfys plugin required version
-			if not currentversion in Requirement.parse(calcversion):
+			if not currentversion in Requirement.parse("iicalc" + calcversion):
 				if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
 					return False
 
@@ -358,7 +358,7 @@ def install(plugin, prompt=False):
 		with open(config["paths"]["systemPath"] + "/version.txt") as f:
 			currentversion = f.read().strip()
 		#check to see if the current version of the calculator satisfys plugin required version
-		if not currentversion in Requirement.parse(calcversion):
+		if not currentversion in Requirement.parse("iicalc" + calcversion):
 			if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
 				return False
 
@@ -430,7 +430,7 @@ def install(plugin, prompt=False):
 		with open(config["paths"]["systemPath"] + "/version.txt") as f:
 			currentversion = f.read().strip()
 		#check to see if the current version of the calculator satisfys plugin required version
-		if not currentversion in Requirement.parse(calcversion):
+		if not currentversion in Requirement.parse("iicalc" + calcversion):
 			if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
 				return False
 
