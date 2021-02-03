@@ -140,7 +140,7 @@ def download(plugin_name, bulk=False):
 		currentversion = f.read().strip()
 	#check to see if the current version of the calculator satisfys plugin required version
 	versiond = Dialog()
-	if not currentversion in Requirement.parse(calcversion):
+	if not currentversion in Requirement.parse("iicalc" + calcversion):
 		if bulk == False:
 			if versiond.yesno("The plugin " + plugin_name + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway?", width=0, height=0) == versiond.CANCEL:
 				return
