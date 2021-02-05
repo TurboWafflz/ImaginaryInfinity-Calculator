@@ -43,7 +43,7 @@ Just make executable and run on many Linux distributions
 
 ## Installation
 
-The advantages of using an installed version of the calculator is that you can launch it from anywhere in a terminal, just by running the `iicalc` command. Installing it also adds a shortcut to your start menu, and if you're on Windows, you have the option to add a desktop shortcut.
+The advantages of using an installed version of the calculator is that you can launch it from anywhere in a terminal, just by running the `iicalc` command. Installing it also adds a shortcut to your application menu, and if you're on Windows, you have the option to add a desktop shortcut.
 
 #### Portable Mode
 The calculator can be run without any installation on any device that supports Python 3. Just clone the repository and in the directory that  you cloned it to, run `python3 main.py`, or replace `python3` with your operating system's python command. (Windows is `py`, Android is `python`, etc.)
