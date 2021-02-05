@@ -5,7 +5,7 @@ calculators. To preform another operation on a result, simply type the operation
 
 ![Screenshot](iicalcscreenshot.png)
 ## Packages
-We provide a packaged version of ImaginaryInfinity calculator for some Linux distributions. They can be found below.
+We provide a packaged version of ImaginaryInfinity Calculator for some Linux distributions. They can be found below.
 
 ![Pipeline](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/badges/development/pipeline.svg)
 
