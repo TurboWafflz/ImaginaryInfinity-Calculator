@@ -13,7 +13,7 @@ debian packager:
     paths:
       - iicalc.deb
   only:
-    - development
+    - master
 buildpkg:
   image: archlinux:latest
   stage: buildpkg
@@ -30,10 +30,10 @@ buildpkg:
     - wget 'https://raw.githubusercontent.com/TabulateJarl8/files/master/debtoap'
     - chmod +x debtoap
     - bash debtoap -u
-    - bash debtoap -pb iicalc.deb
-    - git clone ssh://aur@aur.archlinux.org/iicalc-beta.git iicalcaur
+    - bash debtoap -p iicalc.deb
+    - git clone ssh://aur@aur.archlinux.org/iicalc.git iicalcaur
     - cd iicalcaur && git checkout master && git fetch && git config pull.rebase false && git pull && cd ..
-    - cp -v /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalc-beta/* iicalcaur/
+    - cp -v /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalc/* iicalcaur/
     - chmod -R 757 /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalcaur
     - cd iicalcaur
     - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
@@ -48,7 +48,7 @@ buildpkg:
     paths:
       - iicalc-any.pkg.tar.zst
   only:
-    - development
+    - master
 makerpm:
   image: ubuntu:latest
   stage: makerpm
@@ -70,7 +70,7 @@ makerpm:
     paths:
       - iicalcunbuilt.rpm
   only:
-    - development
+    - master
 buildrpm:
   image: fedora:latest
   stage: buildrpm
@@ -87,7 +87,7 @@ buildrpm:
     paths:
       - iicalc.rpm
   only:
-    - development
+    - master
 AppImage packager:
     stage: AppImage packager
     script:
@@ -98,4 +98,4 @@ AppImage packager:
         paths:
             - ImaginaryInfinity_Calculator-x86_64.AppImage
     only:
-        - development
+        - master
