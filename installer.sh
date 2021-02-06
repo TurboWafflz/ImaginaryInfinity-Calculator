@@ -343,13 +343,13 @@ fi
 #Finish building AppImage
 if [ "$1" == "--make-appImage" ]
 then
-	# if [ -f appimagetool-x86_64.AppImage ]
-	# then
-	# 	echo "Found appimagetool"
-	# else
-	# 	./wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-	# fi
-	# chmod +x ./appimagetool-x86_64.AppImage
+	if [ -f appimagetool-x86_64.AppImage ]
+	then
+		echo "Found appimagetool"
+	else
+		wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+	fi
+	chmod +x ./appimagetool-x86_64.AppImage
 	./appimagetool-x86_64.AppImage --appimage-extract
 	mv squashfs-root appimagetool
 	ARCH=x86_64 ./appimagetool/AppRun iicalc-appImage
