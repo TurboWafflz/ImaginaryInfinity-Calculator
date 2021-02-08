@@ -47,7 +47,7 @@ elif [ "$1" == "--make-appImage" ]
 		iconPath="iicalc-appImage/"
 		desktopFilePath="iicalc-appImage"
 		desktopFile=".installer/desktopFiles/iicalc-appImage.desktop"
-		cp "iicalc.tiff" "iicalc-appImage"
+		cp "iicalc.png" "iicalc-appImage"
 		installDesktopFile="true"
 		buildOnly="true"
 #Install for Android
