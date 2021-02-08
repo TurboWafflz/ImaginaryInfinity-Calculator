@@ -18,7 +18,7 @@ buildpkg:
   image: archlinux:latest
   stage: buildpkg
   before_script:
-    - pacman -Sy bash binutils fakeroot pkgfile wget openssh sudo git --noconfirm --needed
+    - pacman -Syu glibc bash binutils fakeroot pkgfile wget openssh sudo git --noconfirm --needed
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
