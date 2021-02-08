@@ -92,7 +92,7 @@ AppImage packager:
     stage: AppImage packager
     script:
         - apt update
-        - apt install -y file
+        - apt install -y file wget
         - ./installer.sh --make-appImage
     artifacts:
         paths:
