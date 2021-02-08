@@ -47,7 +47,7 @@ elif [ "$1" == "--make-appImage" ]
 		iconPath="iicalc-appImage/"
 		desktopFilePath="iicalc-appImage"
 		desktopFile=".installer/desktopFiles/iicalc-appImage.desktop"
-		cp "iicalc.png" "iicalc-appImage"
+		cp "iicalc.tiff" "iicalc-appImage"
 		installDesktopFile="true"
 		buildOnly="true"
 #Install for Android
@@ -246,7 +246,7 @@ if [ $installDesktopFile == "true" ]
 then
 	echo "Installing icons..."
 	if [ `uname` == "Darwin" ]; then
-		iconSource="$DIR/iicalc.png"
+		iconSource="$DIR/iicalc.tiff"
 		iconDestination="$DIR/$desktopFile"
 		icon=/tmp/`basename $iconSource`
 		rsrc=/tmp/icon.rsrc
@@ -273,7 +273,7 @@ then
 
 		rm $rsrc $icon
 	else
-		cp iicalc.png "$iconPath"
+		cp iicalc.tiff "$iconPath"
 	fi
 
 	cp -r "$desktopFile" "$desktopFilePath"
@@ -343,13 +343,13 @@ fi
 #Finish building AppImage
 if [ "$1" == "--make-appImage" ]
 then
-	# if [ -f appimagetool-x86_64.AppImage ]
-	# then
-	# 	echo "Found appimagetool"
-	# else
-	# 	./wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-	# fi
-	# chmod +x ./appimagetool-x86_64.AppImage
+	if [ -f appimagetool-x86_64.AppImage ]
+	then
+		echo "Found appimagetool"
+	else
+		wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+	fi
+	chmod +x ./appimagetool-x86_64.AppImage
 	./appimagetool-x86_64.AppImage --appimage-extract
 	mv squashfs-root appimagetool
 	ARCH=x86_64 ./appimagetool/AppRun iicalc-appImage
