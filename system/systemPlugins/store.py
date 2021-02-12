@@ -94,7 +94,7 @@ def uninstall(filename, plugin):
 		#Remove section in installed
 		installed.remove_section(plugin)
 		#write the updated install file to the install file
-		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "r+") as f:
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 			f.seek(0)
 			installed.write(f)
 			f.truncate()
@@ -190,7 +190,7 @@ def download(plugin_name, bulk=False):
 		installed[plugin_name]["verified"] = "true"
 
 	#write to installed file
-	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "r+") as f:
+	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 		installed.write(f)
 
 	dependencies = True
@@ -292,7 +292,7 @@ def updateMenu():
 	#append all plugins with available updates to list
 	for key in installed.sections():
 		if float(installed[key]["lastupdate"]) < float(index[key]["lastUpdate"]) or installed[key]["verified"] == "false":
-			updates.append((key, installed[key]["version"] + " > " + index[key]["version"]))
+			updates.append((key, installed[key]["version"] + " -> " + index[key]["version"]))
 			updatenum += 1
 	#create list with empty tuple if no plugins require updates
 	if len(updates) == 0:
