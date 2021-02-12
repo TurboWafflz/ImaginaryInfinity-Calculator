@@ -18,7 +18,7 @@ This package can be installed with apt, gdebi, qapt, etc.
 You can install the AUR package or download the package below. To install from the AUR:
 
 ```bash
-git clone https://aur.archlinux.org/iicalc-beta.git && cd iicalc
+git clone https://aur.archlinux.org/iicalc-beta.git && cd iicalc-beta
 makepkg -s
 sudo pacman -U *.pkg*
 ```
