@@ -598,7 +598,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			except:
 				pass
 		try:
-			with open(configPath, "r+") as cf:
+			with open(configPath, "w+") as cf:
 				config.write(cf)
 		except:
 			pass

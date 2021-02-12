@@ -131,7 +131,7 @@ else:
 						config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
 					except:
 						pass
-			with open(configPath, "r+") as cf:
+			with open(configPath, "w+") as cf:
 				config.write(cf)
 
 	#Load config from current directory
@@ -256,12 +256,12 @@ signal("onPluginsLoaded")
 #transition old 'yes' and 'no' to 'true' and 'false'
 if config["startup"]["startserver"] == "no":
 	config["startup"]["startserver"] = "false"
-	with open(configPath, "r+") as f:
+	with open(configPath, "w+") as f:
 		config.write(f)
 	config.read(configPath)
 elif config["startup"]["startserver"] == "yes":
 	config["startup"]["startserver"] = "true"
-	with open(configPath, "r+") as f:
+	with open(configPath, "w+") as f:
 		config.write(f)
 	config.read(configPath)
 
@@ -273,7 +273,7 @@ if config["startup"]["startserver"] == "ask":
 		config["startup"]["startserver"] = "false"
 	else:
 		config["startup"]["startserver"] = "true"
-	with open(configPath, "r+") as f:
+	with open(configPath, "w+") as f:
 		config.write(f)
 	config.read(configPath)
 
