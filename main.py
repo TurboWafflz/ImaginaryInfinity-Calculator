@@ -118,16 +118,19 @@ else:
 			configFile.close()
 
 		#Update config file from share config for installed
-		if os.path.exists("/usr/share/iicalc/config.ini"):
+		if os.path.isfile(config['paths']['systemPath'] + "/config.ini"):
+			systemPath = config['paths']['systemPath']
 			oldConfig = []
 			for each_section in config.sections():
 				for (each_key, each_val) in config.items(each_section):
 					oldConfig.append((each_section, each_key, each_val))
 			config = configparser.ConfigParser()
-			config.read("/usr/share/iicalc/config.ini")
+			config.read(systemPath + "/config.ini")
 			for i in range(len(oldConfig)):
 				if oldConfig[i][1] != "installtype":
 					try:
+						if not config.has_secion(oldConfig[i][0]):
+							config.add_section(oldConfig[i][0])
 						config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
 					except:
 						pass
