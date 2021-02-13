@@ -6,4 +6,3 @@ tqdm>=4.46.1
 py_essentials>=1.4.12
 pipreqs>=0.4.10
 packaging>=20.0
-argparse>=1.4.0
