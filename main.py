@@ -112,13 +112,25 @@ else:
 				except Exception as e:
 					print("Error: " + str(e) + ". Exiting")
 					exit()
-		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-		with open(configPath, "w") as configFile:
-			config.write(configFile)
-			configFile.close()
+
+		# Format things that need to be changed
+		formatted = False
+		if "{}" in config['paths']['userPath']:
+			config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+			formatted = True
+		if "{}" in config['system']['userVersion']:
+			with open(config['paths']['systemPath'] + "/version.txt") as f:
+				config['system']['userVersion'] = config['system']['userVersion'].format(f.read().strip())
+			formatted = True
+
+		if formatted == True:
+			with open(configPath, "w") as configFile:
+				config.write(configFile)
 
 		#Update config file from share config for installed
-		if os.path.isfile(config['paths']['systemPath'] + "/config.ini"):
+		with open(config['paths']['systemPath'] + "/version.txt") as f:
+			systemVersion = f.read().strip()
+		if os.path.isfile(config['paths']['systemPath'] + "/config.ini") and config['system']['userVersion'].strip() != systemVersion:
 			systemPath = config['paths']['systemPath']
 			oldConfig = []
 			for each_section in config.sections():
@@ -128,12 +140,15 @@ else:
 			config.read(systemPath + "/config.ini")
 			for i in range(len(oldConfig)):
 				if oldConfig[i][1] != "installtype":
-					try:
-						if not config.has_section(oldConfig[i][0]):
-							config.add_section(oldConfig[i][0])
-						config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
-					except:
-						pass
+					if oldConfig[i][1] == "userversion":
+						config[oldConfig[i][0]][oldConfig[i][1]] = systemVersion
+					else:
+						try:
+							if not config.has_section(oldConfig[i][0]):
+								config.add_section(oldConfig[i][0])
+							config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
+						except Exception as e:
+							print("Warning: " + str(e))
 			with open(configPath, "w+") as cf:
 				config.write(cf)
 
