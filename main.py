@@ -129,7 +129,7 @@ else:
 			for i in range(len(oldConfig)):
 				if oldConfig[i][1] != "installtype":
 					try:
-						if not config.has_secion(oldConfig[i][0]):
+						if not config.has_section(oldConfig[i][0]):
 							config.add_section(oldConfig[i][0])
 						config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
 					except:
