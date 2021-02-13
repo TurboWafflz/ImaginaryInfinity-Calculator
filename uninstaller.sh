@@ -145,7 +145,7 @@ if [ $installDesktopFile == "true" ]
 then
 	rm -rf "$desktopFilePath/$desktopFile"
 	echo "Removing icons..."
-	rm "$iconPath/iicalc.png"
+	rm "$iconPath/iicalc.tiff"
 fi
 echo "Removing main Python script.."
 rm "$systemPath/iicalc.py"
