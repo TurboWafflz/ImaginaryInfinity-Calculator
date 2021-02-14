@@ -69,6 +69,10 @@ def cmdEditor():
 	Back = input("Error background: ")
 	Style = input("Error style: ")
 	openTheme["styles"]["error"] = "colorama.Fore." + Fore.upper() + " + colorama.Back." + Back.upper() + " + colorama.Style." + Style.upper()
+	Fore = input("Warning foreground: ")
+	Back = input("Warning background: ")
+	Style = input("Warning style: ")
+	openTheme["styles"]["warning"] = "colorama.Fore." + Fore.upper() + " + colorama.Back." + Back.upper() + " + colorama.Style." + Style.upper()
 	Fore = input("Important foreground: ")
 	Back = input("Important background: ")
 	Style = input("Important style: ")
@@ -164,6 +168,8 @@ def dialogEditor():
 
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Error Foreground:", 1, 1, "", 1, 20, 15, 15), ("Error Background:", 2, 1, "", 2, 19, 15, 15), ("Error Style:", 3, 1, "", 3, 14, 9, 9)], height=0, width=0, form_height=0))
 
+	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Warning Foreground:", 1, 1, "", 1, 20, 15, 15), ("Warning Background:", 2, 1, "", 2, 19, 15, 15), ("Warning Style:", 3, 1, "", 3, 14, 9, 9)], height=0, width=0, form_height=0))
+
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Important Foreground:", 1, 1, "", 1, 24, 15, 15), ("Important Background:", 2, 1, "", 2, 23, 15, 15), ("Important Style:", 3, 1, "", 3, 18, 9, 9)], height=0, width=0, form_height=0))
 
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Startup Foreground:", 1, 1, "", 1, 22, 15, 15), ("Startup Background:", 2, 1, "", 2, 21, 15, 15), ("Startup Style:", 3, 1, "", 3, 16, 9, 9)], height=0, width=0, form_height=0))
@@ -205,12 +211,13 @@ def dialogEditor():
 
 	openTheme["styles"]["normal"] = "colorama.Fore." + answers[1][1][0].upper() + " + colorama.Back." + answers[1][1][1].upper() + " + colorama.Style." + answers[1][1][2].upper()
 	openTheme["styles"]["error"] = "colorama.Fore." + answers[2][1][0].upper() + " + colorama.Back." + answers[2][1][1].upper() + " + colorama.Style." + answers[2][1][2].upper()
-	openTheme["styles"]["important"] = "colorama.Fore." + answers[3][1][0].upper() + " + colorama.Back." + answers[3][1][1].upper() + " + colorama.Style." + answers[3][1][2].upper()
-	openTheme["styles"]["startupmessage"] = "colorama.Fore." + answers[4][1][0].upper() + " + colorama.Back." + answers[4][1][1].upper() + " + colorama.Style." + answers[4][1][2].upper()
-	openTheme["styles"]["prompt"] = "colorama.Fore." + answers[5][1][0].upper() + " + colorama.Back." + answers[5][1][1].upper() + " + colorama.Style." + answers[5][1][2].upper()
-	openTheme["styles"]["link"] = "colorama.Fore." + answers[6][1][0].upper() + " + colorama.Back." + answers[6][1][1].upper() + " + colorama.Style." + answers[6][1][2].upper()
-	openTheme["styles"]["answer"] = "colorama.Fore." + answers[7][1][0].upper() + " + colorama.Back." + answers[7][1][1].upper() + " + colorama.Style." + answers[7][1][2].upper()
-	openTheme["styles"]["output"] = "colorama.Fore." + answers[8][1][0].upper() + " + colorama.Back." + answers[8][1][1].upper() + " + colorama.Style." + answers[8][1][2].upper()
+	openTheme["styles"]["warning"] = "colorama.Fore." + answers[3][1][0].upper() + " + colorama.Back." + answers[3][1][1].upper() + " + colorama.Style." + answers[3][1][2].upper()
+	openTheme["styles"]["important"] = "colorama.Fore." + answers[4][1][0].upper() + " + colorama.Back." + answers[4][1][1].upper() + " + colorama.Style." + answers[4][1][2].upper()
+	openTheme["styles"]["startupmessage"] = "colorama.Fore." + answers[5][1][0].upper() + " + colorama.Back." + answers[5][1][1].upper() + " + colorama.Style." + answers[5][1][2].upper()
+	openTheme["styles"]["prompt"] = "colorama.Fore." + answers[6][1][0].upper() + " + colorama.Back." + answers[6][1][1].upper() + " + colorama.Style." + answers[6][1][2].upper()
+	openTheme["styles"]["link"] = "colorama.Fore." + answers[7][1][0].upper() + " + colorama.Back." + answers[7][1][1].upper() + " + colorama.Style." + answers[7][1][2].upper()
+	openTheme["styles"]["answer"] = "colorama.Fore." + answers[8][1][0].upper() + " + colorama.Back." + answers[8][1][1].upper() + " + colorama.Style." + answers[8][1][2].upper()
+	openTheme["styles"]["output"] = "colorama.Fore." + answers[9][1][0].upper() + " + colorama.Back." + answers[9][1][1].upper() + " + colorama.Style." + answers[9][1][2].upper()
 
 	if themeName[-8:] != ".iitheme":
 		themeName += ".iitheme"
