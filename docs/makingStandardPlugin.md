@@ -48,6 +48,7 @@ If you are doing anything involving printing, like taking input or just using `p
 <a name="themevalues"></a>
  - Normal - No styling
  - Error - Error Styling
+ - Warning - Warning Styling
  - Important - Important Text Styling
  - StartupMessage - Startup Message styling
  - Prompt - The color of the prompt (Default prompt is `> `)
@@ -124,6 +125,7 @@ ansi = false
 [styles]
 normal = No
 error = No
+warning = No
 important = No
 startupmessage = No
 prompt = No
@@ -140,6 +142,7 @@ If you are using ANSI colors, change `ansi` to `true`, if not, leave it as `fals
 [styles]
 normal = colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 error = colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
+warning = colorama.Fore.YELLOW + colorama.Back.RESET + colorama.Style.NORMAL
 important = colorama.Fore.MAGENTA + colorama.Back.RESET + colorama.Style.BRIGHT
 startupmessage = colorama.Fore.YELLOW + colorama.Back.RESET + colorama.Style.NORMAL
 prompt = colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.BRIGHT
@@ -154,6 +157,7 @@ output = colorama.Fore.WHITE + colorama.Back.RESET + colorama.Style.NORMAL
 [styles]
 normal = \u001b[38;5;238m\u001b[48;5;19m
 error = \u001b[38;5;197m\u001b[48;5;201m
+warning = \u001b[38;2;219;203;72m
 important = \u001b[38;5;236m\u001b[48;5;47m
 startupmessage = \u001b[38;5;21m\u001b[48;5;39m
 prompt = \u001b[38;5;227m\u001b[48;5;126m

@@ -36,6 +36,7 @@ def switchBranch(branch):
 def showPalette():
 	print(theme["styles"]["normal"] + "Normal")
 	print(theme["styles"]["error"] + "Error")
+	print(theme['styles']['warning'] + "Warning")
 	print(theme["styles"]["important"] + "Important")
 	print(theme["styles"]["startupmessage"] + "Startup Message")
 	print(theme["styles"]["prompt"] + "Prompt")

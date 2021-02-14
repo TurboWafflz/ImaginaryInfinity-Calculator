@@ -6,6 +6,7 @@ ansi=false
 [styles]
 normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL
 error=colorama.Fore.RED + colorama.Back.RESET + colorama.Style.BRIGHT
+warning=colorama.Fore.YELLOW + colorama.Back.RESET + colorama.Style.NORMAL
 important=colorama.Fore.MAGENTA + colorama.Back.RESET + colorama.Style.BRIGHT
 startupmessage=colorama.Fore.YELLOW + colorama.Back.RESET + colorama.Style.NORMAL
 prompt=colorama.Fore.GREEN + colorama.Back.RESET + colorama.Style.BRIGHT
