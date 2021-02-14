@@ -204,7 +204,7 @@ Once you want to update your plugin, you can go to [https://turbowafflz.gitlab.i
 Only the creator of a plugin can delete it. There are 2 ways to do this. The first option is to go [here](https://turbowafflz.azurewebsites.net/iicalc/delete) and select it from the list. The second option is to go to [here](https://turbowafflz.azurewebsites.net/iicalc/browse), select your plugin, and then press the delete button on the plugin page. Note that the page's may take a minute to load if the server went to sleep.
 
 #### Reporting a plugin<a name="reportPlugin"></a>
-If you find a plugin that violates our [guidelines]("guidelines.md"), you can report it by going to [https://turbowafflz.azurewebsites.net/iicalc/browse](https://turbowafflz.azurewebsites.net/iicalc/browse), selecting the desired plugin, and pressing the report button on the plugin's page.
+If you find a plugin that violates our [guidelines](guidelines.md), you can report it by going to [https://turbowafflz.azurewebsites.net/iicalc/browse](https://turbowafflz.azurewebsites.net/iicalc/browse), selecting the desired plugin, and pressing the report button on the plugin's page.
 
 #### Rating a plugin<a name="ratePlugin"></a>
 There are 2 ways to rate a plugin. The first way is to go to the plugin's page (find it at [https://turbowafflz.azurewebsites.net/iicalc/browse](https://turbowafflz.azurewebsites.net/iicalc/browse)) and hit the upvote or downvote button. You must be authenticated to do this. The 2nd way is through the calculator. Start the calculator and run `pm.connect()` if you haven't done that already. Follow the steps and once you're authenticated, you can either run `pm.rate("pluginname")`, or by going to the plugin's store page, accessed with `store.store()`.
