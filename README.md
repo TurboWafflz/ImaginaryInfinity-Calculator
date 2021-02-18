@@ -144,7 +144,7 @@ starting number
 
 - `pm.update()` - Update the package list, this must be run before plugins can be installed or to check for updates
 
-- `pm.install("<plugin>")` - Installs a plugin from the plugin index
+- `pm.install(*args)` - Installs the specified plugins from the plugin index. (Accepts lists) Example: `pm.install('algebra', 'ptable')`
 
 - `pm.list("<available/installed>")` - List plugins
 
@@ -154,7 +154,7 @@ starting number
 
 - `pm.upgrade()` - Install all available updates
 
-- `pm.remove("<plugin>")` - Removes an installed plugin
+- `pm.remove(*args)` - Removes the specified installed plugins. (Accepts lists) Example: `pm.remove('algebra', 'ptable')`
 
 - `pm.installFromFile("<filename>")` - Install a plugin from a local \*.icpk file
 

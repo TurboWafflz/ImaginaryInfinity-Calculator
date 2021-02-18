@@ -14,6 +14,8 @@ import webbrowser
 import json
 from pkg_resources import Requirement
 
+_list_type = list
+
 class OAuthError(Exception):
 	pass
 
@@ -232,7 +234,7 @@ def update(silent=False, theme=theme):
 		print("Run 'pm.upgrade()' to apply these changes")
 	done = True
 #Install a plugin
-def install(plugin, prompt=False):
+def install(*args, prompt=False):
 
 	#update(silent=True)
 	#Load index, if available
@@ -253,25 +255,108 @@ def install(plugin, prompt=False):
 			installedFile.close()
 			installed = configparser.ConfigParser()
 			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-	#Set verified to none if it is not set in the installed list
-	try:
-		verified = installed[plugin]["verified"]
-	except:
-		verified = "none"
-	#Set dependencies to none if it is not set in the installed file
-	try:
-		dependencies = index[plugin]["depends"]
-	except:
-		index[plugin]["depends"] = "none"
 
-	#Plugin is already installed
-	if installed.has_section(plugin) and not verified == "false":
-		#Newer version available, update
-		if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
+	# Flatten out lists or tuples contained in args
+	args = [plugin for sublist in args for plugin in sublist if isinstance(sublist, (_list_type, tuple))] + [plugin for plugin in args if not isinstance(plugin, (_list_type, tuple))]
+	for plugin in args:
+		print()
+		#Set verified to none if it is not set in the installed list
+		try:
+			verified = installed[plugin]["verified"]
+		except:
+			verified = "none"
+		#Set dependencies to none if it is not set in the installed file
+		try:
+			dependencies = index[plugin]["depends"]
+		except:
+			index[plugin]["depends"] = "none"
+
+		#Plugin is already installed
+		if installed.has_section(plugin) and not verified == "false":
+			#Newer version available, update
+			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
+				if prompt == True:
+					if input(plugin + " has an update available. Update it? [y/N] ").lower() != "y":
+						return
+				print("Updating " + plugin + "...")
+
+				# Calculator version testing for plugin compatibilities
+				#Parse calcversion to find the operator and version
+				calcversion = index[plugin]["calcversion"]
+				#Get current calculator version
+				with open(config["paths"]["systemPath"] + "/version.txt") as f:
+					currentversion = f.read().strip()
+				#check to see if the current version of the calculator satisfys plugin required version
+				if not currentversion in Requirement.parse("iicalc" + calcversion):
+					if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+						return False
+
+				try:
+					print("Installing dependencies...")
+					dependencies = index[plugin]["depends"].split(",")
+					#Iterate through dependencies
+					for dependency in dependencies:
+						with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+							installed.write(f)
+						installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+						#Install from index if available
+						if index.has_section(dependency):
+							with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+								installed.write(f)
+							install(dependency)
+							installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+						#Dependancy already installed, do nothing
+						elif installed.has_section(dependency):
+							print("Dependancy already satisfied")
+						elif dependency.startswith("pypi:"):
+							try:
+								subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+							except:
+								print("Dependency unsatisfyable: " + dependency)
+								return
+						elif dependency != "none":
+							print("Dependency unsatisfyable: " + dependency)
+							return
+						else:
+							pass
+					installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+					if index[plugin]["type"] == "plugins":
+						location = config["paths"]["userPath"] + "/plugins/"
+					elif index[plugin]["type"] == "themes":
+						location = config["paths"]["userPath"] + "/themes/"
+					else:
+						print("Error installing plugin: Invalid type")
+						return "error"
+
+					download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
+					installed[plugin] = index[plugin]
+					installed[plugin]["source"] = "index"
+					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+						installed.write(f)
+				except Exception as e:
+					print("Could not download file: " + str(e))
+					pass
+				#Verify plugin against hash in index
+				print("Verifying...")
+				if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+					print("Package verification failed, the package should be reinstalled.")
+					installed[plugin]["verified"] = "false"
+					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+						installed.write(f)
+				else:
+					print("Package verification passed")
+					installed[plugin]["verified"] = "true"
+					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+						installed.write(f)
+			#No updates available, nothing to do
+			else:
+				print(plugin + " is already installed and has no update available")
+		#Plugin has failed verification, reinstall it
+		elif verified != "true" and installed.has_section(plugin):
 			if prompt == True:
-				if input(plugin + " has an update available. Update it? [y/N] ").lower() != "y":
+				if input(plugin + " is damaged and should be reinstalled. Install it? [y/N] ").lower() != "y":
 					return
-			print("Updating " + plugin + "...")
+			print("Redownloading damaged package " + plugin + "...")
 
 			# Calculator version testing for plugin compatibilities
 			#Parse calcversion to find the operator and version
@@ -289,9 +374,6 @@ def install(plugin, prompt=False):
 				dependencies = index[plugin]["depends"].split(",")
 				#Iterate through dependencies
 				for dependency in dependencies:
-					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-						installed.write(f)
-					installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 					#Install from index if available
 					if index.has_section(dependency):
 						with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
@@ -302,17 +384,17 @@ def install(plugin, prompt=False):
 					elif installed.has_section(dependency):
 						print("Dependancy already satisfied")
 					elif dependency.startswith("pypi:"):
-						try:
-							subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
-						except:
-							print("Dependency unsatisfyable: " + dependency)
-							return
+							try:
+								subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+							except:
+								print("Dependency not unsatisfyable: " + dependency)
+								return
 					elif dependency != "none":
 						print("Dependency unsatisfyable: " + dependency)
 						return
 					else:
 						pass
-				installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+				#Download plugin
 				if index[plugin]["type"] == "plugins":
 					location = config["paths"]["userPath"] + "/plugins/"
 				elif index[plugin]["type"] == "themes":
@@ -320,8 +402,8 @@ def install(plugin, prompt=False):
 				else:
 					print("Error installing plugin: Invalid type")
 					return "error"
-
 				download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
+				#Mark plugin as installed from index
 				installed[plugin] = index[plugin]
 				installed[plugin]["source"] = "index"
 				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
@@ -329,10 +411,85 @@ def install(plugin, prompt=False):
 			except Exception as e:
 				print("Could not download file: " + str(e))
 				pass
-			#Verify plugin against hash in index
+			#Verify plugin against hash stored in index
 			print("Verifying...")
 			if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-				print("Package verification failed, the package should be reinstalled.")
+				print("File hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
+				print("Expected: " + index[plugin]["hash"])
+				print("Package verification failed, the plugin should be reinstalled.")
+				installed[plugin]["verified"] = "false"
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
+			else:
+				print("Package verification passed")
+				installed[plugin]["verified"] = "true"
+		#Plugin is not installed, install it
+		elif index.has_section(plugin):
+			if prompt == True:
+				if input("Install " + plugin + "? [y/N] ").lower() != "y":
+					return
+			print("Downloading " + plugin + "...")
+
+			# Calculator version testing for plugin compatibilities
+			#Parse calcversion to find the operator and version
+			calcversion = index[plugin]["calcversion"]
+			#Get current calculator version
+			with open(config["paths"]["systemPath"] + "/version.txt") as f:
+				currentversion = f.read().strip()
+			#check to see if the current version of the calculator satisfys plugin required version
+			if not currentversion in Requirement.parse("iicalc" + calcversion):
+				if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
+					return False
+
+			try:
+				print("Installing dependencies...")
+				dependencies = index[plugin]["depends"].split(",")
+				#Iterate through dependencies
+				for dependency in dependencies:
+					#Install dependency from index if available
+					if index.has_section(dependency):
+						with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+							installed.write(f)
+						install(dependency)
+						installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+					#Dependancy already installed, do nothing
+					elif installed.has_section(dependency):
+						print("Dependancy already satisfied")
+					#Dependency not satisfyable, abort
+					elif dependency.startswith("pypi:"):
+							try:
+								subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
+							except:
+								print("Dependency not unsatisfyable: " + dependency)
+								return
+					elif dependency != "none":
+						print("Dependency unsatisfyable: " + dependency)
+						return
+					else:
+						pass
+				#Download plugin
+				if index[plugin]["type"] == "plugins":
+					location = config["paths"]["userPath"] + "/plugins/"
+				elif index[plugin]["type"] == "themes":
+					location = config["paths"]["userPath"] + "/themes/"
+				else:
+					print("Error installing plugin: Invalid type")
+					return "error"
+				download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
+				#Mark plugin as installed
+				installed[plugin] = index[plugin]
+				installed[plugin]["source"] = "index"
+				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+					installed.write(f)
+			except Exception as e:
+				print("Could not download file: " + str(e))
+				pass
+			#Check plugin against hash in index
+			print("Verifying...")
+			if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+				print("File hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
+				print("Expected: " + index[plugin]["hash"])
+				print("Packages verification failed, the plugin should be reinstalled.")
 				installed[plugin]["verified"] = "false"
 				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
@@ -341,163 +498,13 @@ def install(plugin, prompt=False):
 				installed[plugin]["verified"] = "true"
 				with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
 					installed.write(f)
-		#No updates available, nothing to do
+		#Plugin could not be found
 		else:
-			print(plugin + " is already installed and has no update available")
-	#Plugin has failed verification, reinstall it
-	elif verified != "true" and installed.has_section(plugin):
-		if prompt == True:
-			if input(plugin + " is damaged and should be reinstalled. Install it? [y/N] ").lower() != "y":
-				return
-		print("Redownloading damaged package " + plugin + "...")
-
-		# Calculator version testing for plugin compatibilities
-		#Parse calcversion to find the operator and version
-		calcversion = index[plugin]["calcversion"]
-		#Get current calculator version
-		with open(config["paths"]["systemPath"] + "/version.txt") as f:
-			currentversion = f.read().strip()
-		#check to see if the current version of the calculator satisfys plugin required version
-		if not currentversion in Requirement.parse("iicalc" + calcversion):
-			if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
-				return False
-
-		try:
-			print("Installing dependencies...")
-			dependencies = index[plugin]["depends"].split(",")
-			#Iterate through dependencies
-			for dependency in dependencies:
-				#Install from index if available
-				if index.has_section(dependency):
-					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-						installed.write(f)
-					install(dependency)
-					installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-				#Dependancy already installed, do nothing
-				elif installed.has_section(dependency):
-					print("Dependancy already satisfied")
-				elif dependency.startswith("pypi:"):
-						try:
-							subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
-						except:
-							print("Dependency not unsatisfyable: " + dependency)
-							return
-				elif dependency != "none":
-					print("Dependency unsatisfyable: " + dependency)
-					return
-				else:
-					pass
-			#Download plugin
-			if index[plugin]["type"] == "plugins":
-				location = config["paths"]["userPath"] + "/plugins/"
-			elif index[plugin]["type"] == "themes":
-				location = config["paths"]["userPath"] + "/themes/"
-			else:
-				print("Error installing plugin: Invalid type")
-				return "error"
-			download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
-			#Mark plugin as installed from index
-			installed[plugin] = index[plugin]
-			installed[plugin]["source"] = "index"
-			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-				installed.write(f)
-		except Exception as e:
-			print("Could not download file: " + str(e))
-			pass
-		#Verify plugin against hash stored in index
-		print("Verifying...")
-		if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-			print("File hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
-			print("Expected: " + index[plugin]["hash"])
-			print("Package verification failed, the plugin should be reinstalled.")
-			installed[plugin]["verified"] = "false"
-			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-				installed.write(f)
-		else:
-			print("Package verification passed")
-			installed[plugin]["verified"] = "true"
-	#Plugin is not installed, install it
-	elif index.has_section(plugin):
-		if prompt == True:
-			if input("Install " + plugin + "? [y/N] ").lower() != "y":
-				return
-		print("Downloading " + plugin + "...")
-
-		# Calculator version testing for plugin compatibilities
-		#Parse calcversion to find the operator and version
-		calcversion = index[plugin]["calcversion"]
-		#Get current calculator version
-		with open(config["paths"]["systemPath"] + "/version.txt") as f:
-			currentversion = f.read().strip()
-		#check to see if the current version of the calculator satisfys plugin required version
-		if not currentversion in Requirement.parse("iicalc" + calcversion):
-			if input("The plugin " + plugin + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway? [Y/n] ").lower() == "n":
-				return False
-
-		try:
-			print("Installing dependencies...")
-			dependencies = index[plugin]["depends"].split(",")
-			#Iterate through dependencies
-			for dependency in dependencies:
-				#Install dependency from index if available
-				if index.has_section(dependency):
-					with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-						installed.write(f)
-					install(dependency)
-					installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-				#Dependancy already installed, do nothing
-				elif installed.has_section(dependency):
-					print("Dependancy already satisfied")
-				#Dependency not satisfyable, abort
-				elif dependency.startswith("pypi:"):
-						try:
-							subprocess.check_call([sys.executable, "-m", "pip","install", "-q", dependency[5:]])
-						except:
-							print("Dependency not unsatisfyable: " + dependency)
-							return
-				elif dependency != "none":
-					print("Dependency unsatisfyable: " + dependency)
-					return
-				else:
-					pass
-			#Download plugin
-			if index[plugin]["type"] == "plugins":
-				location = config["paths"]["userPath"] + "/plugins/"
-			elif index[plugin]["type"] == "themes":
-				location = config["paths"]["userPath"] + "/themes/"
-			else:
-				print("Error installing plugin: Invalid type")
-				return "error"
-			download(index[plugin]["download"], location + "/" + index[plugin]["filename"], pbarEnable=True)
-			#Mark plugin as installed
-			installed[plugin] = index[plugin]
-			installed[plugin]["source"] = "index"
-			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-				installed.write(f)
-		except Exception as e:
-			print("Could not download file: " + str(e))
-			pass
-		#Check plugin against hash in index
-		print("Verifying...")
-		if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
-			print("File hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
-			print("Expected: " + index[plugin]["hash"])
-			print("Packages verification failed, the plugin should be reinstalled.")
-			installed[plugin]["verified"] = "false"
-			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-				installed.write(f)
-		else:
-			print("Package verification passed")
-			installed[plugin]["verified"] = "true"
-			with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-				installed.write(f)
-	#Plugin could not be found
-	else:
-		print("Packages " + plugin + " not found.")
-	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-		installed.write(f)
+			print("Packages " + plugin + " not found.")
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+			installed.write(f)
 #Remove a plugin
-def remove(plugin):
+def remove(*args):
 
 	#Check if installed list exists
 	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
@@ -509,33 +516,39 @@ def remove(plugin):
 			installedFile.close()
 			installed = configparser.ConfigParser()
 			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-	#Check if plugin is marked as installed
-	if installed.has_section(plugin):
-		print("Removing packages...")
-		#Remove plugin from plugins
-		if installed[plugin]["type"] == "plugins":
-			location = config["paths"]["userPath"] + "/plugins/"
-		elif installed[plugin]["type"] == "themes":
-			location = config["paths"]["userPath"] + "/themes/"
-		else:
-			print("Error installing plugin: Invalid type")
-			return "error"
-		try:
-			os.remove(location + "/" + installed[plugin]["filename"])
-		except:
+
+	# Flatten out lists or tuples contained in args
+	args = [plugin for sublist in args for plugin in sublist if isinstance(sublist, (_list_type, tuple))] + [plugin for plugin in args if not isinstance(plugin, (_list_type, tuple))]
+
+	for plugin in args:
+		print()
+		#Check if plugin is marked as installed
+		if installed.has_section(plugin):
+			print("Removing packages...")
+			#Remove plugin from plugins
+			if installed[plugin]["type"] == "plugins":
+				location = config["paths"]["userPath"] + "/plugins/"
+			elif installed[plugin]["type"] == "themes":
+				location = config["paths"]["userPath"] + "/themes/"
+			else:
+				print("Error installing plugin: Invalid type")
+				return "error"
 			try:
-				os.remove(location + "/" + installed[plugin]["filename"] + ".disabled")
+				os.remove(location + "/" + installed[plugin]["filename"])
 			except:
-				pass
-		#Remove plugin from installed list
-		installed.remove_section(plugin)
-		print("Done")
-	else:
-		#Plugin is not installed, no need to do anything
-		print(plugin + " is not installed.")
-	#Write installed list to disk
-	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
-		installed.write(f)
+				try:
+					os.remove(location + "/" + installed[plugin]["filename"] + ".disabled")
+				except:
+					pass
+			#Remove plugin from installed list
+			installed.remove_section(plugin)
+			print("Done")
+		else:
+			#Plugin is not installed, no need to do anything
+			print(plugin + " is not installed.")
+		#Write installed list to disk
+		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as f:
+			installed.write(f)
 #Upgrade all plugins
 def upgrade():
 	#Read index, if available
@@ -781,11 +794,11 @@ def info(plugin):
 #Help
 def help():
 	print("pm.update() - Update the package list, this must be run before packages can be installed or to check for updates")
-	print("pm.install(\"<plugin>\") - Installs a package from the package index")
+	print("pm.install(*args) - Installs the specified plugins from the plugin index. (Accepts lists) Example: pm.install(\'algebra\', \'ptable\')")
 	print("pm.list(\"<available/installed>\") - List packages")
 	print("pm.search(\"<term>\") - Search the package index")
 	print("pm.info(\"<plugin>\") - Show info about a package")
 	print("pm.upgrade() - Install all available updates")
-	print("pm.remove(\"<plugin>\") - Remove an installed package")
+	print("pm.remove(*args) - Removes the specified installed plugins. (Accepts lists) Example: pm.remove(\'algebra\', \'ptable\')")
 	print("pm.rate(\"<plugin>\") - Rate an installed plugin")
 	print("pm.installFromFile(\"<filename>\") - Install a packages from a local *.icpk file")
