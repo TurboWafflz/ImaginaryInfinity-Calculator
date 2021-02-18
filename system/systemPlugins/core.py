@@ -429,8 +429,12 @@ def signal(sig,args=""):
 		for plugin in os.listdir(pluginPath):
 			if not plugin in nonplugins:
 				plugin = plugin[:-3]
-				if sig in eval("dir(" + plugin + ")"):
-					exec(plugin + "." + sig + "(" + args + ")")
+				try:
+					if sig in eval("dir(" + plugin + ")"):
+						exec(plugin + "." + sig + "(" + args + ")")
+				except NameError:
+					# Catch for disabled plugins
+					pass
 	except Exception as e:
 		pass
 
