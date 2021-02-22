@@ -21,8 +21,11 @@ import re
 import argparse
 from packaging import version
 import tempfile
-from tqdm import tqdm
 from dialog import Dialog, ExecutableNotFound
+from systemPlugins import utils
+from rich.console import Console
+from rich.markdown import Markdown
+import pydoc
 #import inspect
 
 parser = argparse.ArgumentParser()
@@ -161,7 +164,7 @@ def chelp():
 	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
 	print("isPrime(<number>) - Checks whether or not a number is prime")
 	print("toStd(\"<value>\", [roundVal], [printResult]) - Convert e notation number to standard notation")
-	if(platform.system()=="Linux" or "BSD" in platform.system()):
+	if shutil.which('less') != None:
 		print("readme() - Shows the README file (Online/Linux only)")
 	print("sh('<command>') - Run a command directly on your computer")
 	#print("shell() - Starts a shell directly on your computer")
@@ -389,13 +392,21 @@ def quit():
 
 #README (Linux only)
 def readme():
-	if(platform.system()=="Linux" or "BSD" in platform.system()):
+	if shutil.which('less') != None:
+		console = Console()
 		if config["installation"]["installtype"] == "portable":
-			sh("cat README-online | less")
+			readmePath = "README.md"
 		else:
-			sh("cat " + config["paths"]["systemPath"] + "/README-online | less")
+			readmePath = config['paths']['systemPath'] + '/README.md'
+
+		with open(readmePath) as f:
+			md = Markdown(f.read(), hyperlinks=False)
+		with console.capture() as capture:
+			console.print(md)
+		str_output = capture.get()
+		pydoc.pipepager(str_output, cmd='less -R')
 	else:
-		return("Sorry, this command only works on Linux")
+		return("Sorry, this command only works with less installed")
 
 #Root
 def root(n,num):
@@ -413,14 +424,6 @@ def shell():
 		if(cmd == "exit"):
 			break
 		print(os.system(cmd))
-
-#Update wizard by tabulate
-def loadConfig():
-	items = []
-	for each_section in config.sections():
-		for (each_key, each_val) in config.items(each_section):
-			items.append((each_section, each_key, each_val))
-	return items
 
 #Signals to trigger functions in plugins
 def signal(sig,args=""):
@@ -464,7 +467,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		plugins = os.path.join(root, "plugins/")
 		themes = os.path.join(root, "themes/")
 		parent = str(Path(root).parent) + "/"
-		confVals = loadConfig()
+		confVals = utils.loadConfig(config)
 		if gui == True:
 			d.gauge_update(12, "Updating...\nBacking Up...", update_text=True)
 
@@ -491,35 +494,24 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			d.gauge_update(37, "Updating...\nDownloading Update...", update_text=True)
 
 		#download files
-		newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
-		total_length = len(newzip.content)
 		try:
-			with open(root + "newcalc.zip", "wb") as f:
-				if total_length is None:
-					f.write(newzip.content)
-				else:
-					if gui == True:
-						dl = 0
-						olddone=0
-						for data in newzip.iter_content(chunk_size=4096):
-							dl += len(data)
-							f.write(data)
-							done = int(25 * dl / total_length)
-							if done > 25:
-								done = 25
-							if olddone != done:
-								olddone = done
-								d.gauge_update(37 + done)
-					else:
-						totaldownloaded = 0
-						pbar = tqdm(unit="B", total=total_length, unit_scale=True, unit_divisor=1024)
-						for chunk in newzip.iter_content(chunk_size=1024):
-							if chunk:
-								pbar.update(len(chunk))
-								totaldownloaded += len(chunk)
-								f.write(chunk)
-						pbar.update(total_length-totaldownloaded)
-						pbar.close()
+			if gui == True:
+				newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
+				total_length = len(newzip.content)
+				dl = 0
+				olddone=0
+				with open(root + "newcalc.zip", "wb") as f:
+					for data in newzip.iter_content(chunk_size=4096):
+						dl += len(data)
+						f.write(data)
+						done = int(25 * dl / total_length)
+						if done > 25:
+							done = 25
+						if olddone != done:
+							olddone = done
+							d.gauge_update(37 + done)
+			else:
+				utils.progress_download(['http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/' + branch + '.zip'], root + 'newcalc.zip')
 		except Exception as e:
 			clear()
 			print(e)
@@ -626,35 +618,24 @@ def doUpdate(branch="master", theme=theme, gui=False):
 			d.gauge_start("Updating...\nDownloading Update...", percent=0)
 		with tempfile.TemporaryDirectory() as td:
 			os.chdir(td)
-			newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
-			total_length = len(newzip.content)
 			try:
-				with open("newcalc.zip", "wb") as f:
-					if total_length is None:
-						f.write(newzip.content)
-					else:
-						if gui == True:
-							dl = 0
-							olddone=0
-							for data in newzip.iter_content(chunk_size=4096):
-								dl += len(data)
-								f.write(data)
-								done = int(50 * dl / total_length)
-								if done > 50:
-									done = 50
-								if olddone != done:
-									olddone = done
-									d.gauge_update(0 + done)
-						else:
-							totaldownloaded = 0
-							pbar = tqdm(unit="B", total=total_length, unit_scale=True, unit_divisor=1024)
-							for chunk in newzip.iter_content(chunk_size=1024):
-								if chunk:
-									pbar.update(len(chunk))
-									totaldownloaded += len(chunk)
-									f.write(chunk)
-							pbar.update(total_length-totaldownloaded)
-							pbar.close()
+				if gui == True:
+					newzip = requests.get("http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/" + branch + ".zip", stream=True)
+					total_length = len(newzip.content)
+					dl = 0
+					olddone=0
+					with open(root + "newcalc.zip", "wb") as f:
+						for data in newzip.iter_content(chunk_size=4096):
+							dl += len(data)
+							f.write(data)
+							done = int(25 * dl / total_length)
+							if done > 25:
+								done = 25
+							if olddone != done:
+								olddone = done
+								d.gauge_update(37 + done)
+				else:
+					utils.progress_download(['http://github.com/TurboWafflz/ImaginaryInfinity-Calculator/archive/' + branch + '.zip'], root + 'newcalc.zip')
 			except Exception as e:
 				clear()
 				print(e)

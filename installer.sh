@@ -305,7 +305,7 @@ cp main.py "$systemPath/iicalc.py"
 cp requirements.txt "$systemPath"
 cp messages.txt "$systemPath"
 cp system/version.txt "$systemPath"
-cp README-online "$systemPath"
+cp README.md "$systemPath"
 cp $config "$systemPath/config.ini"
 #Add custom URI scheme if supported
 #if type xdg-mime > /dev/null; then

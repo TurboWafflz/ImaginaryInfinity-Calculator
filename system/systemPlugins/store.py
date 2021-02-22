@@ -203,7 +203,7 @@ def download(plugin_name, bulk=False):
 		for i in range(len(depends)):
 			if depends[i].startswith("pypi:"):
 				d.gauge_update(100, text="Installing Dependency " + depends[i][5:], update_text=True)
-				process = subprocess.Popen([sys.executable, "-m", "pip","install", depends[i][5:]], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+				process = subprocess.Popen([sys.executable, "-m", "pip","install", depends[i][5:], '--user'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 				text = ""
 				for c in iter(lambda: process.stdout.read(1), b''):
 					text += c.decode("utf-8")

@@ -58,6 +58,12 @@ if args.config != None:
 		try:
 			if config.read(args.config) == []:
 				raise FileNotFoundError
+			else:
+				if "{}" in config['system']['userVersion']:
+					with open(config['paths']['systemPath'] + "/version.txt") as f:
+						config['system']['userVersion'] = config['system']['userVersion'].format(f.read().strip())
+					with open(args.config, "w") as configFile:
+						config.write(configFile)
 		except Exception as e:
 			print("Error in config file at " + args.config + ": " + str(e) + ". Exiting")
 			exit()
@@ -161,6 +167,12 @@ else:
 			try:
 				if config.read("config.ini") == []:
 					raise FileNotFoundError("Config file not found")
+				else:
+					if "{}" in config['system']['userVersion']:
+						with open(config['paths']['systemPath'] + "/version.txt") as f:
+							config['system']['userVersion'] = config['system']['userVersion'].format(f.read().strip())
+						with open(configPath, "w") as configFile:
+							config.write(configFile)
 			except Exception as e:
 				if input("The config at ./config.ini is broken. Restore the last backup? (" + time.ctime(os.stat("config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
 					#Restore config

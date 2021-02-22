@@ -146,7 +146,7 @@ starting number
 
 - `pm.install(*args)` - Installs the specified plugins from the plugin index. (Accepts lists) Example: `pm.install('algebra', 'ptable')`
 
-- `pm.list("<available/installed>")` - List plugins
+- `pm.listPlugins("<available/installed>")` - List plugins
 
 - `pm.search("<term>")` - Search the plugin index
 

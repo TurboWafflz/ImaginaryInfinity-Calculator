@@ -4,7 +4,7 @@ Architecture: all
 Essential: no
 Section: math
 Priority: optional
-Depends: python3 (>=3.5), python3-pip  (>=8.0.0)
+Depends: python3 (>=3.5), python3-pip (>=8.0.0)
 Maintainer: Finian Wright
 Installed-Size: 0
 Description: An extensible calculator written in Python.
