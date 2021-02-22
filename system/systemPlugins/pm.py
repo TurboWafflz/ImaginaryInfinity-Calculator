@@ -486,6 +486,7 @@ def install(*args, prompt=False):
 
 	# Flatten out lists or tuples contained in args
 	args = list(utils.flatten(args))
+	args = utils.removeDuplicates(args)
 
 	pluginDependencies, themeDependencies, pypiDependencies, requestedPlugins, index = resolveDependencies(args, index)
 	depends = pluginDependencies + themeDependencies + pypiDependencies + requestedPlugins
@@ -572,6 +573,9 @@ def install(*args, prompt=False):
 
 #Remove a plugin
 def remove(*args):
+	
+	args = list(utils.flatten(args))
+	args = utils.removeDuplicates(args)
 
 	#Check if installed list exists
 	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
@@ -638,8 +642,8 @@ def upgrade():
 			installedFile.close()
 			installed = configparser.ConfigParser()
 			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-	updates = 0
-	reinstall = 0
+	updates = []
+	reinstall = []
 	#Iterate through installed plugins
 	for plugin in installed.sections():
 		#Read installed list
@@ -662,24 +666,24 @@ def upgrade():
 			#Check plugin update time against the latest version
 			if float(index[plugin]["lastUpdate"]) > float(installed[plugin]["lastUpdate"]):
 				#print("Updating " + plugin + "...")
-				if install(plugin) != False:
-					updates = updates + 1
+				updates.append(plugin)
 			#Plugin is marked as unverified, offer to reinstall it
 			elif installed[plugin]["verified"] == "false":
 				print("Hash: " + hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256"))
 				print("Expected: " + index[plugin]["hash"])
 				if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
-					if install(plugin) != False:
-						reinstall = reinstall + 1
+					reinstall.append(plugin)
 		elif not os.path.exists(location + "/" + installed[plugin]["filename"] + ".disabled"):
 			#Plugin file is missing, offer to reinstall it
 			print("File not found: " + location + "/" + installed[plugin]["filename"])
 			if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
-				if install(plugin) != False:
-					reinstall = reinstall + 1
-	print("Done:")
-	print(str(updates) + " packages updated")
-	print(str(reinstall) + " damaged packages reinstalled")
+				reinstall.append(plugin)
+				
+	install(reinstall + updates)
+	
+	#print("Done:")
+	#print(str(len(updates)) + " packages updated")
+	#print(str(len(reinstall)) + " damaged packages reinstalled")
 #Search the index for a plugin
 def search(term, type="all"):
 	#Read index, if available
