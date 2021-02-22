@@ -869,7 +869,7 @@ def info(plugin):
 def help():
 	print("pm.update() - Update the package list, this must be run before packages can be installed or to check for updates")
 	print("pm.install(*args) - Installs the specified plugins from the plugin index. (Accepts lists) Example: pm.install(\'algebra\', \'ptable\')")
-	print("pm.list_plugins(\"<available/installed>\") - List packages")
+	print("pm.listPlugins(\"<available/installed>\") - List packages")
 	print("pm.search(\"<term>\") - Search the package index")
 	print("pm.info(\"<plugin>\") - Show info about a package")
 	print("pm.upgrade() - Install all available updates")
