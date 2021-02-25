@@ -395,8 +395,6 @@ def main(config=config, warmupThread=warmupThread):
 				os.system("clear")
 				onlineMode=True
 				print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
-				if os.path.isfile('.development'):
-					print(Fore.WHITE + "You are currently on a development branch, you can switch back to the stable branch with" + Fore.CYAN + " dev.SwitchBranch('master')" + Fore.RESET)
 			else:
 				raise ValueError
 		except:
@@ -444,6 +442,8 @@ def main(config=config, warmupThread=warmupThread):
 		print(theme["styles"]["link"] + "https://turbowafflz.gitlab.io/iicalc.html" + theme["styles"]["normal"])
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
+		if config["updates"]["branch"] != "master":
+			print(theme["styles"]["important"] + "You are currently using an unstable update channel, you can switch back to the master channel in settings.")
 		#Display startupmessage
 		try:
 			with open(config["appearance"]["messageFile"]) as messagesFile:

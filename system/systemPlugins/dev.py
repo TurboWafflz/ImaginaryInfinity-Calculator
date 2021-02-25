@@ -8,19 +8,20 @@ import time
 import shutil
 import subprocess
 
-def switchBranch(branch):
-	if branch != "master":
-		print(Fore.RESET + "Warning, branches other than " + Fore.CYAN + "master " + Fore.RESET + "may be unstable and buggy. Are you sure you want to continue switching to " + Fore.CYAN + branch + Fore.RESET + "?(y/n)")
-		yn=input()
-		if yn=="n":
-			return
-	os.system("touch .start")
-	os.system("git checkout " + branch)
-	if branch != "master":
-		os.system("touch .development")
-	else:
-		os.system("rm .development")
-	exit()
+# def switchBranch(branch):
+# 	if branch != "master":
+# 		print(Fore.RESET + "Warning, branches other than " + Fore.CYAN + "master " + Fore.RESET + "may be unstable and buggy. Are you sure you want to continue switching to " + Fore.CYAN + branch + Fore.RESET + "?(y/n)")
+# 		yn=input()
+# 		if yn=="n":
+# 			return
+# 	os.system("touch .start")
+# 	os.system("git checkout " + branch)
+# 	if branch != "master":
+# 		os.system("touch .development")
+# 	else:
+# 		os.system("rm .development")
+# 	exit()
+
 # onlineMode=os.path.exists(".onlineMode")
 # def switchBranch(branch):
 #     if(onlineMode):
