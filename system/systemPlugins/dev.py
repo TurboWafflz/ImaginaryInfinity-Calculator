@@ -143,7 +143,7 @@ def guiStoreInfo():
 
 			if type == "plugins":
 				reqs = getReqs(resp[1])
-				depends = d.editbox_str(reqs, title="Dependencies separated by line breaks. Start PiPy dependancies with \'pipy:\'")[1]
+				depends = d.editbox_str(reqs, title="Dependencies separated by line breaks. Start PyPI dependancies with \'pipy:\'")[1]
 			depends = depends.replace("\n", ",")
 			depends = depends.rstrip(",")
 
