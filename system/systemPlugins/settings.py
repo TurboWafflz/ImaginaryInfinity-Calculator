@@ -88,7 +88,8 @@ def editor():
 									("Debug Mode", "Enable/disable debug mode"),
 									("Check for Updates", "Check for Updates on Starup"),
 									("Update Channel", "Switch which channel you\'re updating from"),
-									("Subtraction from last answer", "Toggle subtraction from last answer")
+									("Subtraction from last answer", "Toggle subtraction from last answer"),
+									('Show branch warning', 'Show unstable branch warning if not on master')
 									]
 
 		for plugin in plugins(False):
@@ -228,6 +229,14 @@ def editor():
 						config["system"]["subtractfromlast"] = "true"
 					else:
 						config["system"]["subtractfromlast"] = "false"
+
+			elif tag == 'Show branch warning':
+				warning = d.menu('ImaginaryInfinity Calculator Branch Warning', choices=[('On', 'Show branch warning on startup if not on the master branch'), ('Off', 'Don\'t show branch warning on startup')])
+				if warning[0] == d.OK:
+					if warning[1] == 'On':
+						config['system']['showbranchwarning'] = 'true'
+					else:
+						config['system']['showbranchwarning'] = 'false'
 
 			#Close settings without modifying config
 			elif tag == "Save and exit":

@@ -442,8 +442,8 @@ def main(config=config, warmupThread=warmupThread):
 		print(theme["styles"]["link"] + "https://turbowafflz.gitlab.io/iicalc.html" + theme["styles"]["normal"])
 		print("Type 'chelp()' for a list of commands")
 		print("Read README")
-		if config["updates"]["branch"] != "master":
-			print(theme["styles"]["important"] + "You are currently using an unstable update channel, you can switch back to the master channel in settings.")
+		if config["updates"]["branch"] != "master" and config['system']['showbranchwarning'] == 'true':
+			print(theme["styles"]["important"] + "You are currently using an unstable update channel, you can switch back to the master channel in settings. (This message can be turned off in settings)")
 		#Display startupmessage
 		try:
 			with open(config["appearance"]["messageFile"]) as messagesFile:
