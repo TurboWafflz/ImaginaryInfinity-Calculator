@@ -434,7 +434,7 @@ def signal(sig,args=""):
 				plugin = plugin[:-3]
 				try:
 					if sig in eval("dir(" + plugin + ")"):
-						exec(plugin + "." + sig + "(" + args + ")")
+						exec(plugin + "." + sig + "(" + repr(args) + ")")
 				except NameError:
 					# Catch error for trying to signal to disabled plugins
 					pass
