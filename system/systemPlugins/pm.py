@@ -375,7 +375,7 @@ def downloadPluginsAndDepends(pluginDependencies, themeDependencies, pypiDepende
 			for package in pypiDependencies:
 				progress.update(task_id, package=package[5:])
 				try:
-					subprocess.call([sys.executable, "-m", "pip","install", package, '--user'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+					subprocess.call([sys.executable, "-m", "pip","install", package[5:], '--user'], stdout=subprocess.DEVNULL)
 				except:
 					if quiet == False:
 						print("\nDependency unsatisfiable: " + dependency)
@@ -573,7 +573,7 @@ def install(*args, prompt=False):
 
 #Remove a plugin
 def remove(*args):
-	
+
 	args = list(utils.flatten(args))
 	args = utils.removeDuplicates(args)
 
@@ -678,9 +678,9 @@ def upgrade():
 			print("File not found: " + location + "/" + installed[plugin]["filename"])
 			if input(plugin + " appears to be damaged, would you like to reinstall it? (Y/n) ").lower() != "n":
 				reinstall.append(plugin)
-				
+
 	install(reinstall + updates)
-	
+
 	#print("Done:")
 	#print(str(len(updates)) + " packages updated")
 	#print(str(len(reinstall)) + " damaged packages reinstalled")
