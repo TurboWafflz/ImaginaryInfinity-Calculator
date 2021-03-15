@@ -76,9 +76,10 @@ buildexe:
     - cp .installer/windowsbuild/iicalc.iss ./
   script:
     - docker run --rm -i -v "$PWD:/work" amake/innosetup iicalc.iss
+    - mv Output/iicalc.exe ./
   artifacts:
     paths:
-      - Output/iicalc.exe
+      - iicalc.exe
   only:
     - development
 
