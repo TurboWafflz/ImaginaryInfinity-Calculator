@@ -70,7 +70,7 @@ buildexe:
   stage: buildexe
   variables:
     DOCKER_DRIVER: overlay2
-  serives:
+  services:
     - docker:dind
   before_script:
     - cp .installer/windowsbuild/iicalc.iss ./
