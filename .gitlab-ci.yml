@@ -3,6 +3,7 @@ stages:
   - makerpm
   - buildrpm
   - AppImage packager
+  - buildexe
   - buildpkg
 debian packager:
   image: ubuntu:latest
@@ -64,6 +65,23 @@ AppImage packager:
             - ImaginaryInfinity_Calculator-x86_64.AppImage
     only:
         - development
+buildexe:
+  image: docker:latest
+  stage: buildexe
+  variables:
+    DOCKER_DRIVER: overlay2
+  serives:
+    - docker:dind
+  before_script:
+    - cp .installer/windowsbuild/iicalc.iss ./
+  script:
+    - docker run --rm -i -v "$PWD:/work" amake/innosetup iicalc.iss
+  artifacts:
+    paths:
+      - Output/iicalc.exe
+  only:
+    - development
+
 buildpkg:
   image: archlinux:latest
   stage: buildpkg
