@@ -14,3 +14,4 @@ themes/
 config.ini.save
 appimagetool-x86_64.AppImage
 squashfs-root
+Output/
