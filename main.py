@@ -520,40 +520,40 @@ def main(config=config, warmupThread=warmupThread):
 				# if pr:
 					#print(Fore.GREEN + eqn + ':')
 				oldcalc=calc
+
+				# try:
+				# 	ans = eval(commandParser.Expression(eqn, globals()).evaluateFunctions().floatToDecimal().expr)
+				# except:
+				# 	import traceback
+				# 	traceback.print_exc()
 				#Evaluate command
-				#Test if eqn is not a function
-				if len(re.findall("[a-zA-Z]+\([^\)]*\)(\.[^\)]*\))?", eqn)) == 0:
-					#Is an equation
-					try:
-						# Surround every number that appears to be a decimal or integer with `decimal.Decimal('<value>')` to fix floating point arithmetic errors
-						decimaleqn = re.sub(r"(((?<=[\s(*/^+-])[-]?|^[-]|^)([0-9]*[.])?[0-9]+)", r"decimal.Decimal('\1')", eqn)
-						try:
-							ans = eval(str(decimaleqn))
-						except decimal.Overflow:
-							#If decimal value is too big for the decimal to handle, fall back to normal eval
-							ans = eval(str(eqn))
-						# if "." in str(ans):
-						# 	ans = float("".join(str(ans).split(".")[:-1]) + "." + str(ans).split(".")[-1].rstrip("0"))
-					except:
-						try:
-							ans=eval(str(eqn))
-						except KeyboardInterrupt:
-							ans=None
-				else:
-					#Isn't an equation
-					try:
-						ans=eval(str(eqn))
-					except KeyboardInterrupt:
-						ans=None
+
+				try:
+					# decimaleqn = re.sub(r"(((?<=[\s(*/^+-])[-]?|^[-]|^)([0-9]*[.])?[0-9]+)", r"decimal.Decimal('\1')", eqn)
+					expr = commandParser.Expression(eqn, newGlobals=globals(), newLocals=locals()).evaluateFunctions().floatToDecimal().expr
+					ans = eval(expr)
+				except KeyboardInterrupt:
+					ans = None
+				except TypeError:
+					if re.search(r'(\d*\.\d+j)([^j0-9]|$)|(\d+\.\d*j)([^j0-9]|$)', expr):
+						expr = commandParser.Expression(eqn, newGlobals=globals(), newLocals=locals()).evaluateFunctions().expr
+						ans = eval(expr)
+					else:
+						raise TypeError
 			except Exception as e:
 				try:
 					#Exec if eval failed
 					try:
 						exec(str(calc))
+						pr = 0
 					except KeyboardInterrupt:
 						pass
-					pr=0
-				except:
+					except Exception:
+						try:
+							ans = commandParser.Expression(eqn, newGlobals=globals(), newLocals=locals()).evaluateFunctions().floatToDecimal().expr
+						except Exception as e:
+							ans = str(eval(eqn))
+				except Exception as e:
 					#Couldn't execute, display error
 					signal("onError", type(e).__name__)
 					if pr:
@@ -584,11 +584,7 @@ def main(config=config, warmupThread=warmupThread):
 						print()
 			#if ans==None and pr==1:
 				#print(Fore.YELLOW + "Done" + Fore.RESET)
-	# except KeyboardInterrupt:
-	# 	signal("onKeyboardInterrupt")
-	# 	print(theme["styles"]["important"] + "\nKeyboard Interrupt, exiting...")
-	# 	print(Fore.RESET + Back.RESET + Style.NORMAL)
-	# 	exit()
+
 	#Exit cleanly on Ctrl + D
 	except EOFError:
 		signal("onEofExit")

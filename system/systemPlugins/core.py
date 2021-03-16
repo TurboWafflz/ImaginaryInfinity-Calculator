@@ -458,12 +458,13 @@ def signal(sig,args=""):
 #		return "Invalid variable name"
 
 def doUpdate(branch="master", theme=theme, gui=False):
+	root = os.path.abspath(config["paths"]["userpath"]) + "/"
 	if config["installation"]["installtype"] == "portable":
 		if gui == True:
 			d = Dialog(dialog="dialog")
 			d.gauge_start("Updating...\nEstablishing Directories...", percent=0)
 		#Establish directories
-		root = os.path.abspath(config["paths"]["userpath"]) + "/"
+
 		plugins = os.path.join(root, "plugins/")
 		themes = os.path.join(root, "themes/")
 		parent = str(Path(root).parent) + "/"
