@@ -34,6 +34,9 @@ This package can be installed using pacman, with `sudo pacman -U iicalc-any.pkg.
 
 This package can be installed or updated on Red Hat based systems, like Fedora and CentOS, using rpm, with `sudo rpm -Uhv https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.rpm?job=buildrpm`
 
+#### Windows Installer
+[Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.exe?job=buildexe) (iicalc.exe)
+
 #### AppImage
 [Download](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/ImaginaryInfinity_Calculator-x86_64.AppImage?job=AppImage%20packager) (ImaginaryInfinity_Calculator-x86_64.AppImage)
 
@@ -52,7 +55,7 @@ The calculator can be run without any installation on any device that supports P
 ImaginaryInfinity Calculator can be installed on Linux by installing the package for your operating system. If your operating system doesn't have a package or you don't want to install a package, you can use the installer script. Just go to the directory where you downloaded the calculator and run `bash installer.sh` in your terminal to install the calculator. The calculator can be easily uninstalled by running `bash uninstaller.sh` in the same directory.
 
 #### Windows Installation
-The calculator can be installed on Windows using the provided powershell script. First, search `powershell` in the windows start menu, right click it, and run it as administrator. Then run `Set-ExecutionPolicy Unrestricted -Scope CurrentUser`, and type "Y" to say yes. This makes it so that the installer script can run. Now, navigate to the directory where you downloaded the calculator, and run `.\installer.ps1`. The calculator can be easily uninstalled by opening a powershell session and running `.\uninstaller.ps1` in the same directory.
+The calculator can be installed on Windows by downloading and running the windows exe installer or by using the provided powershell script. To install via the powershell script, first search `powershell` in the windows start menu, right click it, and run it as administrator. Then run `Set-ExecutionPolicy Unrestricted -Scope CurrentUser`, and type "Y" to say yes. This makes it so that the installer script can run. Now, navigate to the directory where you downloaded the calculator, and run `.\installer.ps1`. The calculator can be easily uninstalled by opening a powershell session and running `.\uninstaller.ps1` in the same directory.
 
 ----
 
