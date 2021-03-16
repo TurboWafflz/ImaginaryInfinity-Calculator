@@ -292,12 +292,13 @@ then
 	fi
 fi
 #Copy files
+mkdir -p "$binPath"
 chmod +x "$binPath/iicalc"
 echo "Installing builtin plugins..."
-mkdir $systemPath
-mkdir "$systemPath/systemPlugins"
+mkdir -p $systemPath
+mkdir -p "$systemPath/systemPlugins"
 cp -r system/systemPlugins/* "$systemPath/systemPlugins"
-mkdir "$systemPath/themes"
+mkdir -p "$systemPath/themes"
 cp -r system/themes/* "$systemPath/themes"
 cp -r "templates" "$systemPath"
 echo "Installing main Python script..."

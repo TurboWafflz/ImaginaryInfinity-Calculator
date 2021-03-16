@@ -412,6 +412,7 @@ def main(config=config, warmupThread=warmupThread):
 				os.system("cls")
 				colorama.init(convert=True)
 			elif(platform.system()=="Darwin"):
+				import readline
 				signal("onMacStart")
 				os.system("clear")
 			else:
