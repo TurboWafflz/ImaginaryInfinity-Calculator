@@ -8,13 +8,11 @@ chmod +x $DIR/${0##*/}
 if [ "$1" == "--make-deb" ]
 then
 	rm -rf "iicalc-deb"
-	mkdir "iicalc-deb"
-	mkdir "iicalc-deb/DEBIAN"
-	mkdir "iicalc-deb/usr"
-	mkdir "iicalc-deb/usr/bin"
-	mkdir "iicalc-deb/usr/share"
-	mkdir "iicalc-deb/usr/share/applications"
-	mkdir "iicalc-deb/usr/share/icons"
+	mkdir -p "iicalc-deb/DEBIAN"
+	mkdir -p "iicalc-deb/usr/bin"
+	mkdir -p "iicalc-deb/usr/share"
+	mkdir -p "iicalc-deb/usr/share/applications"
+	mkdir -p "iicalc-deb/usr/share/icons"
 	cp ".installer/deb/control" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/postinst" "iicalc-deb/DEBIAN"
 	cp ".installer/deb/prerm" "iicalc-deb/DEBIAN"
@@ -34,10 +32,8 @@ then
 elif [ "$1" == "--make-appImage" ]
 	then
 		rm -rf "iicalc-appImage"
-		mkdir "iicalc-appImage"
-		mkdir "iicalc-appImage/usr"
-		mkdir "iicalc-appImage/usr/bin"
-		mkdir "iicalc-appImage/usr/share"
+		mkdir -p "iicalc-appImage/usr/bin"
+		mkdir -p "iicalc-appImage/usr/share"
 		cp ".installer/appImage/AppRun" "iicalc-appImage"
 		chmod +x "iicalc-appImage/AppRun"
 		systemPath="iicalc-appImage/usr/share/iicalc/"
@@ -334,7 +330,9 @@ fi
 if [ "$1" == "--make-deb" ]
 then
 	#Calculate MD5 Sums
-	find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > "iicalc-deb/DEBIAN/md5sums"
+	cd iicalc-deb
+	find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' -printf '%P ' | xargs md5sum > "DEBIAN/md5sums"
+	cd ..
 	#Calculate Size
 	cat "iicalc-deb/DEBIAN/control" | sed "s'Installed-Size: 0'Installed-Size: `du -s iicalc-deb/ | awk '{print $1}'`'" > "iicalc-deb/DEBIAN/control"
 	cat "iicalc-deb/DEBIAN/control" | sed "s'Version: 0'Version: `cat system/version.txt`'" > "iicalc-deb/DEBIAN/control"
