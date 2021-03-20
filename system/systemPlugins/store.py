@@ -119,7 +119,7 @@ def ratePlugin(plugin):
 			return
 	else:
 		clear()
-		pm.connect()
+		pm.auth()
 		ratePlugin(plugin)
 
 #download plugins

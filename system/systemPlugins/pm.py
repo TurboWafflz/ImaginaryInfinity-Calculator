@@ -31,7 +31,7 @@ def loading(text):
 		sys.stdout.flush()
 		time.sleep(0.1)
 
-def connect():
+def auth():
 	webbrowser.open("https://turbowafflz.azurewebsites.net/iicalc/auth?connectCalc=true")
 	print(theme["styles"]["output"] + "If your browser does not automatically open, go to this URL: " + theme["styles"]["link"] + "https://turbowafflz.azurewebsites.net/iicalc/auth?connectCalc=true" + theme["styles"]["normal"])
 	token = input(theme["styles"]["input"] + "Please authenticate in your browser and paste the token here: " + theme["styles"]["normal"])
@@ -53,11 +53,11 @@ def getUserInfo():
 		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
 			user = json.loads(requests.get("https://api.github.com/user", headers={"Authorization": "Bearer "+ f.read().strip()}).text)
 		if "message" in user:
-			raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+			raise OAuthError("Invalid OAuth Token. Please run pm.auth() to refresh your token.")
 		else:
 			return user
 	else:
-		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+		raise OAuthError("Invalid OAuth Token. Please run pm.auth() to refresh your token.")
 
 #Plugin rating function
 def rate(plugin):
@@ -70,6 +70,7 @@ def rate(plugin):
 		if os.path.isfile(config["paths"]["userpath"] + "/.pluginstore/.token"):
 			rating = 0
 			while rating != "1" and rating != "2":
+				print("Rating " + plugin)
 				rating = input("Upvote (1) or Downvote (2)? ")
 			if rating == "2":
 				rating = -1
@@ -79,8 +80,8 @@ def rate(plugin):
 				response = requests.post("https://turbowafflz.azurewebsites.net/iicalc/rate/" + plugin, data={"vote": rating}, cookies={"authToken": f.read().strip()})
 				print(response.text)
 		else:
-			clear()
-			pm.connect()
+			auth()
+			print()
 			rate(plugin)
 	elif plugin in index.sections():
 		if input("You must install a plugin to rate it. Install " + plugin + "? [Y/n] ").lower() != "n":
@@ -95,11 +96,11 @@ def getUserPlugins():
 		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
 			r = requests.post("https://turbowafflz.azurewebsites.net/iicalc/getplugins", cookies={"authToken": f.read().strip()})
 		if "OAuth Error" in r.text or "Invalid OAuth Session" in r.text:
-			raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+			raise OAuthError("Invalid OAuth Token. Please run pm.auth() to refresh your token.")
 		else:
 			return r.text.split(",")
 	else:
-		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+		raise OAuthError("Invalid OAuth Token. Please run pm.auth() to refresh your token.")
 
 #Download file
 def download(url, localFilename):
@@ -875,4 +876,5 @@ def help():
 	print("pm.upgrade() - Install all available updates")
 	print("pm.remove(*args) - Removes the specified installed plugins. (Accepts lists) Example: pm.remove(\'algebra\', \'ptable\')")
 	print("pm.rate(\"<plugin>\") - Rate an installed plugin")
+	print("pm.auth() - Connect your installation of iicalc with your GitHub account. Allows for rating of plugins")
 	print("pm.installFromFile(\"<filename>\") - Install a packages from a local *.icpk file")
