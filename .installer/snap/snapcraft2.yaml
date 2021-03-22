@@ -1,0 +1,19 @@
+name: iicalc # you probably want to 'snapcraft register <name>'
+base: core18 # the base snap is the execution environment for this snap
+version: '0.1' # just for humans, typically '1.2+git' or '1.3.2'
+summary: An extensible calculator written in Python. # 79 char long summary
+description: |
+  ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's command line interface is designed to resemble that of some graphing calculators.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+apps:
+  iicalc:
+    command: usr/bin/iicalc
+
+parts:
+  iicalc:
+    # See 'snapcraft plugins'
+    plugin: dump
+    source: .
