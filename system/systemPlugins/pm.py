@@ -2,7 +2,7 @@ import requests
 import os
 import configparser
 from py_essentials import hashing as hs
-from shutil import copyfile
+import shutil
 import itertools
 import threading
 import sys
@@ -13,11 +13,15 @@ from systemPlugins import utils
 import webbrowser
 import json
 from pkg_resources import Requirement
+
 from rich.progress import (
 	BarColumn,
 	TextColumn,
 	Progress
 )
+from rich.markdown import Markdown
+from rich.console import Console
+import pydoc
 
 class OAuthError(Exception):
 	pass
@@ -770,7 +774,7 @@ def listPlugins(scope="available", type="all"):
 #Install a package from a file
 def installFromFile(file):
 	#Copy the file to an ini file so configparser doesn't get mad
-	copyfile(file, config["paths"]["userPath"] + "/.pluginstore/installer.ini")
+	shutil.copyfile(file, config["paths"]["userPath"] + "/.pluginstore/installer.ini")
 	#Read index
 	try:
 		index = configparser.ConfigParser()
@@ -868,13 +872,21 @@ def info(plugin):
 
 #Help
 def help():
-	print("pm.update() - Update the package list, this must be run before packages can be installed or to check for updates")
-	print("pm.install(*args) - Installs the specified plugins from the plugin index. (Accepts lists) Example: pm.install(\'algebra\', \'ptable\')")
-	print("pm.listPlugins(\"<available/installed>\") - List packages")
-	print("pm.search(\"<term>\") - Search the package index")
-	print("pm.info(\"<plugin>\") - Show info about a package")
-	print("pm.upgrade() - Install all available updates")
-	print("pm.remove(*args) - Removes the specified installed plugins. (Accepts lists) Example: pm.remove(\'algebra\', \'ptable\')")
-	print("pm.rate(\"<plugin>\") - Rate an installed plugin")
-	print("pm.auth() - Connect your installation of iicalc with your GitHub account. Allows for rating of plugins")
-	print("pm.installFromFile(\"<filename>\") - Install a packages from a local *.icpk file")
+	console = Console()
+	md = Markdown("""
+
+# Commands:
+
+ - `pm.update()` - Update the package list, this must be run before packages can be installed or to check for updates
+ - `pm.upgrade()` - Install all available updates
+ - `pm.install(*args)` - Installs the specified plugins from the plugin index. (Accepts lists) Example: `pm.install(\'algebra\', \'ptable\')`
+ - `pm.remove(*args)` - Removes the specified installed plugins. (Accepts lists) Example: `pm.remove(\'algebra\', \'ptable\')`
+ - `pm.listPlugins(\"<available/installed>\")` - List packages
+ - `pm.search(\"<term>\")` - Search the package index
+ - `pm.info(\"<plugin>\")` - Show info about a package
+ - `pm.rate(\"<plugin>\")` - Rate an installed plugin
+ - `pm.auth()` - Connect your installation of iicalc with your GitHub account. Allows for rating of plugins
+ - `pm.installFromFile(\"<filename>\")` - Install a packages from a local *.icpk file
+
+	""", inline_code_lexer="python", inline_code_theme=config['appearance']['syntaxhighlight'])
+	console.print(md)
