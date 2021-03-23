@@ -114,6 +114,15 @@ def editor():
 					d.msgbox("No themes installed")
 					pass
 				else:
+					#Handle themes in folders
+					for themeFile in themeFiles:
+						if os.path.isdir(config["paths"]["userPath"] + "/themes/" + themeFile):
+							themeFiles.remove(themeFile)
+							themeFilesInDir=os.listdir(config["paths"]["userPath"] + "/themes/" + themeFile)
+							pathToThemeFilesInDir=[]
+							for themeFileInDir in themeFilesInDir:
+								pathToThemeFilesInDir.append(themeFile + "/" + themeFileInDir)
+							themeFiles.extend(pathToThemeFilesInDir)
 					choices = []
 					for themeFile in themeFiles:
 						themeInfo = configparser.ConfigParser()
@@ -130,6 +139,15 @@ def editor():
 										choices=choices, width=0, height=0)
 					if tcode == d.OK:
 						themeFiles = os.listdir(config["paths"]["userPath"] + "/themes/") + os.listdir(config["paths"]["systemPath"] + "/themes/")
+						#Handle themes in folders
+						for themeFile in themeFiles:
+							if os.path.isdir(config["paths"]["userPath"] + "/themes/" + themeFile):
+								themeFiles.remove(themeFile)
+								themeFilesInDir=os.listdir(config["paths"]["userPath"] + "/themes/" + themeFile)
+								pathToThemeFilesInDir=[]
+								for themeFileInDir in themeFilesInDir:
+									pathToThemeFilesInDir.append(themeFile + "/" + themeFileInDir)
+								themeFiles.extend(pathToThemeFilesInDir)
 						if ".placeholder" in themeFiles:
 							themeFiles.remove(".placeholder")
 						for themeFile in themeFiles:
