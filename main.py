@@ -254,14 +254,17 @@ if config["paths"]["systemPath"] != "none":
 #Load plugins
 if config["startup"]["safemode"] == "false":
 	plugins = os.listdir(pluginPath)
-	try:
-		plugins.remove("core.py")
-		plugins.remove("settings.py")
-		plugins.remove("__init__.py")
-	except:
-		pass
+	badPlugins=["core.py", "settings.py", "__init__.py", "__pycache__"]
 	for plugin in plugins:
-		if plugin[-3:] == ".py":
+		if plugin in badPlugins or plugin[:2] == "__":
+			print("Not loading " + plugin + " as it is not a valid plugin.")
+			continue
+		if os.path.isdir(f"{pluginPath}/{plugin}"):
+			pluginFiles=os.listdir(f"{pluginPath}/{plugin}")
+			for pluginFile in pluginFiles:
+				if pluginFile[-3:] == ".py":
+					exec(f"from plugins.{plugin} import {pluginFile[:-3]}")
+		elif plugin[-3:] == ".py":
 			print(plugin)
 			try:
 				exec("from plugins import " + plugin[:-3])
