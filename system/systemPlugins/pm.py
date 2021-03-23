@@ -758,7 +758,7 @@ def listPlugins(scope="available", type="all"):
 		installed = configparser.ConfigParser()
 		installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	#If not, create one
-	else:<<<<<<< HEAD
+	else:
 		with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "w+") as installedFile:
 			installedFile.close()
 			installed = configparser.ConfigParser()
