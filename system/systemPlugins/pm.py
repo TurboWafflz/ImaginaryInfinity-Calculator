@@ -592,8 +592,8 @@ def installIIZ(plugin):
 	oldPwd=os.getcwd()
 	with tempfile.TemporaryDirectory() as td:
 		os.chdir(td)
-		# success = utils.progress_download([plugin.download], plugin.name, isFile=True)
-		open(plugin.filename, "wb+").write(requests.get(plugin.download).content)
+		utils.progress_download([plugin.download], plugin.filename, isFile=True)
+		# open(plugin.filename, "wb+").write(requests.get(plugin.download).content)
 		zipfile.ZipFile(plugin.filename, 'r').extractall()
 		for type in ["plugins", "themes", "docs"]:
 			if os.path.exists(type):

@@ -6,9 +6,15 @@ import pydoc
 
 def findDoc(article):
 	if os.path.exists(config["paths"]["userPath"] + f"/docs/{article}.md"):
-		return config["paths"]["userPath"] + f"/docs/{article}.md"
+		if not os.path.isdir(config["paths"]["userPath"] + f"/docs/{article}.md"):
+			return config["paths"]["userPath"] + f"/docs/{article}.md"
+		else:
+			return None
 	elif os.path.exists(config["paths"]["systemPath"] + f"/docs/{article}.md"):
-		return config["paths"]["systemPath"] + f"/docs/{article}.md"
+		if not os.path.isdir(config["paths"]["systemPath"] + f"/docs/{article}.md"):
+			return config["paths"]["systemPath"] + f"/docs/{article}.md"
+		else:
+			return None
 	else:
 		return None
 
@@ -28,3 +34,23 @@ def view(article):
 		pydoc.pipepager(str_output, cmd='less -R --prompt \"Press [up] and [down] to scroll, press [q] to quit.\"')
 	else:
 		console.print(md)
+def list():
+	articles = []
+	for file in os.listdir(config["paths"]["userPath"] + "/docs/"):
+		if file[-3:]==".md":
+			articles.append(file[:-3])
+		if os.path.isdir(config["paths"]["userPath"] + f"/docs/{file}"):
+			for fileInDir in os.listdir(config["paths"]["userPath"] + f"/docs/{file}"):
+				if fileInDir[-3:]==".md":
+					articles.append(file + "/" + fileInDir[:-3])
+	for file in os.listdir(config["paths"]["systemPath"] + "/docs/"):
+		if file[-3:]==".md":
+			articles.append(file[:-3])
+		if os.path.isdir(config["paths"]["systemPath"] + f"/docs/{file}"):
+			for fileInDir in os.listdir(config["paths"]["systemPath"] + f"/docs/{file}"):
+				if fileInDir[-3:]==".md":
+					articles.append(file + "/" + fileInDir[:-3])
+
+	print("Available articles:")
+	for article in sorted(articles):
+		print(article)
