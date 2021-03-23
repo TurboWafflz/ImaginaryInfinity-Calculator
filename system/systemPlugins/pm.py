@@ -2,7 +2,7 @@ import requests
 import os
 import configparser
 from py_essentials import hashing as hs
-from shutil import copyfile
+from shutil import copyfile, copy
 import itertools
 import threading
 import sys
@@ -18,6 +18,8 @@ from rich.progress import (
 	TextColumn,
 	Progress
 )
+import tempfile
+import zipfile
 
 class OAuthError(Exception):
 	pass
@@ -428,28 +430,31 @@ def downloadPluginsAndDepends(pluginDependencies, themeDependencies, pypiDepende
 
 	# Install explicitely installed packages
 	for plugin in plugins:
-		if plugin.type == 'themes':
-			location = config["paths"]["userPath"] + "/themes/" + plugin.filename
-		elif plugin.type == 'plugins':
-			location = config["paths"]["userPath"] + "/plugins/" + plugin.filename
-
-		if debug == True:
-			print(location)
-
-		success = utils.progress_download([plugin.download], location, isFile=True)
-
-		if success != True:
-			if quiet == False:
-				print()
-				if plugin.type == 'themes':
-					print('\nTheme unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, plugins))[success])
-				elif plugin.type == 'plugins':
-					print('\nPlugin unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, plugins))[success])
-			return False
+		if plugin.filename[-4:].lower() == ".iiz":
+			installIIZ(plugin)
 		else:
-			successfullyInstalled[plugin.name] = {}
-			successfullyInstalled[plugin.name]['hash'] = plugin.hash
-			successfullyInstalled[plugin.name]['location'] = location
+			if plugin.type == 'themes':
+				location = config["paths"]["userPath"] + "/themes/" + plugin.filename
+			elif plugin.type == 'plugins':
+				location = config["paths"]["userPath"] + "/plugins/" + plugin.filename
+
+			if debug == True:
+				print(location)
+
+			success = utils.progress_download([plugin.download], location, isFile=True)
+
+			if success != True:
+				if quiet == False:
+					print()
+					if plugin.type == 'themes':
+						print('\nTheme unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, plugins))[success])
+					elif plugin.type == 'plugins':
+						print('\nPlugin unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, plugins))[success])
+				return False
+			else:
+				successfullyInstalled[plugin.name] = {}
+				successfullyInstalled[plugin.name]['hash'] = plugin.hash
+				successfullyInstalled[plugin.name]['location'] = location
 
 	# Update installed list
 	installed = configparser.ConfigParser()
@@ -571,6 +576,26 @@ def install(*args, prompt=False):
 	else:
 		print('\n'.join(newInstalls))
 	return
+
+#Install zipped package
+def installIIZ(plugin):
+	oldPwd=os.getcwd()
+	with tempfile.TemporaryDirectory() as td:
+		os.chdir(td)
+		# success = utils.progress_download([plugin.download], plugin.name, isFile=True)
+		open(plugin.filename, "wb+").write(requests.get(plugin.download).content)
+		zipfile.ZipFile(plugin.filename, 'r').extractall()
+		for type in ["plugins", "themes"]:
+			if os.path.exists(type):
+				for file in os.listdir(type):
+					print(file)
+					if not os.path.exists(f"{config['paths']['userPath']}/{type}/{plugin.name}"):
+						os.mkdir(f"{config['paths']['userPath']}/{type}/{plugin.name}")
+					if os.path.isdir(f"{type}/{file}"):
+						copytree(f"{type}/{file}", f"{config['paths']['userPath']}/{type}/{plugin.name}/{file}")
+					else:
+						copyfile(f"{type}/{file}", f"{config['paths']['userPath']}/{type}/{plugin.name}/{file}")
+		os.chdir(oldPwd)
 
 #Remove a plugin
 def remove(*args):
