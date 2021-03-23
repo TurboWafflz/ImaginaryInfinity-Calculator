@@ -52,5 +52,5 @@ def list():
 					articles.append(file + "/" + fileInDir[:-3])
 
 	print("Available articles:")
-	for article in articles:
+	for article in sorted(articles):
 		print(article)
