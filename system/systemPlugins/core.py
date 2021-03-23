@@ -156,23 +156,60 @@ def pingServer():
 
 #Help
 def chelp():
-	print("Commands:")
-	print("------")
-	print("settings.configMod('<section>', '<key>', '<value>') - Changes a value in the config file.")
-	print("settings.editor() - Settings editor (Not supported on all platforms)")
-	print("factor(<number>) - Shows factor pairs for a number")
-	print("iprt('<library name>') - Installs and imports a Python moule from PyPi")
-	print("isPrime(<number>) - Checks whether or not a number is prime")
-	print("toStd(\"<value>\", [roundVal], [printResult]) - Convert e notation number to standard notation")
+	console = Console()
+
+	md = Markdown("""
+
+# Commands:
+
+## Calculations:
+
+ - `factor(<number>)` - Shows factor pairs for a number
+
+ - `isPrime(<number>)` - Checks whether or not a number is prime
+
+ - `toStd(\"<value>\", [roundVal], [printResult])` - Convert e notation number to standard notation
+
+
+## Settings:
+
+ - `settings.configMod('<section>', '<key>', '<value>')` - Changes a value in the config file.
+
+ - `settings.editor()` - Settings editor (Not supported on all platforms)
+
+ - `settings.list()` - Show the entire config file
+
+## Utility:
+
+ - `iprt('<library name>')` - Installs and imports a Python moule from PyPI
+
+ - `readme()` - Shows the README file (Online/Linux only)
+
+ - `sh('<command>')` - Run a command directly on your computer
+
+ - `update()` - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins
+
+ - `quit()` - Quit ImaginaryInfinity Calculator
+
+
+## Package manager:
+
+ - `plugins()` - Lists all plugins
+
+ - `pm.help()` - Package Manager Help
+
+ - `store.store()` - Plugin GUI Store
+
+ """, inline_code_lexer="python", inline_code_theme=config['appearance']['syntaxhighlight'])
+
 	if shutil.which('less') != None:
-		print("readme() - Shows the README file (Online/Linux only)")
-	print("sh('<command>') - Run a command directly on your computer")
-	#print("shell() - Starts a shell directly on your computer")
-	print("plugins() - Lists all plugins")
-	print("update() - Update ImaginaryInfinity Calculator. *NOTE* updating the calculator via this command will delete any changes you may have made to the files. This command will save your plugins")
-	print("pm.help() - Package Manager Help")
-	print("store.store() - Plugin Store")
-	print("quit() - Quit ImaginaryInfinity Calculator")
+		with console.capture() as capture:
+			console.print(md)
+		str_output = capture.get()
+		pydoc.pipepager(str_output, cmd='less -R --prompt \"Press [up] and [down] to scroll, press [q] to quit.\"')
+	else:
+		console.print(md)
+
 
 #AllWillPerish
 def AllWillPerish():
@@ -400,7 +437,7 @@ def readme():
 			readmePath = config['paths']['systemPath'] + '/README.md'
 
 		with open(readmePath) as f:
-			md = Markdown(f.read(), hyperlinks=False)
+			md = Markdown(f.read(), hyperlinks=False, code_theme=config['appearance']['syntaxhighlight'], inline_code_lexer="python", inline_code_theme=config['appearance']['syntaxhighlight'])
 		with console.capture() as capture:
 			console.print(md)
 		str_output = capture.get()
