@@ -6,7 +6,7 @@
 
 - `isPrime(<number>)` - Checks whether or not a number is prime
 
-- `toStd(\"<value>\", [roundVal], [printResult])` - Convert e notation number to standard notation
+- `toStd("<value>", [roundVal], [printResult])` - Convert e notation number to standard notation
 
 
 ## Settings:
