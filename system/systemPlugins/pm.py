@@ -595,7 +595,7 @@ def installIIZ(plugin):
 		# success = utils.progress_download([plugin.download], plugin.name, isFile=True)
 		open(plugin.filename, "wb+").write(requests.get(plugin.download).content)
 		zipfile.ZipFile(plugin.filename, 'r').extractall()
-		for type in ["plugins", "themes"]:
+		for type in ["plugins", "themes", "docs"]:
 			if os.path.exists(type):
 				for file in os.listdir(type):
 					print(file)
@@ -611,7 +611,7 @@ def removeIIZ(plugin):
 	installed = configparser.ConfigParser()
 	installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 	plugin=installed[plugin]
-	for type in ["plugins", "themes"]:
+	for type in ["plugins", "themes", "docs"]:
 		if os.path.exists(f"{config['paths']['userPath']}/{type}/{plugin.name}"):
 			shutil.rmtree(f"{config['paths']['userPath']}/{type}/{plugin.name}")
 
