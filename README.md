@@ -188,4 +188,6 @@ all get shown to the user:**
 
 printResult can be set to `True` or `False`, and defaults to `True` if not specified
 
+## In-app documentation
 
+Documentation for the calculator and supported plugins can be viewed by running `doc.view("<article>")`. You can also list all articles with `doc.list()`.
