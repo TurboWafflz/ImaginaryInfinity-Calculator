@@ -435,7 +435,13 @@ def downloadPluginsAndDepends(pluginDependencies, themeDependencies, pypiDepende
 	# Install explicitely installed packages
 	for plugin in plugins:
 		if plugin.filename[-4:].lower() == ".iiz":
-			installIIZ(plugin)
+			try:
+				installIIZ(plugin)
+				success=True
+				location = config["paths"]["userPath"] + "/plugins/" + plugin.filename
+			except:
+				success=False
+
 		else:
 			if plugin.type == 'themes':
 				location = config["paths"]["userPath"] + "/themes/" + plugin.filename
@@ -447,18 +453,18 @@ def downloadPluginsAndDepends(pluginDependencies, themeDependencies, pypiDepende
 
 			success = utils.progress_download([plugin.download], location, isFile=True)
 
-			if success != True:
-				if quiet == False:
-					print()
-					if plugin.type == 'themes':
-						print('\nTheme unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, plugins))[success])
-					elif plugin.type == 'plugins':
-						print('\nPlugin unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, plugins))[success])
-				return False
-			else:
-				successfullyInstalled[plugin.name] = {}
-				successfullyInstalled[plugin.name]['hash'] = plugin.hash
-				successfullyInstalled[plugin.name]['location'] = location
+		if success != True:
+			if quiet == False:
+				print()
+				if plugin.type == 'themes':
+					print('\nTheme unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, plugins))[success])
+				elif plugin.type == 'plugins':
+					print('\nPlugin unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, plugins))[success])
+			return False
+		else:
+			successfullyInstalled[plugin.name] = {}
+			successfullyInstalled[plugin.name]['hash'] = plugin.hash
+			successfullyInstalled[plugin.name]['location'] = location
 
 	# Update installed list
 	installed = configparser.ConfigParser()
@@ -601,6 +607,14 @@ def installIIZ(plugin):
 						shutil.copyfile(f"{type}/{file}", f"{config['paths']['userPath']}/{type}/{plugin.name}/{file}")
 		os.chdir(oldPwd)
 
+def removeIIZ(plugin):
+	installed = configparser.ConfigParser()
+	installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+	plugin=installed[plugin]
+	for type in ["plugins", "themes"]:
+		if os.path.exists(f"{config['paths']['userPath']}/{type}/{plugin.name}"):
+			shutil.rmtree(f"{config['paths']['userPath']}/{type}/{plugin.name}")
+
 #Remove a plugin
 def remove(*args):
 
@@ -626,22 +640,25 @@ def remove(*args):
 	for plugin in args:
 		#Check if plugin is marked as installed
 		if installed.has_section(plugin):
-			print(plugin)
-			#Remove plugin from plugins
-			if installed[plugin]["type"] == "plugins":
-				location = config["paths"]["userPath"] + "/plugins/"
-			elif installed[plugin]["type"] == "themes":
-				location = config["paths"]["userPath"] + "/themes/"
+			if installed[plugin]["filename"][-4:]==".iiz":
+				removeIIZ(plugin)
 			else:
-				print("Error installing plugin: Invalid type")
-				return "error"
-			try:
-				os.remove(location + "/" + installed[plugin]["filename"])
-			except:
+				print(plugin)
+				#Remove plugin from plugins
+				if installed[plugin]["type"] == "plugins":
+					location = config["paths"]["userPath"] + "/plugins/"
+				elif installed[plugin]["type"] == "themes":
+					location = config["paths"]["userPath"] + "/themes/"
+				else:
+					print("Error installing plugin: Invalid type")
+					return "error"
 				try:
-					os.remove(location + "/" + installed[plugin]["filename"] + ".disabled")
+					os.remove(location + "/" + installed[plugin]["filename"])
 				except:
-					pass
+					try:
+						os.remove(location + "/" + installed[plugin]["filename"] + ".disabled")
+					except:
+						pass
 			#Remove plugin from installed list
 			installed.remove_section(plugin)
 		else:
