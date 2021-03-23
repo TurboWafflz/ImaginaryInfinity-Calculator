@@ -28,3 +28,14 @@ def view(article):
 		pydoc.pipepager(str_output, cmd='less -R --prompt \"Press [up] and [down] to scroll, press [q] to quit.\"')
 	else:
 		console.print(md)
+def list():
+	articles = []
+	for file in os.listdir(config["paths"]["userPath"] + "/docs/"):
+		if file[-3:]==".md":
+			articles.append(file[:-3])
+	for file in os.listdir(config["paths"]["systemPath"] + "/docs/"):
+		if file[-3:]==".md":
+			articles.append(file[:-3])
+	print("Available articles:")
+	for article in articles:
+		print(article)
