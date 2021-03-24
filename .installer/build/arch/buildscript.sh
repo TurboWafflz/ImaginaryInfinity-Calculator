@@ -11,15 +11,16 @@ else
   installname="iicalc.install"
 fi
 
+# Build deb if not exists
+if [ ! -f iicalc.deb ]; then
+  echo "Error: iicalc.deb not found. Run \"./installer.sh --make-deb\" to build it"
+  exit 1
+fi
+
 rm -rf "iicalc-arch"
 mkdir -p "iicalc-arch"
 cp .installer/build/arch/PKGBUILD "iicalc-arch/"
 cp .installer/build/arch/iicalc.install iicalc-arch/$installname
-
-# Build deb if not exists
-if [ ! -f iicalc.deb ]; then
-  bash installer.sh --make-deb
-fi
 
 if [ "$beta" == "true" ]; then
   sed -i 's/{{pkgname}}/iicalc-beta/g' iicalc-arch/PKGBUILD

@@ -1,6 +1,6 @@
 stages:
   - build
-  - makerpm
+  - build-stage-2
   - buildrpm
 debian packager:
   image: ubuntu:latest
@@ -36,7 +36,7 @@ makerpm:
     - development
 buildrpm:
   image: fedora:latest
-  stage: buildrpm
+  stage: build-stage-2
   before_script:
     - dnf -y install rpmrebuild wget
     - wget https://raw.githubusercontent.com/TabulateJarl8/files/master/rpmrebuild.sh
@@ -82,7 +82,7 @@ buildexe:
 
 buildpkg:
   image: archlinux:latest
-  stage: build
+  stage: build-stage-2
   before_script:
     - pacman -Syu glibc bash binutils fakeroot pkgfile dpkg openssh sudo git bash-completion python-pip --noconfirm --needed
     - eval $(ssh-agent -s)
@@ -93,7 +93,6 @@ buildpkg:
     - git config --global user.name "TabulateJarl8"
     - git config --global user.email "tabulatejarl8@gmail.com"
   script:
-    - rm -f iicalc.deb
     - ./installer.sh --make-pkg -b -h
     - git clone ssh://aur@aur.archlinux.org/iicalc-beta.git iicalcaur
     - git config --global pull.rebase false
