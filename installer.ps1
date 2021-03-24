@@ -45,7 +45,7 @@ cp main.py "$systemPath\iicalc.py" -force
 cp requirements.txt "$systemPath" -force
 cp messages.txt "$systemPath" -force
 cp system\version.txt "$systemPath" -force
-cp .\README.md "$systemPath" -force
+cp .\README.md "$systemPath\docs\iicalc.md" -force
 cp $config "$systemPath\config.ini" -force
 
 echo "Installing icons..."
