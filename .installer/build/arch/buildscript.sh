@@ -5,9 +5,16 @@ else
   beta=false
 fi
 
+if [ "$beta" == "true" ]; then
+  installname="iicalc-beta.install"
+else
+  installname="iicalc.install"
+fi
+
 rm -rf "iicalc-arch"
 mkdir -p "iicalc-arch"
-cp .installer/build/arch/iicalc.install .installer/build/arch/PKGBUILD "iicalc-arch/"
+cp .installer/build/arch/PKGBUILD "iicalc-arch/"
+cp .installer/build/arch/iicalc.install iicalc-arch/$installname
 
 # Build deb if not exists
 if [ ! -f iicalc.deb ]; then
@@ -52,15 +59,15 @@ sed -i "s/{{sha512sums}}/(\'$(sha512sum iicalc.deb | awk '{print $1}')\')/g" iic
 sed -i '/{{postinst}}/{
   s/{{postinst}}//g
   r .installer/build/deb/postinst
-}' iicalc-arch/iicalc.install
+}' iicalc-arch/$installname
 sed -i '/{{prerm}}/{
   s/{{prerm}}//g
   r .installer/build/deb/prerm
-}' iicalc-arch/iicalc.install
+}' iicalc-arch/$installname
 
 # Clean .install file
-sed -i 's/#!\/bin\/sh//g' iicalc-arch/iicalc.install
-sed -i ':a;N;$!ba;s/\n\n/\n/g' iicalc-arch/iicalc.install
+sed -i 's/#!\/bin\/sh//g' iicalc-arch/$installname
+sed -i ':a;N;$!ba;s/\n\n/\n/g' iicalc-arch/$installname
 
 cp -f iicalc.deb "iicalc-arch/iicalc-${versionarr[0]}.deb"
 
