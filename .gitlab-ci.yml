@@ -84,7 +84,7 @@ buildpkg:
   image: archlinux:latest
   stage: build
   before_script:
-    - pacman -Syu glibc bash binutils fakeroot pkgfile openssh sudo git --noconfirm --needed
+    - pacman -Syu glibc bash binutils fakeroot pkgfile dpkg openssh sudo git --noconfirm --needed
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
@@ -93,7 +93,7 @@ buildpkg:
     - git config --global user.name "TabulateJarl8"
     - git config --global user.email "tabulatejarl8@gmail.com"
   script:
-    - ./installer.sh --make-pkg -b
+    - ./installer.sh --make-pkg -b -h
     - git clone ssh://aur@aur.archlinux.org/iicalc-beta.git iicalcaur
     - git config --global pull.rebase false
     - cp -v iicalc-arch/* iicalcaur/
