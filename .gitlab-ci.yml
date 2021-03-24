@@ -1,13 +1,10 @@
 stages:
-  - debian packager
+  - build
   - makerpm
   - buildrpm
-  - AppImage packager
-  - buildexe
-  - buildpkg
 debian packager:
   image: ubuntu:latest
-  stage: debian packager
+  stage: build
   script:
     - ./installer.sh --make-deb
   artifacts:
@@ -55,7 +52,7 @@ buildrpm:
   only:
     - development
 AppImage packager:
-    stage: AppImage packager
+    stage: build
     script:
         - apt update
         - apt install -y file wget
@@ -67,13 +64,13 @@ AppImage packager:
         - development
 buildexe:
   image: docker:latest
-  stage: buildexe
+  stage: build
   variables:
     DOCKER_DRIVER: overlay2
   services:
     - docker:dind
   before_script:
-    - cp .installer/windowsbuild/iicalc.iss ./
+    - cp .installer/build/windows/iicalc.iss ./
   script:
     - docker run --rm -i -v "$PWD:/work" amake/innosetup iicalc.iss
     - mv Output/iicalc.exe ./
@@ -85,9 +82,9 @@ buildexe:
 
 buildpkg:
   image: archlinux:latest
-  stage: buildpkg
+  stage: build
   before_script:
-    - pacman -Syu glibc bash binutils fakeroot pkgfile wget openssh sudo git --noconfirm --needed
+    - pacman -Syu glibc bash binutils fakeroot pkgfile openssh sudo git --noconfirm --needed
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
@@ -96,16 +93,11 @@ buildpkg:
     - git config --global user.name "TabulateJarl8"
     - git config --global user.email "tabulatejarl8@gmail.com"
   script:
-    - wget 'https://raw.githubusercontent.com/TabulateJarl8/files/master/debtoap'
-    - chmod +x debtoap
-    - bash debtoap -u
-    - bash debtoap -pb iicalc.deb
+    - ./installer.sh --make-pkg -b
     - git clone ssh://aur@aur.archlinux.org/iicalc-beta.git iicalcaur
     - git config --global pull.rebase false
-    - cp -v /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalc-beta/* iicalcaur/
-    - chmod -R 757 /builds/TurboWafflz/ImaginaryInfinity-Calculator/iicalcaur
+    - cp -v iicalc-arch/* iicalcaur/
     - cd iicalcaur
-    - sudo -u nobody makepkg --printsrcinfo > .SRCINFO
     - git add .
     - git commit -m "$CI_COMMIT_MESSAGE"
     - git show-ref

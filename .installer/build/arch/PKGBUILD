@@ -1,0 +1,27 @@
+# Maintainer: tabulatejarl8@gmail.com <TabulateJarl8>
+# Maintainer: TurboWafflz <turbowafflz@gmail.com>
+pkgname={{pkgname}}
+pkgver={{pkgver}}
+pkgrel={{pkgrel}}
+pkgdesc={{pkgdesc}}
+arch=('any')
+url="https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator"
+license=('GPL')
+groups=('')
+depends=('bash-completion' 'python-pip')
+optdepends=("dialog: GUI elements")
+makedepends=("tar")
+conflicts={{conflicts}}
+options=('!strip' '!emptydirs')
+install=iicalc.install
+source=("iicalc-$pkgver.deb::https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator/-/jobs/artifacts/development/raw/iicalc.deb?job=debian%20packager")
+sha512sums={{sha512sums}}
+
+package(){
+
+	# Extract package data
+	tar xf data.tar.xz -C "${pkgdir}"
+	rm debian-binary control.tar.xz data.tar.xz
+	sed -i -E 's/debian/aur/' ${pkgdir}/usr/share/iicalc/config.ini
+
+}

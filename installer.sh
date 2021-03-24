@@ -13,9 +13,9 @@ then
 	mkdir -p "iicalc-deb/usr/share"
 	mkdir -p "iicalc-deb/usr/share/applications"
 	mkdir -p "iicalc-deb/usr/share/icons"
-	cp ".installer/deb/control" "iicalc-deb/DEBIAN"
-	cp ".installer/deb/postinst" "iicalc-deb/DEBIAN"
-	cp ".installer/deb/prerm" "iicalc-deb/DEBIAN"
+	cp ".installer/build/deb/control" "iicalc-deb/DEBIAN"
+	cp ".installer/build/deb/postinst" "iicalc-deb/DEBIAN"
+	cp ".installer/build/deb/prerm" "iicalc-deb/DEBIAN"
 	chmod +x "iicalc-deb/DEBIAN/postinst"
 	chmod +x "iicalc-deb/DEBIAN/prerm"
 	systemPath="iicalc-deb/usr/share/iicalc/"
@@ -34,7 +34,7 @@ elif [ "$1" == "--make-appImage" ]
 		rm -rf "iicalc-appImage"
 		mkdir -p "iicalc-appImage/usr/bin"
 		mkdir -p "iicalc-appImage/usr/share"
-		cp ".installer/appImage/AppRun" "iicalc-appImage"
+		cp ".installer/build/appImage/AppRun" "iicalc-appImage"
 		chmod +x "iicalc-appImage/AppRun"
 		systemPath="iicalc-appImage/usr/share/iicalc/"
 		binPath="iicalc-appImage/usr/bin"
@@ -46,6 +46,16 @@ elif [ "$1" == "--make-appImage" ]
 		cp "iicalc.png" "iicalc-appImage"
 		installDesktopFile="true"
 		buildOnly="true"
+
+# Build arch pkg
+elif printf '%s\n' "$@" | grep -q -P '^--make-pkg$'
+	then
+		cp -f .installer/build/arch/buildscript.sh ./
+		bash buildscript.sh "$@"
+
+		rm buildscript.sh
+
+	exit 0
 #Install for Android
 elif [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
