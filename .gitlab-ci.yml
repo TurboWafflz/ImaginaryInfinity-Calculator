@@ -84,7 +84,7 @@ buildpkg:
   image: archlinux:latest
   stage: build
   before_script:
-    - pacman -Syu glibc bash binutils fakeroot pkgfile dpkg openssh sudo git --noconfirm --needed
+    - pacman -Syu glibc bash binutils fakeroot pkgfile dpkg openssh sudo git bash-completion python-pip --noconfirm --needed
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
