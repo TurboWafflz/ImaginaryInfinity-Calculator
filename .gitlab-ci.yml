@@ -93,6 +93,7 @@ buildpkg:
     - git config --global user.name "TabulateJarl8"
     - git config --global user.email "tabulatejarl8@gmail.com"
   script:
+    - rm -f iicalc.deb
     - ./installer.sh --make-pkg -b -h
     - git clone ssh://aur@aur.archlinux.org/iicalc-beta.git iicalcaur
     - git config --global pull.rebase false
