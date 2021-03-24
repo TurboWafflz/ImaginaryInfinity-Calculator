@@ -81,7 +81,7 @@ cd iicalc-arch
 if printf '%s\n' "$@" | grep -q -P '^--headless$|^-h$'; then
   sudo -u nobody makepkg --printsrcinfo > .SRCINFO
   sudo -u nobody makepkg -s
-  chmod -x *
+  chmod -x iicalc*.install PKGBUILD
 else
   makepkg --printsrcinfo > .SRCINFO
   makepkg -s
