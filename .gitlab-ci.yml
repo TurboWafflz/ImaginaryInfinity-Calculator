@@ -14,7 +14,7 @@ debian packager:
     - development
 makerpm:
   image: ubuntu:latest
-  stage: makerpm
+  stage: build-stage-2
   before_script:
     - apt update
     - export DEBIAN_FRONTEND=noninteractive
@@ -36,7 +36,7 @@ makerpm:
     - development
 buildrpm:
   image: fedora:latest
-  stage: build-stage-2
+  stage: buildrpm
   before_script:
     - dnf -y install rpmrebuild wget
     - wget https://raw.githubusercontent.com/TabulateJarl8/files/master/rpmrebuild.sh
