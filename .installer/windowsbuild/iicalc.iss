@@ -75,6 +75,7 @@ Source: ".installer\launchers\windows.bat"; DestDir: "C:\Windows"; DestName: "ii
 #emit ProcessFolder("system\systemPlugins\", "{app}\systemPlugins")
 ;Source: "system\systemPlugins\*"; DestDir: "{app}\systemPlugins"; Flags: ignoreversion recursesubdirs createallsubdirs
 #emit ProcessFolder("system\themes\", "{app}\themes")
+#emit ProcessFolder("system\docs\", "{app}\docs")
 ;Source: "system\themes\*"; DestDir: "{app}\themes"; Flags: ignoreversion recursesubdirs createallsubdirs
 #emit ProcessFolder("templates\", "{app}")
 Source: "README.md"; DestDir: "{app}"

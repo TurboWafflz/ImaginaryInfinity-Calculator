@@ -32,12 +32,14 @@ if($installDesktopFile -eq "true"){
 
 mkdir $systemPath 2>$null
 mkdir "$systemPath\systemPlugins" 2>$null
+mkdir "$systemPath\docs" 2>$null
 echo "Installing launcher..."
 cp $launcher "C:\Windows\iicalc.bat" -force
 echo "Installing builtin plugins..."
 cp system\systemPlugins\* "$systemPath\systemPlugins\" -Recurse -force
 cp "system\themes\" "$systemPath" -Recurse -force
 cp "templates\" "$systemPath" -Recurse -force
+cp system\docs\* "$systemPath\docs\" -Recurse -force
 echo "Installing main Python script.."
 cp main.py "$systemPath\iicalc.py" -force
 cp requirements.txt "$systemPath" -force
