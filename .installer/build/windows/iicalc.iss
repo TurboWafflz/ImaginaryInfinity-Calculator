@@ -78,7 +78,7 @@ Source: ".installer\launchers\windows.bat"; DestDir: "C:\Windows"; DestName: "ii
 #emit ProcessFolder("system\docs\", "{app}\docs")
 ;Source: "system\themes\*"; DestDir: "{app}\themes"; Flags: ignoreversion recursesubdirs createallsubdirs
 #emit ProcessFolder("templates\", "{app}")
-Source: "README.md"; DestDir: "{app}\docs\iicalc.md
+Source: "README.md"; DestDir: "{app}\docs\iicalc.md"
 Source: "messages.txt"; DestDir: "{app}"
 Source: "requirements.txt"; DestDir: "{app}"
 Source: "system\version.txt"; DestDir: "{app}"
