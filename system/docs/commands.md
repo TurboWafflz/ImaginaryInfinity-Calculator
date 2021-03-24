@@ -38,3 +38,7 @@
 
 - `store.store()` - Plugin GUI Store
 
+## Documentation:
+
+- `doc.view("<article>")` - View a help article
+- `doc.list()` - Show a list of all available articles
