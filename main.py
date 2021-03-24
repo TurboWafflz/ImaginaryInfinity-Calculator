@@ -262,7 +262,7 @@ if config["startup"]["safemode"] == "false":
 		if os.path.isdir(f"{pluginPath}/{plugin}"):
 			pluginFiles=os.listdir(f"{pluginPath}/{plugin}")
 			for pluginFile in pluginFiles:
-				if pluginFile[-3:] == ".py":
+				if pluginFile[-3:] == ".py" and not pluginFile.startswith("_"):
 					exec(f"from plugins.{plugin} import {pluginFile[:-3]}")
 		elif plugin[-3:] == ".py":
 			print(plugin)
