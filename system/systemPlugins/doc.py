@@ -5,18 +5,24 @@ import os
 import pydoc
 
 def findDoc(article):
-	if os.path.exists(config["paths"]["userPath"] + f"/docs/{article}.md"):
-		if not os.path.isdir(config["paths"]["userPath"] + f"/docs/{article}.md"):
-			return config["paths"]["userPath"] + f"/docs/{article}.md"
+	try:
+		if os.path.exists(config["paths"]["userPath"] + f"/docs/{article}.md"):
+			if not os.path.isdir(config["paths"]["userPath"] + f"/docs/{article}.md"):
+				return config["paths"]["userPath"] + f"/docs/{article}.md"
+			else:
+				return None
+	except:
+		pass
+	try:
+		elif os.path.exists(config["paths"]["systemPath"] + f"/docs/{article}.md"):
+			if not os.path.isdir(config["paths"]["systemPath"] + f"/docs/{article}.md"):
+				return config["paths"]["systemPath"] + f"/docs/{article}.md"
+			else:
+				return None
 		else:
 			return None
-	elif os.path.exists(config["paths"]["systemPath"] + f"/docs/{article}.md"):
-		if not os.path.isdir(config["paths"]["systemPath"] + f"/docs/{article}.md"):
-			return config["paths"]["systemPath"] + f"/docs/{article}.md"
-		else:
-			return None
-	else:
-		return None
+	except:
+		pass
 
 def view(article):
 	path=findDoc(article)
