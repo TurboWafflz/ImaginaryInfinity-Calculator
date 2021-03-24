@@ -73,10 +73,11 @@ cd iicalc-arch
 # generate SRCINFO
 if printf '%s\n' "$@" | grep -q -P '^--headless$|^-h$'; then
   sudo -u nobody makepkg --printsrcinfo > .SRCINFO
+  sudo -u nobody makepkg -s
 else
   makepkg --printsrcinfo > .SRCINFO
+  makepkg -s
 fi
-makepkg -s
 
 rm -rf "iicalc-${versionarr[0]}.deb" pkg/ src/
 
