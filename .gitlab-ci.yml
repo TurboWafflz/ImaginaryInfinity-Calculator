@@ -1,5 +1,6 @@
 stages:
   - build
+  - makerpm
   - buildrpm
 debian packager:
   image: ubuntu:latest
@@ -13,7 +14,7 @@ debian packager:
     - development
 makerpm:
   image: ubuntu:latest
-  stage: build
+  stage: makerpm
   before_script:
     - apt update
     - export DEBIAN_FRONTEND=noninteractive
