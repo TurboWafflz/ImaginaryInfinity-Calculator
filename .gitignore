@@ -18,3 +18,4 @@ Output/
 iicalc-arch/
 /buildscript.sh
 *.pkg*
+/iicalc.spec

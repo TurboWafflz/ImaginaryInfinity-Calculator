@@ -56,6 +56,28 @@ elif printf '%s\n' "$@" | grep -q -P '^--make-pkg$'
 		rm buildscript.sh
 
 	exit 0
+
+elif [ "$1" == "--make-rpm" ]
+	then
+		realdir="$(cd "$(dirname "$DIR")"; pwd)"
+
+		cp -f .installer/build/rhel/iicalc.spec ./
+		sed -i "s:{{maindir}}:$realdir:g" iicalc.spec
+		version=$(cat system/version.txt)
+		versionarr=(${version//-/ })
+		if [ "${#versionarr[@]}" -eq "1" ]; then
+		  versionarr+=('1')
+		fi
+
+		sed -i "s/{{pkgver}}/${versionarr[0]}/g" iicalc.spec
+		sed -i "s/{{pkgrel}}/${versionarr[1]}/g" iicalc.spec
+
+		rpmpath=$(rpmbuild --target noarch -bb iicalc.spec | awk -F': ' '/Wrote: /{print $2}')
+
+		mv "$rpmpath" ./iicalc.rpm
+
+		exit
+
 #Install for Android
 elif [ "$(echo $PREFIX | grep -o 'com.termux')" != "" ]
 then
