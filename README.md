@@ -19,8 +19,7 @@ You can install the AUR package or download the package below. To install from t
 
 ```bash
 git clone https://aur.archlinux.org/iicalc-beta.git && cd iicalc-beta
-makepkg -s
-sudo pacman -U *.pkg*
+makepkg -si
 ```
 
 Or you can install it with the below package:
