@@ -2,7 +2,7 @@
 ##Copyright 2020-2021 Finian Wright and Connor Sample
 ##https://turbowafflz.gitlab.io/iicalc.html
 import sys
-if not "-V" in sys.argv and not "--version" in sys.argv:
+if "-V" not in sys.argv and "--version" not in sys.argv and '--ensurereqs' not in sys.argv and '-e' not in sys.argv:
 	print("Loading...")
 global cplx
 global onlineMode
@@ -32,8 +32,9 @@ import atexit
 from pathlib import Path
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--config", "-c", type=str, help="Optional config file")
-parser.add_argument("--version", "-V", action="store_true", help="Print Version")
+parser.add_argument("--config", "-c", type=str, help="Specify a file path to use as the config file")
+parser.add_argument("--ensurereqs", "-e", action="store_true", help="Ensure that all requirements are satisfied")
+parser.add_argument("--version", "-V", action="store_true", help="Print version and exit")
 #parser.add_argument("--viewstoreplugin", type=str, help="View plugin on store page. For custom iicalc:// URI")
 #parser.add_argument("--installpmplugin", type=str, help="Prompt to install plugin with pm. For custom iicalc:// URI")
 args = parser.parse_args()
@@ -46,7 +47,7 @@ if False:
 	print("There is literally no way for this message to appear unless someone tampered with the source code")
 	input("[Press enter to continue]")
 
-if args.version is False:
+if args.version is False and args.ensurereqs is False:
 	print("Importing plugins...")
 	print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 
@@ -75,7 +76,7 @@ else:
 	#Load config from ~/.iicalc
 	try:
 		home = os.path.expanduser("~")
-		if args.version is False:
+		if args.version is False and args.ensurereqs is False:
 			print("Loading config...")
 		config = configparser.ConfigParser()
 		#test if config is broken
@@ -221,6 +222,22 @@ if args.version is True:
 	else:
 		print("Version file not found: " + config["paths"]["systemPath"] + "/version.txt")
 		exit()
+
+if args.ensurereqs is True:
+	if config['installation']['installtype'] == 'portable':
+		if os.path.isfile('requirements.txt'):
+			subprocess.call([sys.executable, '-m', 'pip', 'install', '-r', 'requirements.txt'])
+			exit()
+		else:
+			print('requirements.txt not found in current directory')
+			exit(1)
+	else:
+		if os.path.isfile(config['paths']['systempath'] + '/requirements.txt'):
+			subprocess.call([sys.executable, '-m', 'pip', 'install', '-r', f'{config["paths"]["systemPath"]}/requirements.txt'])
+			exit()
+		else:
+			print(f'requirements.txt not found in {config["paths"]["systemPath"]}')
+			exit(1)
 
 pluginPath=config["paths"]["userPath"] + "/plugins/"
 #Add system path to path to load built in plugins

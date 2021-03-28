@@ -58,6 +58,21 @@ The calculator can be installed on Windows by downloading and running the window
 
 ----
 
+## Command usage
+
+```sh
+usage: iicalc [-h] [--config CONFIG] [--ensurereqs] [--version]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --config CONFIG, -c CONFIG
+                        Specify a file path to use as the config file
+  --ensurereqs, -e      Ensure that all requirements are satisfied
+  --version, -V         Print version and exit
+```
+
+----
+
 ## Supported platforms
 **ImaginaryInfinity Calculator fully supports the following platforms:**
 - **Linux**
