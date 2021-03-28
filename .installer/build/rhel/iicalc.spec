@@ -7,6 +7,7 @@ URL: https://turbowafflz.gitlab.io/iicalc.html
 Packager: Connor Sample
 Requires: bash
 Requires: python3
+Requires: dialog
 
 %description
 ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's command line interface is designed to resemble that of some graphing calculators. New functionality can easily be added by downloading plugins with the built in package manager or by placing Python files with additional functions in the plugins directory.
