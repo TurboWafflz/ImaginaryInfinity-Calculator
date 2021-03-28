@@ -70,7 +70,7 @@ buildpkg:
     - ./installer.sh --make-pkg -b -h
     - git clone ssh://aur@aur.archlinux.org/iicalc-beta.git iicalcaur
     - git config --global pull.rebase false
-    - cp -v iicalc-arch/* iicalcaur/
+    - cp -rv iicalc-arch/. iicalcaur
     - cd iicalcaur
     - git add .
     - git commit -m "$CI_COMMIT_MESSAGE"
