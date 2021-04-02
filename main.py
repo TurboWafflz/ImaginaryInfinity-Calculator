@@ -179,7 +179,7 @@ class ConfigInit:
 		return self
 
 	def autoInit(self):
-		self.setConfigPath().readUserConfig().formatUserConfig().updateUserConfig().verifyConfigIntegrity().backup()
+		self.setConfigPath().readUserConfig().updateUserConfig().formatUserConfig().verifyConfigIntegrity().backup()
 		return self
 
 	def backup(self):
