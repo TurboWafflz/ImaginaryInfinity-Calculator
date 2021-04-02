@@ -102,6 +102,10 @@ optional arguments:
 - MacOS Catalina 10.15.7
 - Windows 10
 
+**Python version:**
+
+ImaginaryInfinity Calculator has been tested to work on Python 3.6 and above, but support in the future is not guaranteed.
+
 <hr style="border: 1px solid white">
 
 ## Plugins
