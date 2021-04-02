@@ -51,168 +51,146 @@ if args.version is False and args.ensurereqs is False:
 	print("Importing plugins...")
 	print("Plugin failing to start? You can cancel loading the current plugin by pressing Ctrl + C.")
 
-#Check if config manually specified
-if args.config != None:
-	if os.path.isfile(args.config):
-		config = configparser.ConfigParser()
-		#test if config is broken
-		try:
-			if config.read(args.config) == []:
-				raise FileNotFoundError
+
+#########################################
+# Class for initializing the config file
+#########################################
+
+class ConfigInit:
+	def __init__(self, manualPath=None):
+		self.config = configparser.ConfigParser()
+		self.configPath = manualPath
+
+	def setConfigPath(self):
+		if self.configPath is None: # No manual config path specified; set config path
+			if os.path.isfile(os.path.join(os.path.expanduser("~"), ".iicalc", "config.ini")):
+				self.configPath = os.path.join(os.path.expanduser("~"), ".iicalc", "config.ini")
+			elif os.path.isfile("./config.ini"):
+				self.configPath = "./config.ini"
 			else:
-				if "{}" in config['system']['userVersion']:
-					with open(config['paths']['systemPath'] + "/version.txt") as f:
-						config['system']['userVersion'] = config['system']['userVersion'].format(f.read().strip())
-					with open(args.config, "w") as configFile:
-						config.write(configFile)
-		except Exception as e:
-			print("Error in config file at " + args.config + ": " + str(e) + ". Exiting")
-			exit()
-		configPath = args.config
-	else:
-		print("Invalid config file location specified: " + args.config)
-		exit()
-else:
-	#Load config from ~/.iicalc
-	try:
-		home = os.path.expanduser("~")
-		if args.version is False and args.ensurereqs is False:
-			print("Loading config...")
-		config = configparser.ConfigParser()
-		#test if config is broken
-		try:
-			if config.read(home + "/.iicalc/config.ini") == []:
 				raise FileNotFoundError("Config file not found")
+
+		return self
+
+	def readUserConfig(self, throwError=False):
+		try:
+			self.config.read(self.configPath)
 		except Exception as e:
-			if input("The config at " + home + "/.iicalc/config.ini is broken. Restore the last backup? (" + time.ctime(os.stat(home + "/.iicalc/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
-				#Restore config
-				try:
-					os.remove(home + "/.iicalc/config.ini")
-				except:
-					pass
-				shutil.copyfile(home + "/.iicalc/config.ini.save", home + "/.iicalc/config.ini")
-				try:
-					config = configparser.ConfigParser()
-					if config.read(home + "/.iicalc/config.ini") == []:
-						raise FileNotFoundError("Config file not found")
-				except Exception as e:
-					print("Error: " + str(e) + ". Exiting")
-					exit()
+
+			if throwError == True:
+				print("Error in config file at " + os.path.abspath(self.configPath) + ": " + str(e) + ". Exiting")
+				exit(1)
+
+			# Config is broken
+			if os.path.isfile(os.path.join(os.path.dirname(self.configPath), "config.ini.save")):
+				if input("The config at " + os.path.abspath(self.configPath) + " is broken. Restore the last backup? (" + time.ctime(os.stat(os.path.join(os.path.dirname(self.configPath), "config.ini.save")).st_mtime) + ") [Y/n] ").lower() != "n":
+					try:
+						os.remove(os.path.abspath(self.configPath))
+					except Exception as e:
+						pass
+
+					shutil.copyfile(os.path.join(os.path.dirname(self.configPath), "config.ini.save"), os.path.abspath(self.configPath))
+
+					self.readUserConfig(throwError=True)
+
+				else:
+					print("Warning: " + str(e))
 			else:
-				print("Fatal Error: " + str(e))
-				exit()
+				print("Warning: " + str(e))
+				print("[" + os.path.join(os.path.dirname(self.configPath), "config.ini.save") + " does not exist to the config file cannot be restored to a previous state")
+				input("[Press enter to continue]")
 
-		configPath = home + "/.iicalc/config.ini"
+		return self
 
-		if not config.has_section("paths"):
-			if input("The config at " + configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(str(Path(configPath).parent) + "/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
-				#Restore config
-				try:
-					os.remove(configPath)
-				except:
-					pass
-				shutil.copyfile(str(Path(configPath).parent) + "/config.ini.save", configPath)
-				try:
-					config = configparser.ConfigParser()
-					if config.read(configPath) == []:
-						raise FileNotFoundError("Config file not found")
-				except Exception as e:
-					print("Error: " + str(e) + ". Exiting")
-					exit()
 
-		# Format things that need to be changed
+	def updateUserConfig(self):
+		# Update user config from system-wide config if applicable
+		with open(self.config['paths']['systemPath'] + "/version.txt") as f:
+			systemVersion = f.read().strip()
+		if os.path.isfile(self.config['paths']['systemPath'] + "/config.ini") and self.config['system']['userVersion'].strip() != systemVersion:
+			systemPath = self.config['paths']['systemPath']
+			oldConfig = []
+
+			# Load old config into memory
+			for each_section in self.config.sections():
+				for (each_key, each_val) in self.config.items(each_section):
+					oldConfig.append((each_section, each_key, each_val))
+
+			# Read new config
+			self.config = configparser.ConfigParser()
+			self.config.read(systemPath + "/config.ini")
+
+			# Restore user preferences
+			for i in range(len(oldConfig)):
+				if oldConfig[i][0] == "installation" and oldConfig[i][1] != "installtype":
+					if oldConfig[i][0] == "system" and oldConfig[i][1] == "userversion":
+						self.config[oldConfig[i][0]][oldConfig[i][1]] = systemVersion
+					else:
+						try:
+							if not self.config.has_section(oldConfig[i][0]):
+								self.config.add_section(oldConfig[i][0])
+							self.config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
+						except Exception as e:
+							print("Warning: " + str(e))
+
+			# Write new config
+			with open(self.configPath, "w") as cf:
+				self.config.write(cf)
+
+		return self
+
+	def formatUserConfig(self):
+		# Format user config if it's new
 		formatted = False
-		if "{}" in config['paths']['userPath']:
-			config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
+		if "{}" in self.config['paths']['userPath']:
+			self.config["paths"]["userPath"] = self.config["paths"]["userPath"].format(os.path.expanduser("~"))
 			formatted = True
-		if "{}" in config['system']['userVersion']:
-			with open(config['paths']['systemPath'] + "/version.txt") as f:
-				config['system']['userVersion'] = config['system']['userVersion'].format(f.read().strip())
+		if "{}" in self.config['system']['userVersion']:
+			with open(self.config['paths']['systemPath'] + "/version.txt") as f:
+				self.config['system']['userVersion'] = self.config['system']['userVersion'].format(f.read().strip())
 			formatted = True
 
 		if formatted == True:
-			with open(configPath, "w") as configFile:
-				config.write(configFile)
+			with open(self.configPath, "w") as configFile:
+				self.config.write(configFile)
 
-		#Update config file from share config for installed
-		with open(config['paths']['systemPath'] + "/version.txt") as f:
-			systemVersion = f.read().strip()
-		if os.path.isfile(config['paths']['systemPath'] + "/config.ini") and config['system']['userVersion'].strip() != systemVersion:
-			systemPath = config['paths']['systemPath']
-			oldConfig = []
-			for each_section in config.sections():
-				for (each_key, each_val) in config.items(each_section):
-					oldConfig.append((each_section, each_key, each_val))
-			config = configparser.ConfigParser()
-			config.read(systemPath + "/config.ini")
-			for i in range(len(oldConfig)):
-				if oldConfig[i][1] != "installtype":
-					if oldConfig[i][1] == "userversion":
-						config[oldConfig[i][0]][oldConfig[i][1]] = systemVersion
-					else:
-						try:
-							if not config.has_section(oldConfig[i][0]):
-								config.add_section(oldConfig[i][0])
-							config[oldConfig[i][0]][oldConfig[i][1]] = oldConfig[i][2]
-						except Exception as e:
-							print("Warning: " + str(e))
-			with open(configPath, "w+") as cf:
-				config.write(cf)
+		return self
 
-	#Load config from current directory
-	except Exception as e:
-		try:
-			if args.version is False:
-				print("Loading portable config...")
-			config = configparser.ConfigParser()
-			try:
-				if config.read("config.ini") == []:
-					raise FileNotFoundError("Config file not found")
-				else:
-					if "{}" in config['system']['userVersion']:
-						with open(config['paths']['systemPath'] + "/version.txt") as f:
-							config['system']['userVersion'] = config['system']['userVersion'].format(f.read().strip())
-						with open(configPath, "w") as configFile:
-							config.write(configFile)
-			except Exception as e:
-				if input("The config at ./config.ini is broken. Restore the last backup? (" + time.ctime(os.stat("config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
-					#Restore config
-					try:
-						os.remove("config.ini")
-					except:
-						pass
-					shutil.copyfile("config.ini.save", "config.ini")
-					try:
-						config = configparser.ConfigParser()
-						if config.read("config.ini") == []:
-							raise FileNotFoundError("Config file not found")
-					except Exception as e:
-						print("Error: " + str(e) + ". Exiting")
-						exit()
-				else:
-					print("Fatal Error: " + str(e))
-					exit()
-			configPath = "config.ini"
-		except:
-			print("Fatal error: Cannot load config")
-			exit()
+	def verifyConfigIntegrity(self):
+		#Verify that config has correct sections
+		if not (self.config.has_section("paths") and self.config.has_section("dev") and self.config.has_section("startup") and self.config.has_section("updates") and self.config.has_section("appearance") and self.config.has_section("installation") and self.config.has_section("system")):
+			if input("The config at " + self.configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(os.path.join(os.path.dirname(self.configPath), "config.ini.save")).st_mtime) + ") [Y/n] ").lower() != "n":
+				#Restore config
+				try:
+					os.remove(self.configPath)
+				except:
+					pass
 
-#Verify that config has correct sections
-if not (config.has_section("paths") and config.has_section("dev") and config.has_section("startup") and config.has_section("updates") and config.has_section("appearance") and config.has_section("installation") and config.has_section("system")):
-	if input("The config at " + configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(str(Path(configPath).parent) + "/config.ini.save").st_mtime) + ") [Y/n] ").lower() != "n":
-		#Restore config
-		try:
-			os.remove(configPath)
-		except:
-			pass
-		shutil.copyfile(str(Path(configPath).parent) + "/config.ini.save", configPath)
-		try:
-			config = configparser.ConfigParser()
-			if config.read(configPath) == []:
-				raise FileNotFoundError("Config file not found")
-		except Exception as e:
-			print("Error: " + str(e) + ". Exiting")
-			exit()
+				shutil.copyfile(os.path.join(os.path.dirname(self.configPath), "config.ini.save"), os.path.abspath(self.configPath))
+
+				self.readUserConfig(throwError=True)
+			else:
+				print("Warning: config does not contain all needed sections.")
+
+		return self
+
+	def autoInit(self):
+		self.setConfigPath().readUserConfig().formatUserConfig().updateUserConfig().verifyConfigIntegrity()
+		return self
+
+#########################################
+# Load config
+#########################################
+
+if args.version is False and args.ensurereqs is False:
+	print("Loading config...")
+configInit = ConfigInit(args.config).autoInit()
+
+# Set variables
+config = configInit.config
+configPath = configInit.configPath
+
+
 
 if args.version is True:
 	if os.path.isfile(config["paths"]["systemPath"] + "/version.txt"):
