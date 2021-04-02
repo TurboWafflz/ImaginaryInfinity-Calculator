@@ -60,6 +60,7 @@ class ConfigInit:
 	def __init__(self, manualPath=None):
 		self.config = configparser.ConfigParser()
 		self.configPath = manualPath
+		self.configBroken = False
 
 	def setConfigPath(self):
 		if self.configPath is None: # No manual config path specified; set config path
@@ -95,10 +96,12 @@ class ConfigInit:
 
 				else:
 					print("Warning: " + str(e))
+					self.configBroken = True
 			else:
 				print("Warning: " + str(e))
 				print("[" + os.path.join(os.path.dirname(self.configPath), "config.ini.save") + " does not exist to the config file cannot be restored to a previous state")
 				input("[Press enter to continue]")
+				self.configBroken = True
 
 		return self
 
@@ -171,12 +174,19 @@ class ConfigInit:
 				self.readUserConfig(throwError=True)
 			else:
 				print("Warning: config does not contain all needed sections.")
+				self.configBroken = True
 
 		return self
 
 	def autoInit(self):
-		self.setConfigPath().readUserConfig().formatUserConfig().updateUserConfig().verifyConfigIntegrity()
+		self.setConfigPath().readUserConfig().formatUserConfig().updateUserConfig().verifyConfigIntegrity().backup()
 		return self
+
+	def backup(self):
+		#Backup config file
+		if self.configBroken == False:
+			with open(os.path.join(os.path.dirname(self.configPath), "config.ini.save"), "w") as f:
+				self.config.write(f)
 
 #########################################
 # Load config
@@ -310,10 +320,6 @@ if config["startup"]["startserver"] == "true":
 	warmupThread.start()
 else:
 	warmupThread = None
-
-#Backup config file
-with open(str(Path(configPath).parent) + "/config.ini.save", "w") as f:
-	config.write(f)
 
 # #Complex toggle
 # def complex(onOff):
