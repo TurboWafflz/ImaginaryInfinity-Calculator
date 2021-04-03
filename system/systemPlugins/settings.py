@@ -1,5 +1,5 @@
 import configparser
-from systemPlugins.core import clear, config, configPath, signal, theme, restart, plugins, update
+from systemPlugins.core import clear, config, configPath, signal, theme, restart, plugins, update, loadConfigFile
 import platform
 from plugins import *
 import argparse
@@ -48,35 +48,10 @@ def editor():
 	except ExecutableNotFound:
 		print(theme["styles"]["error"] + "Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)" + theme["styles"]["normal"])
 		return
-	#Check if config manually specified
-	if args.config != None:
-		if os.path.isfile(args.config):
-			config = configparser.ConfigParser()
-			config.read(args.config)
-			configPath = args.config
-		else:
-			print("Invalid config file location specified: " + args.config)
-			exit()
-	else:
-		#Load config from ~/.iicalc
-		try:
-			home = os.path.expanduser("~")
-			config = configparser.ConfigParser()
-			config.read(home + "/.iicalc/config.ini")
-			config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-			configPath = home + "/.iicalc/config.ini"
-			with open(configPath, "w") as configFile:
-				config.write(configFile)
-				configFile.close()
-		#Load config from current directory
-		except:
-			try:
-				config = configparser.ConfigParser()
-				config.read("config.ini")
-				configPath = "config.ini"
-			except:
-				print("Fatal error: Cannot load config")
-				exit()
+
+	# Load config
+	config, _ = loadConfigFile(args)
+
 	while True:
 		#Define menu options
 		choices = [("Theme", "The colors the calculator will use"),

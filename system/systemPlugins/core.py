@@ -30,34 +30,36 @@ parser.add_argument("--config", "-c", type=str, help="Optional config file")
 args = parser.parse_args()
 
 #Check if config manually specified
-if args.config != None:
-	if os.path.isfile(args.config):
-		config = configparser.ConfigParser()
-		config.read(args.config)
-		configPath = args.config
-	else:
-		print("Invalid config file location specified: " + args.config)
-		exit()
-else:
-	#Load config from ~/.iicalc
-	try:
-		home = os.path.expanduser("~")
-		config = configparser.ConfigParser()
-		config.read(home + "/.iicalc/config.ini")
-		config["paths"]["userPath"]=config["paths"]["userPath"].format(home)
-		configPath = home + "/.iicalc/config.ini"
-		with open(configPath, "w") as configFile:
-			config.write(configFile)
-			configFile.close()
-	#Load config from current directory
-	except:
-		try:
+def loadConfigFile(args):
+	if args.config != None:
+		if os.path.isfile(args.config):
 			config = configparser.ConfigParser()
-			config.read("config.ini")
-			configPath = "config.ini"
-		except:
-			print("Fatal error: Cannot load config")
+			config.read(args.config)
+			configPath = args.config
+		else:
+			print("Invalid config file location specified: " + args.config)
 			exit()
+	else:
+		#Load config from ~/.iicalc
+		home = os.path.expanduser("~")
+		if os.path.isfile(os.path.join(home, ".iicalc", "config.ini")):
+			config = configparser.ConfigParser()
+			config.read(home + "/.iicalc/config.ini")
+			configPath = os.path.join(home, ".iicalc", "config.ini")
+		#Load config from current directory
+		elif os.path.isfile(os.path.abspath("./config.ini")):
+			try:
+				config = configparser.ConfigParser()
+				config.read(os.path.abspath("./config.ini"))
+				configPath = os.path.abspath("config.ini")
+			except Exception:
+				print("Fatal error: Cannot load config")
+				exit()
+
+	return config, configPath
+
+config, configPath = loadConfigFile(args)
+
 #Get paths
 themePath = config["paths"]["userPath"] + "/themes/"
 pluginPath = config["paths"]["userPath"] + "/plugins/"

@@ -49,7 +49,7 @@ if args.version is False and args.ensurereqs is False:
 # Class for initializing the config file
 #########################################
 
-class ConfigInit:
+class ConfigLoader:
 	def __init__(self, manualPath=None):
 		self.config = configparser.ConfigParser()
 		self.configPath = manualPath
@@ -60,7 +60,7 @@ class ConfigInit:
 			if os.path.isfile(os.path.join(os.path.expanduser("~"), ".iicalc", "config.ini")):
 				self.configPath = os.path.join(os.path.expanduser("~"), ".iicalc", "config.ini")
 			elif os.path.isfile("./config.ini"):
-				self.configPath = "./config.ini"
+				self.configPath = os.path.abspath("./config.ini")
 			else:
 				raise FileNotFoundError("Config file not found")
 
@@ -72,18 +72,18 @@ class ConfigInit:
 		except Exception as e:
 
 			if throwError == True:
-				print("Error in config file at " + os.path.abspath(self.configPath) + ": " + str(e) + ". Exiting")
+				print("Error in config file at " + self.configPath + ": " + str(e) + ". Exiting")
 				exit(1)
 
 			# Config is broken
 			if os.path.isfile(os.path.join(os.path.dirname(self.configPath), "config.ini.save")):
-				if input("The config at " + os.path.abspath(self.configPath) + " is broken. Restore the last backup? (" + time.ctime(os.stat(os.path.join(os.path.dirname(self.configPath), "config.ini.save")).st_mtime) + ") [Y/n] ").lower() != "n":
+				if input("The config at " + self.configPath + " is broken. Restore the last backup? (" + time.ctime(os.stat(os.path.join(os.path.dirname(self.configPath), "config.ini.save")).st_mtime) + ") [Y/n] ").lower() != "n":
 					try:
-						os.remove(os.path.abspath(self.configPath))
+						os.remove(self.configPath)
 					except Exception as e:
 						pass
 
-					shutil.copyfile(os.path.join(os.path.dirname(self.configPath), "config.ini.save"), os.path.abspath(self.configPath))
+					shutil.copyfile(os.path.join(os.path.dirname(self.configPath), "config.ini.save"), self.configPath)
 
 					self.readUserConfig(throwError=True)
 
@@ -162,7 +162,7 @@ class ConfigInit:
 				except:
 					pass
 
-				shutil.copyfile(os.path.join(os.path.dirname(self.configPath), "config.ini.save"), os.path.abspath(self.configPath))
+				shutil.copyfile(os.path.join(os.path.dirname(self.configPath), "config.ini.save"), self.configPath)
 
 				self.readUserConfig(throwError=True)
 			else:
@@ -187,7 +187,7 @@ class ConfigInit:
 
 if args.version is False and args.ensurereqs is False:
 	print("Loading config...")
-configInit = ConfigInit(args.config).autoInit()
+configInit = ConfigLoader(args.config).autoInit()
 
 # Set variables
 config = configInit.config
@@ -487,7 +487,7 @@ def main(config=config, warmupThread=warmupThread):
 				if calc == 'clear':
 					clear()
 					pr=0
-				if calc == "restart()":
+				if calc == "restart()" or calc == "settings.editor()":
 					if "readline" in sys.modules:
 						readline.set_history_length(1000)
 						readline.write_history_file(config["paths"]["userPath"] + "/.history")
