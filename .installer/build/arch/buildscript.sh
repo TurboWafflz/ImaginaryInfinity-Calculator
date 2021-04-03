@@ -80,12 +80,22 @@ cd iicalc-arch
 
 # generate SRCINFO
 if printf '%s\n' "$@" | grep -q -P '^--headless$|^-h$'; then
+	# Change config from `aur` to `arch`
+	sed -i "s;s/debian/aur/;s/debian/arch/;" PKGBUILD
+	sudo -u nobody makepkg -s
+
+	# Change config back to aur
+	sed -i "s;s/debian/arch/;s/debian/aur/;" PKGBUILD
   sudo -u nobody makepkg --printsrcinfo > .SRCINFO
-  sudo -u nobody makepkg -s
   chmod -x iicalc*.install PKGBUILD .SRCINFO
 else
-  makepkg --printsrcinfo > .SRCINFO
-  makepkg -s
+	# Change config from `aur` to `arch`
+	sed -i "s;s/debian/aur/;s/debian/arch/;" PKGBUILD
+	makepkg -s
+
+	# Change config back to aur
+	sed -i "s;s/debian/arch/;s/debian/aur/;" PKGBUILD
+	makepkg --printsrcinfo > .SRCINFO
 fi
 
 rm -rf "iicalc-${versionarr[0]}.deb" pkg/ src/

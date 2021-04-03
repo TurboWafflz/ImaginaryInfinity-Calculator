@@ -99,6 +99,7 @@ optional arguments:
 - Red Hat Linux
 - Alpine Linux
 - Android (Termux)
+- Void Linux
 - MacOS Catalina 10.15.7
 - Windows 10
 

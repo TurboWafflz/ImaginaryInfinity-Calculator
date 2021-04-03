@@ -102,3 +102,6 @@ May emit UV radiation
 We started the fire
 Spill proof!
 Arachnophobic!
+Warning: If usage of iiCalc results in the spontaneous generation of cookies, check the seal before consumption.
+Feature request? Submit a new issue at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues
+iiCalc is not a French spy and therefore does not require you to be suspicious of such things.

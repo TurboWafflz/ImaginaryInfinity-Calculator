@@ -418,7 +418,7 @@ def main(config=config, warmupThread=warmupThread):
 				readline.read_history_file(config["paths"]["userPath"] + "/.history")
 			except FileNotFoundError:
 				pass
-			readline.set_history_length(1000)
+			readline.set_history_length(10000)
 			atexit.register(readline.write_history_file, config["paths"]["userPath"] + "/.history")
 
 		#Display start up stuff
@@ -489,7 +489,7 @@ def main(config=config, warmupThread=warmupThread):
 					pr=0
 				if calc == "restart()" or calc == "settings.editor()":
 					if "readline" in sys.modules:
-						readline.set_history_length(1000)
+						readline.set_history_length(10000)
 						readline.write_history_file(config["paths"]["userPath"] + "/.history")
 				eqn=calc
 				#ability to disable subtraction from last answer
