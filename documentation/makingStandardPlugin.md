@@ -74,7 +74,6 @@ print(theme["styles"]["important"] + importantVariable)
 The calculator will send a signal to plugins when certain events happen. This can be taken advantage of by making a function in your plugin with the same name as the signal name. Some signals take arguments, so that you can do something with the data. Available signal names can be found below:
  - `onRestart` - Activated when the calculator restarts
  - `onPluginsLoaded` - Activated when all plugins have been loaded
- - `onOnlineStart` - Activated when the calculator is started in repl.it
  - `onLinuxStart` - Activated when the calculator is started on a Linux operating system
  - `onHaikuStart` - Activated when the calculator is started on Haiku
  - `onWindowsStart` - Activated when the calculator is started on Windows

@@ -5,10 +5,6 @@ import sys
 if "-V" not in sys.argv and "--version" not in sys.argv and '--ensurereqs' not in sys.argv and '-e' not in sys.argv:
 	print("Loading...")
 global cplx
-global onlineMode
-global debugMode
-debugMode=False
-
 
 from colorama import Fore, Back, Style
 import colorama
@@ -391,44 +387,33 @@ def main(config=config, warmupThread=warmupThread):
 
 	oldcalc=" "
 	try:
-		global debugMode
-		try:
-			if(sys.argv[1]=="online"):
-				signal("onOnlineStart")
-				import readline
+		#Send signal and clear screen for different OSs
+		if(platform.system()=="Linux" or "BSD" in platform.system()):
+			signal("onLinuxStart")
+			os.system("clear")
+			import readline
+		elif(platform.system()=="Haiku"):
+			signal("onHaikuStart")
+			os.system("clear")
+			import readline
+		elif(platform.system()=="Windows"):
+			signal("onWindowsStart")
+			os.system("cls")
+			colorama.init(convert=True)
+		elif(platform.system()=="Darwin"):
+			import readline
+			signal("onMacStart")
+			os.system("clear")
+		else:
+			signal("onUnknownStart")
+			try:
 				os.system("clear")
-				onlineMode=True
-				print(Fore.RED + Style.BRIGHT + "Online mode" + Fore.RESET + Style.NORMAL)
-			else:
-				raise ValueError
-		except:
-			#Send signal and clear screen for different OSs
-			if(platform.system()=="Linux" or "BSD" in platform.system()):
-				signal("onLinuxStart")
-				os.system("clear")
-				import readline
-			elif(platform.system()=="Haiku"):
-				signal("onHaikuStart")
-				os.system("clear")
-				import readline
-			elif(platform.system()=="Windows"):
-				signal("onWindowsStart")
-				os.system("cls")
-				colorama.init(convert=True)
-			elif(platform.system()=="Darwin"):
-				import readline
-				signal("onMacStart")
-				os.system("clear")
-			else:
-				signal("onUnknownStart")
+			except:
 				try:
-					os.system("clear")
+					os.system("cls")
 				except:
-					try:
-						os.system("cls")
-					except:
-						pass;
-				print("Unknown OS, command history and line navigation not available.")
+					pass
+			print("Unknown OS, command history and line navigation not available.")
 
 		#Load line history
 		if "readline" in sys.modules:
