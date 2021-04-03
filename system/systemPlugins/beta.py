@@ -2,7 +2,6 @@ import re
 from functools import reduce
 from math import gcd
 import colorama
-import math
 
 class style:
 	normal=colorama.Fore.RESET + colorama.Back.RESET + colorama.Style.NORMAL

@@ -12,11 +12,9 @@ from random import *
 import time
 from math import *
 from cmath import *
-import pkgutil
 import platform
 import os
 import requests
-import json
 import shutil
 import configparser
 import subprocess
@@ -25,7 +23,6 @@ from packaging import version
 import decimal
 import argparse
 import atexit
-from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Specify a file path to use as the config file")

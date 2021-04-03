@@ -8,7 +8,6 @@ from systemPlugins import pm
 import sys
 import subprocess
 import re
-import json
 from pkg_resources import Requirement
 
 #init

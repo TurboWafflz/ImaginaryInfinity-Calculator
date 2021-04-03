@@ -1,10 +1,10 @@
 import configparser
-import sys
-from systemPlugins.core import *
+from systemPlugins.core import clear, config, configPath, signal, theme, restart, plugins, update
 import platform
 from plugins import *
 import argparse
 from dialog import Dialog, ExecutableNotFound
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--config", "-c", type=str, help="Optional config file")
@@ -28,12 +28,12 @@ def settingsSignal(sig,config,args=""):
 				resp = eval(plugin + ".settings." + sig + "(" + args + ", config)")
 				if type(resp) == configparser.ConfigParser:
 					return resp
-		except Exception as e:
+		except Exception:
 			pass
 
 def list():
 	for section in config.sections():
-		print(theme["styles"]["important"] + section + Fore.RESET + Back.RESET + Style.NORMAL)
+		print(theme["styles"]["important"] + section + theme['styles']['normal'])
 		for (key, val) in config.items(section):
 			print(key + " = " + val)
 		print()
@@ -96,7 +96,7 @@ def editor():
 			try:
 				exec("from plugins import " + plugin[:-3])
 				exec("choices += " + plugin[:-3] + ".settings.choices")
-			except Exception as e:
+			except Exception:
 				pass
 				#print(e); import traceback; traceback.print_exc(); import sys; sys.exit(0)
 		choices += [("Save and exit", "Exit the settings editor"), ("Exit without saving", "Exit the settings editor without saving changes")]

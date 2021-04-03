@@ -1,7 +1,7 @@
 import configparser
 import colorama
-from systemPlugins.core import *
-import sys
+from systemPlugins.core import theme, clear, config
+from dialog import Dialog
 import platform
 
 def cmdEditor():

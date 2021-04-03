@@ -6,16 +6,11 @@ from colorama import Fore
 from colorama import Back
 from colorama import Style
 import colorama
-import math
 import sys
-import json
 import zipfile
-import urllib.request
 import requests
 import shutil
 from pathlib import Path
-import time
-from shutil import copytree, rmtree, copy
 import configparser
 import re
 import argparse
@@ -136,7 +131,7 @@ for plugin in plugins:
 			exec("from plugins import " + plugin[:-3])
 		except KeyboardInterrupt:
 			print("Cancelled loading of " + plugin )
-		except Exception as e:
+		except Exception:
 			pass
 
 #Restart
@@ -193,10 +188,8 @@ def clear():
 	#Just clear on known operating systems
 	if(platform.system()=="Linux" or "BSD" in platform.system()):
 		os.system("clear")
-		import readline
 	elif(platform.system()=="Haiku"):
 		os.system("clear")
-		import readline
 	elif(platform.system()=="Windows"):
 		os.system("cls")
 		colorama.init(convert=True)
@@ -433,7 +426,7 @@ def signal(sig,args=""):
 				except NameError:
 					# Catch error for trying to signal to disabled plugins
 					pass
-	except Exception as e:
+	except Exception:
 		pass
 
 #Function for plugins to set variable
@@ -816,9 +809,8 @@ def update():
 			return
 		else:
 			try:
-				d = Dialog()
 				guiUpdate()
-			except ExecutableNotFound as e:
+			except ExecutableNotFound:
 				print(theme["styles"]["error"] + "Dialog Execeutable Not Found. (Try installing \'dialog\' with your package manager)" + theme["styles"]["normal"])
 				input("[Press Enter to use the CLI Updater]")
 				cmdUpdate()

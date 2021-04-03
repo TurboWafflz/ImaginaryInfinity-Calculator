@@ -2,7 +2,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 import os
-import sys
 from typing import Iterable
 import urllib.request
 
@@ -63,7 +62,7 @@ def removeDuplicates(iterable):
 	res = []
 	[res.append(item) for item in iterable if item not in res]
 	return type(iterable)(res)
-	
+
 def loadConfig(config):
 	items = []
 	for each_section in config.sections():

@@ -3,10 +3,7 @@ import os
 import configparser
 from py_essentials import hashing as hs
 import shutil
-import itertools
-import threading
 import sys
-import time
 import subprocess
 from systemPlugins.core import theme,config
 from systemPlugins import utils
@@ -23,19 +20,9 @@ import tempfile
 import zipfile
 from rich.markdown import Markdown
 from rich.console import Console
-import pydoc
 
 class OAuthError(Exception):
 	pass
-
-#Loading spinner
-def loading(text):
-	for c in itertools.cycle(['|', '/', '-', '\\']):
-		if done:
-			break
-		sys.stdout.write('\r' + text + " " + c)
-		sys.stdout.flush()
-		time.sleep(0.1)
 
 def auth():
 	webbrowser.open("https://turbowafflz.azurewebsites.net/iicalc/auth?connectCalc=true")
@@ -152,10 +139,6 @@ def verify(plugin):
 		return True
 #Update package lists from server
 def update(silent=False, theme=theme):
-	# global done
-	# done = False
-	# t = threading.Thread(target=loading, args=("Updating package list...",))
-	# t.start()
 	if not os.path.isdir(config["paths"]["userPath"] + "/.pluginstore"):
 		os.makedirs(config["paths"]["userPath"] + "/.pluginstore")
 	try:
@@ -385,7 +368,7 @@ def downloadPluginsAndDepends(pluginDependencies, themeDependencies, pypiDepende
 					subprocess.call([sys.executable, "-m", "pip","install", package[5:], '--user'], stdout=subprocess.DEVNULL)
 				except:
 					if quiet == False:
-						print("\nDependency unsatisfiable: " + dependency)
+						print("\nDependency unsatisfiable: " + package[5:])
 					return False
 				progress.start_task(task_id)
 				progress.advance(task_id)
@@ -411,9 +394,9 @@ def downloadPluginsAndDepends(pluginDependencies, themeDependencies, pypiDepende
 			successfullyInstalled[plugin.name]['location'] = config["paths"]["userPath"] + "/plugins/" + plugin.filename
 
 	# Install theme dependencies
-	for theme in themeDependencies:
+	for themeInstall in themeDependencies:
 
-		success = utils.progress_download([theme.download], config["paths"]["userPath"] + "/themes/" + plugin.filename, isFile=True)
+		success = utils.progress_download([themeInstall.download], config["paths"]["userPath"] + "/themes/" + plugin.filename, isFile=True)
 
 		if success != True:
 			if quiet == False:
@@ -421,9 +404,9 @@ def downloadPluginsAndDepends(pluginDependencies, themeDependencies, pypiDepende
 				print('\nDependancy unsatisfiable: ' + list(map(lambda i: i if isinstance(i, str) else i.name, themeDependencies))[success])
 			return False
 		else:
-			successfullyInstalled[theme.name] = {}
-			successfullyInstalled[theme.name]['hash'] = theme.hash
-			successfullyInstalled[theme.name]['location'] = config["paths"]["userPath"] + "/themes/" + plugin.filename
+			successfullyInstalled[themeInstall.name] = {}
+			successfullyInstalled[themeInstall.name]['hash'] = themeInstall.hash
+			successfullyInstalled[themeInstall.name]['location'] = config["paths"]["userPath"] + "/themes/" + plugin.filename
 
 	# Install plugins
 	if quiet == False:
@@ -750,11 +733,7 @@ def search(term, type="all"):
 			installedFile.close()
 			installed = configparser.ConfigParser()
 			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-	#Set verified to none if it is not set in the
-	try:
-		verified = installed[plugin]["verified"]
-	except:
-		verified = "none"
+
 	#Iterate through plugins in index
 	for plugin in index.sections():
 		#Show plugin if search term is included in the name or description
@@ -780,12 +759,8 @@ def listPlugins(scope="available", type="all"):
 			installedFile.close()
 			installed = configparser.ConfigParser()
 			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-	#Set verified to none if it is not set in the installed list
-	try:
-		verified = installed[plugin]["verified"]
-	except:
-		verified = "none"
-	#List installed packages
+
+	# List installed packages
 	if scope == "installed":
 		#Iterate through installed plugins
 		for plugin in installed.sections():
@@ -828,11 +803,7 @@ def installFromFile(file):
 	#Load locak file
 	icpk = configparser.ConfigParser()
 	icpk.read(config["paths"]["userPath"] + "/.pluginstore/installer.ini")
-	#Set dependencies to none if dependencies is not set in the file
-	try:
-		dependencies = icpk[plugin]["depends"]
-	except:
-		icpk[plugin]["depends"] = "none"
+	
 	#Check if installed list exists
 	if os.path.exists(config["paths"]["userPath"] + "/.pluginstore/installed.ini"):
 		installed = configparser.ConfigParser()
@@ -892,7 +863,11 @@ def info(plugin):
 	except:
 		print("Could not find packages list, maybe run pm.update()")
 		return
-	#Show info from index if available
+
+	installed = configparser.ConfigParser()
+	installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
+
+	# Show info from index if available
 	if index.has_section(plugin):
 		print("Name: " + plugin)
 		print("Description: " + index[plugin]["description"])
@@ -900,7 +875,7 @@ def info(plugin):
 		print("Version: " + index[plugin]["version"])
 		print("Votes: " + index[plugin]["rating"])
 		#print("Screened: " + index[plugin]["approved"])
-	#Show info from local install file if not available in index
+	# Show info from local install file if not available in index
 	elif installed.has_section(plugin):
 		print("Name: " + plugin)
 		print("Description: " + index[plugin]["description"])

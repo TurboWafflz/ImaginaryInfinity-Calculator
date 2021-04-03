@@ -1,7 +1,6 @@
 #The dev plugin contains advanced functions not intended for most users
 import os
-from systemPlugins.core import *
-from colorama import Fore, Back
+from systemPlugins.core import theme, pluginPath, plugins, clear
 from py_essentials import hashing as hs
 from dialog import Dialog
 import time
@@ -75,7 +74,6 @@ def generateStoreInfo(plugin):
 		maintainer = input("Maintainer email address: ")
 		link = input("Direct download link (Please use GitHub or GitLab for hosting): ")
 		summary = input("Description summary: ")
-		lastUpdate=time.time()
 		hash = hs.fileChecksum(type + "s/" + plugin, "sha256")
 		print()
 		print("Plugin listing information:")
@@ -147,7 +145,6 @@ def guiStoreInfo():
 			depends = depends.replace("\n", ",")
 			depends = depends.rstrip(",")
 
-			lastUpdate=time.time()
 			hash = hs.fileChecksum(type + "/" + resp[1], "sha256")
 
 			clear()
