@@ -125,7 +125,7 @@ class ConfigInit:
 
 			# Restore user preferences
 			for i in range(len(oldConfig)):
-				if oldConfig[i][0] == "installation" and oldConfig[i][1] != "installtype":
+				if not (oldConfig[i][0] == "installation" and oldConfig[i][1] == "installtype"): # never keep user installtype value
 					if oldConfig[i][0] == "system" and oldConfig[i][1] == "userversion":
 						self.config[oldConfig[i][0]][oldConfig[i][1]] = systemVersion
 					else:
