@@ -38,6 +38,16 @@ def list():
 			print(key + " = " + val)
 		print()
 
+def startupTimes():
+	if os.path.isfile(os.path.join(config['paths']['userPath'], 'startuptimes.ini')):
+		startuptimes = configparser.ConfigParser()
+		startuptimes.read(os.path.join(config['paths']['userPath'], 'startuptimes.ini'))
+		for section in startuptimes.sections():
+			for (key, val) in startuptimes.items(section):
+				print(key + " - " + str(round(float(val), 2)) + "ms")
+	else:
+		print(theme['styles']['error'] + os.path.join(config['paths']['userPath'], 'startuptimes.ini') + " does not exist." + theme['styles']['normal'])
+
 #Dialog based settings editor
 def editor():
 	if platform.system() == "Windows":

@@ -250,6 +250,10 @@ if config["paths"]["systemPath"] != "none":
 		else:
 			print("Not loading " + plugin + " as it is not a valid plugin.")
 #Load plugins
+
+starttimes = configparser.ConfigParser()
+starttimes.add_section('data')
+
 if config["startup"]["safemode"] == "false":
 	plugins = os.listdir(pluginPath)
 	badPlugins=["core.py", "settings.py", "__init__.py", "__pycache__"]
@@ -261,11 +265,29 @@ if config["startup"]["safemode"] == "false":
 			pluginFiles=os.listdir(f"{pluginPath}/{plugin}")
 			for pluginFile in pluginFiles:
 				if pluginFile[-3:] == ".py" and not pluginFile.startswith("_"):
+
+					# Start plugin load timer
+					starttime = time.perf_counter()
+
+					# Load plugin
+					# TODO: try, except for bad things
 					exec(f"from plugins.{plugin} import {pluginFile[:-3]}")
+
+					# End plugin load timer
+					endtime = time.perf_counter()
+					starttimes['data'][plugin[:-3]] = f"{(endtime - starttime)*1000:0.8f}"
 		elif plugin[-3:] == ".py":
 			print(plugin)
 			try:
+				# Start plugin load timer
+				starttime = time.perf_counter()
+
+				# Load plugin
 				exec("from plugins import " + plugin[:-3])
+
+				# End plugin load timer
+				endtime = time.perf_counter()
+				starttimes['data'][plugin[:-3]] = f"{(endtime - starttime)*1000:0.8f}"
 			except KeyboardInterrupt:
 				print("Cancelled loading of " + plugin )
 			except Exception as e:
@@ -276,6 +298,10 @@ if config["startup"]["safemode"] == "false":
 			print("Not loading " + plugin[:-9] + " as it has been disabled in settings.")
 		else:
 			print("Not loading " + plugin + " as it is not a valid plugin.")
+
+		# Write startup times to file
+		with open(os.path.join(config['paths']['userPath'], 'startuptimes.ini'), 'w') as f:
+			starttimes.write(f)
 else:
 	print("Safe mode, only loading core and settings plugin.")
 # from plugins import *

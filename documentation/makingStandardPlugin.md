@@ -43,6 +43,9 @@ from systemPlugins.core import config, theme, restart
 name = input("Input your name here: ")
 ```
 
+#### Giving answers
+When giving answers, it's better to return an answer instead of printing it. This will allow for the resulting calculation to be used in other calculations.
+
 #### Printing Information <a name="print"></a>
 If you are doing anything involving printing, like taking input or just using `print()`, you should make it display with the user's theme's color for that type of output. To see the current color palette, you can type `dev.showPalette()` in the calculator. The available styles can be found below:
 <a name="themevalues"></a>

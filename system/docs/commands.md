@@ -17,6 +17,8 @@
 
 - `settings.list()` - Show the entire config file
 
+- `settings.startupTimes()` - Show the time (in milliseconds) that plugins add to startup
+
 ## Utility:
 
 - `iprt('<library name>')` - Installs and imports a Python moule from PyPI

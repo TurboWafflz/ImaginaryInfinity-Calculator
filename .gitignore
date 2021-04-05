@@ -19,3 +19,4 @@ iicalc-arch/
 /buildscript.sh
 *.pkg*
 /iicalc.spec
+startuptimes.ini
