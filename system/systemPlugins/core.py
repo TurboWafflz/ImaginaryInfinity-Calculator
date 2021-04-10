@@ -140,7 +140,10 @@ for plugin in plugins:
 def restart():
 	signal("onRestart")
 	print("\u001b[0m" + theme["styles"]["normal"])
-	os.execl(sys.executable, sys.executable, * sys.argv)
+	if platform.system()=="Windows":
+		os.execl(sys.executable, sys.executable,* ['"' + item + '"' for item in sys.argv])
+	else:
+		os.execl(sys.executable, sys.executable,* sys.argv)
 
 #Wake up server to decrease wait times when accessing store
 def pingServer():
