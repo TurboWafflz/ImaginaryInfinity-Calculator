@@ -617,5 +617,9 @@ def main(config=config, warmupThread=warmupThread):
 		print(Style.NORMAL + "The calculator has encountered an error and cannot continue.")
 		print(Style.BRIGHT + "Error: " + str(e) + theme["styles"]["normal"])
 		print("Please start an issue on the GitHub repository at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues")
+		if config["dev"]["debug"] == "true":
+			print("Traceback:")
+			import traceback
+			trackback.print_exc()
 
 main()
