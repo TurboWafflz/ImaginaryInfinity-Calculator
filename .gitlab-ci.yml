@@ -1,6 +1,16 @@
 stages:
+  - checkbump
   - build
   - build-stage-2
+
+checkbump:
+    image: ubuntu:latest
+    stage: checkbump
+    script:
+        - if ! git diff --raw HEAD^1 | grep -Fxq system/version.txt; then exit 1; fi
+    only:
+        - development
+
 debian packager:
   image: ubuntu:latest
   stage: build
