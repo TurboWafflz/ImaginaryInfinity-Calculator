@@ -623,6 +623,6 @@ def main(config=config, warmupThread=warmupThread):
 		if config["dev"]["debug"] == "true":
 			print("Traceback:")
 			import traceback
-			trackback.print_exc()
+			traceback.print_exc()
 
 main()
