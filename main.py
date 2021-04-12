@@ -428,8 +428,11 @@ def main(config=config, warmupThread=warmupThread):
 			signal("onMacStart")
 			os.system("clear")
 			## Remove empty history file to fix weird bug in MacOS if history is empty and calculator is exited with Ctrl+D
-			if readline.get_current_history_length() == 0:
-				os.remove(config["paths"]["userPath"] + ".history")
+			try:
+				if readline.get_current_history_length() == 0:
+					os.remove(config["paths"]["userPath"] + ".history")
+			except:
+				pass
 		else:
 			signal("onUnknownStart")
 			try:
