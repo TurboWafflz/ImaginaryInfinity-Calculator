@@ -146,6 +146,7 @@ then
 	desktopFile=".installer/desktopFiles/iicalc.app"
 	installDesktopFile="true"
 	pythonCommand="python3"
+	mkdir /usr/local/share
 
 #Install for NetBSD
 elif [ `uname` == "NetBSD" ]
