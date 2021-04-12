@@ -7,7 +7,7 @@ checkbump:
     image: ubuntu:latest
     stage: checkbump
     script:
-        - apt upgrade
+        - apt update
         - apt install -y git
         - if ! git diff --raw HEAD^1 | grep -Fxq system/version.txt; then exit 1; fi
     only:
