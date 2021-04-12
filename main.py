@@ -427,6 +427,12 @@ def main(config=config, warmupThread=warmupThread):
 			import readline
 			signal("onMacStart")
 			os.system("clear")
+			## Remove empty history file to fix weird bug in MacOS if history is empty and calculator is exited with Ctrl+D
+			try:
+				if readline.get_current_history_length() == 0:
+					os.remove(config["paths"]["userPath"] + ".history")
+			except:
+				pass
 		else:
 			signal("onUnknownStart")
 			try:
@@ -617,5 +623,9 @@ def main(config=config, warmupThread=warmupThread):
 		print(Style.NORMAL + "The calculator has encountered an error and cannot continue.")
 		print(Style.BRIGHT + "Error: " + str(e) + theme["styles"]["normal"])
 		print("Please start an issue on the GitHub repository at https://github.com/TurboWafflz/ImaginaryInfinity-Calculator/issues")
+		if config["dev"]["debug"] == "true":
+			print("Traceback:")
+			import traceback
+			traceback.print_exc()
 
 main()
