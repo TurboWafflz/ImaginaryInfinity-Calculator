@@ -47,6 +47,32 @@ elif [ "$1" == "--make-appImage" ]
 		installDesktopFile="true"
 		buildOnly="true"
 
+#Install for MacOS
+elif [ `uname` == "Darwin" ]
+then
+	if [ `whoami` != "root" ]
+	then
+		echo "Root access is required to install ImaginaryInfinity Calculator."
+		sudo $DIR/${0##*/}
+		exit
+	fi
+	echo "The installer has detected that you are using MacOS, is this correct? (Y/n)"
+	read yn
+	if [ "$yn" == "n" ]
+	then
+		exit
+	fi
+	systemPath="/usr/local/share/iicalc/"
+	binPath="/usr/local/bin/"
+	config=".installer/configDefaults/macos.ini"
+	launcher=".installer/launchers/macos.sh"
+	iconPath="/usr/local/share/iicalc/"
+	desktopFilePath="/Applications/ImaginaryInfinity Calculator.app"
+	desktopFile=".installer/desktopFiles/iicalc.app"
+	installDesktopFile="true"
+	pythonCommand="python3"
+	mkdir /usr/local/share
+
 # Build arch pkg
 elif printf '%s\n' "$@" | grep -q -P '^--make-pkg$'
 	then
@@ -121,32 +147,6 @@ then
 	desktopFile=".installer/desktopFiles/iicalc.desktop"
 	installDesktopFile="true"
 	pythonCommand="python3"
-
-#Install for MacOS
-elif [ `uname` == "Darwin" ]
-then
-	if [ `whoami` != "root" ]
-	then
-		echo "Root access is required to install ImaginaryInfinity Calculator."
-		sudo $DIR/${0##*/}
-		exit
-	fi
-	echo "The installer has detected that you are using MacOS, is this correct? (Y/n)"
-	read yn
-	if [ "$yn" == "n" ]
-	then
-		exit
-	fi
-	systemPath="/usr/local/share/iicalc/"
-	binPath="/usr/local/bin/"
-	config=".installer/configDefaults/macos.ini"
-	launcher=".installer/launchers/macos.sh"
-	iconPath="/usr/local/share/iicalc/"
-	desktopFilePath="/Applications/ImaginaryInfinity Calculator.app"
-	desktopFile=".installer/desktopFiles/iicalc.app"
-	installDesktopFile="true"
-	pythonCommand="python3"
-	mkdir /usr/local/share
 
 #Install for NetBSD
 elif [ `uname` == "NetBSD" ]
