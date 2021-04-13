@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100mm"
+   height="100mm"
+   viewBox="0 0 100 100"
+   version="1.1"
+   id="svg894"
+   inkscape:version="1.0.2 (1.0.2+r75+1)"
+   sodipodi:docname="iicalcnew2.svg">
+  <defs
+     id="defs888" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#1e2129"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="11.453637"
+     inkscape:cy="180.90174"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:snap-intersection-paths="true"
+     inkscape:pagecheckerboard="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-text-baseline="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-smooth-nodes="false"
+     inkscape:object-paths="false"
+     inkscape:snap-bbox="true"
+     inkscape:snap-page="false"
+     inkscape:bbox-paths="false"
+     inkscape:bbox-nodes="false"
+     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:snap-bbox-midpoints="false" />
+  <metadata
+     id="metadata891">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#002b36;fill-opacity:1;stroke:#002b36;stroke-width:7;stroke-linecap:round;stroke-opacity:1"
+       id="rect978"
+       width="90"
+       height="90"
+       x="5"
+       y="5"
+       ry="18.040693" />
+    <path
+       style="fill:none;stroke:#268bd2;stroke-width:5.99037;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 83.463126,16.790855 62.826952,93.806098"
+       id="path1697" />
+    <path
+       style="fill:none;stroke:#dc322f;stroke-width:5.99037;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 37.173047,6.1939024 16.536874,83.209144"
+       id="path1697-9" />
+    <path
+       style="fill:none;stroke:#fdf6e3;stroke-width:5.0587;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 71.721818,38.446738 37.244035,28.202807"
+       id="path1739" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:12.6795px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.316991"
+       x="44.963741"
+       y="13.388617"
+       id="text1743"
+       transform="rotate(15)"><tspan
+         sodipodi:role="line"
+         id="tspan1741"
+         x="44.963741"
+         y="13.388617"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:12.6795px;font-family:Quicksand;-inkscape-font-specification:'Quicksand, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#859900;fill-opacity:1;stroke-width:0.316991">iiCalc</tspan></text>
+  </g>
+</svg>
