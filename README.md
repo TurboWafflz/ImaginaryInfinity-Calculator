@@ -1,3 +1,5 @@
+# NOTE: This project has been moved to GitLab [https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator)
+
 # ImaginaryInfinity Calculator
 ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
 command line interface is designed to resemble that of some graphing
