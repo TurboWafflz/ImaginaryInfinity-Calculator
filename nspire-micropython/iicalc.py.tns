@@ -8,9 +8,8 @@
 #global onlineMode
 #global debugMode
 debugMode=False
-pluginIndex = open("/documents/iicalc/plugins.iindex.tns")
-plugins=pluginIndex.readlines()
-pluginIndex.close()
+with open("/documents/iicalc/plugins.iindex.tns") as pluginIndex:
+		plugins=pluginIndex.readlines()
 #Import core
 for plugin in plugins:
 		with open(plugin,"r") as file:
@@ -20,8 +19,8 @@ from math import *
 from cmath import *
 
 def clear():
-	for x in range(30):
-		print()
+		for _ in range(30):
+				print()
 
 
 cplx=False

@@ -152,14 +152,20 @@ def dialogEditor():
 	d = Dialog(dialog="dialog")
 	d.set_background_title('ImaginaryInfinity Calculator Theme Editor')
 	themeName = d.inputbox("Theme File:", height=None, width=None, init="")
-	if themeName[1] == "":
-		themeName = "untitled.iitheme"
-	else:
-		themeName = themeName[1]
+	themeName = "untitled.iitheme" if themeName[1] == "" else themeName[1]
 	d.add_persistent_args(["--title", "Editing " + themeName])
-	answers = []
-	answers.append(d.form("Basic Information", [("Theme Name:", 1, 1, "", 1, 13, 255, 255), ("Theme Description:", 2, 1, "", 2, 20, 255, 255)], height=0, width=0, form_height=0))
-
+	answers = [
+	    d.form(
+	        "Basic Information",
+	        [
+	            ("Theme Name:", 1, 1, "", 1, 13, 255, 255),
+	            ("Theme Description:", 2, 1, "", 2, 20, 255, 255),
+	        ],
+	        height=0,
+	        width=0,
+	        form_height=0,
+	    )
+	]
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Normal Foreground:", 1, 1, "", 1, 21, 15, 15), ("Normal Background:", 2, 1, "", 2, 20, 15, 15), ("Normal Style:", 3, 1, "", 3, 15, 9, 9)], height=0, width=0, form_height=0))
 
 	answers.append(d.form("Available Colors:\n\nFore: " + str(foreColors) + "\n\nBack: " + str(backColors) + "\n\nStyle: " + str(styles), [("Error Foreground:", 1, 1, "", 1, 20, 15, 15), ("Error Background:", 2, 1, "", 2, 19, 15, 15), ("Error Style:", 3, 1, "", 3, 14, 9, 9)], height=0, width=0, form_height=0))

@@ -17,7 +17,7 @@ def expFactor(exp):
 	variables=[]
 	#Remove duplicates
 	for variable in variablesRaw:
-		if not variable in variables:
+		if variable not in variables:
 			variables.append(variable)
 	#Put variables in alphabetical order
 	variables.sort()

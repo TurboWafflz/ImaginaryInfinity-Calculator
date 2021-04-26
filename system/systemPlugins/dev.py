@@ -96,75 +96,68 @@ def generateStoreInfo(plugin):
 def guiStoreInfo():
 	d = Dialog()
 	d.add_persistent_args(["--title", "Generate Store Info"])
-	#Get plugin
-	choices = []
 	pluginlist = plugins(False, True)
-	for i in range(len(pluginlist)):
-		choices.append((pluginlist[i], ""))
-	if len(choices) == 0:
+	#Get plugin
+	choices = [(pluginlist[i], "") for i in range(len(pluginlist))]
+	if not choices:
 		choices = [("No Plugins Are Installed", "")]
 	resp = d.menu("Choose plugin", choices=choices)
-	if resp[0] == d.OK:
-		if resp[1] == "No Plugins Are Installed":
-			clear()
-			return
-		else:
-			#Continue Asking
-			name = ""
-			while name == "":
-				name = d.inputbox("Plugin Name (No Spaces)")[1].replace(" ", "_")
-
-			if resp[1].endswith(".iitheme"):
-				type = "themes"
-			elif resp[1].endswith(".py"):
-				type = "plugins"
-
-			description = "\n"
-			while description == "\n":
-				description = d.editbox_str("", title="Plugin Description")[1].rstrip()
-
-			version = ""
-			while version == "":
-				version = d.inputbox("Plugin Version")[1]
-
-			maintainer = ""
-			while maintainer == "":
-				maintainer = d.inputbox("Maintainer Email Address")[1]
-
-			link = ""
-			while link == "":
-				link = d.inputbox("Direct Download Link (Please use GitHub or GitLab for hosting)")[1]
-
-			summary = ""
-			while summary == "":
-				summary = d.inputbox("Plugin Summary")[1]
-
-			if type == "plugins":
-				reqs = getReqs(resp[1])
-				depends = d.editbox_str(reqs, title="Dependancies separated by line breaks. Start PiPI dependancies with \'pipy:\'")[1]
-			depends = depends.replace("\n", ",")
-			depends = depends.rstrip(",")
-
-			lastUpdate=time.time()
-			hash = hs.fileChecksum(type + "/" + resp[1], "sha256")
-
-			clear()
-
-			print("[" + name + "]")
-			print("description = " + description)
-			print("maintainer = " + maintainer)
-			print("version = " + version)
-			print("download = " + link)
-			print("hash = " + hash)
-			print("lastupdate = " + str(time.time()))
-			print("summary = " + summary)
-			print("filename = " + resp[1])
-			if not depends == "":
-				print("depends = " + depends)
-			print("rating = 5")
-			print("ratings = 0")
-			print("type = " + type)
-
-	else:
+	if resp[1] == "No Plugins Are Installed" or resp[0] != d.OK:
 		clear()
 		return
+	else:
+		#Continue Asking
+		name = ""
+		while name == "":
+			name = d.inputbox("Plugin Name (No Spaces)")[1].replace(" ", "_")
+
+		if resp[1].endswith(".iitheme"):
+			type = "themes"
+		elif resp[1].endswith(".py"):
+			type = "plugins"
+
+		description = "\n"
+		while description == "\n":
+			description = d.editbox_str("", title="Plugin Description")[1].rstrip()
+
+		version = ""
+		while version == "":
+			version = d.inputbox("Plugin Version")[1]
+
+		maintainer = ""
+		while maintainer == "":
+			maintainer = d.inputbox("Maintainer Email Address")[1]
+
+		link = ""
+		while link == "":
+			link = d.inputbox("Direct Download Link (Please use GitHub or GitLab for hosting)")[1]
+
+		summary = ""
+		while summary == "":
+			summary = d.inputbox("Plugin Summary")[1]
+
+		if type == "plugins":
+			reqs = getReqs(resp[1])
+			depends = d.editbox_str(reqs, title="Dependancies separated by line breaks. Start PiPI dependancies with \'pipy:\'")[1]
+		depends = depends.replace("\n", ",")
+		depends = depends.rstrip(",")
+
+		lastUpdate=time.time()
+		hash = hs.fileChecksum(type + "/" + resp[1], "sha256")
+
+		clear()
+
+		print("[" + name + "]")
+		print("description = " + description)
+		print("maintainer = " + maintainer)
+		print("version = " + version)
+		print("download = " + link)
+		print("hash = " + hash)
+		print("lastupdate = " + str(time.time()))
+		print("summary = " + summary)
+		print("filename = " + resp[1])
+		if depends != "":
+			print("depends = " + depends)
+		print("rating = 5")
+		print("ratings = 0")
+		print("type = " + type)

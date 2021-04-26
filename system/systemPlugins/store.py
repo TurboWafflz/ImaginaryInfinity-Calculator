@@ -30,7 +30,6 @@ installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
 def reloadPluginList():
 	try:
 		file_name = config["paths"]["userPath"] + "/.pluginstore/index.ini"
-		link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
 		#display progress box of updating index
 		d = Dialog(dialog="dialog")
 		d.add_persistent_args(["--title", "Updating package List..."])
@@ -38,6 +37,7 @@ def reloadPluginList():
 
 		#download actual index from site
 		with open(file_name, "wb") as f:
+			link = "https://turbowafflz.azurewebsites.net/iicalc/plugins/index"
 			try:
 				response = requests.get(link, stream=True)
 			except requests.exceptions.ConnectionError:
@@ -58,12 +58,11 @@ def reloadPluginList():
 					dl += len(data)
 					f.write(data)
 					done = int(100 * dl / total_length)
-					if done > 100:
-						done = 100
+					done = min(done, 100)
 					if olddone != done:
 						olddone = done
 
-						d.gauge_update(done)
+						d.gauge_update(olddone)
 		d.gauge_stop()
 		return True
 	except KeyboardInterrupt:
@@ -73,10 +72,7 @@ def reloadPluginList():
 		except:
 			pass
 		with open(config["paths"]["userPath"] + "/.pluginstore/index.ini") as index:
-			if index.read().strip("\n") == "#" or index.read().strip("\n") == "":
-				return False
-			else:
-				return True
+			return index.read().strip("\n") not in ["#", ""]
 
 #Uninstall plugin
 def uninstall(filename, plugin):
@@ -107,16 +103,12 @@ def ratePlugin(plugin):
 	d = Dialog(dialog="dialog")
 	if os.path.isfile(config["paths"]["userpath"] + "/.pluginstore/.token"):
 		rating = d.radiolist("Voting for " + plugin + " (Space to select option)", choices=[("Upvote", "Upvotes this plugin", True), ("Downvote", "Downvotes this plugin", False)])
-		if rating[0] == d.OK:
-			if rating[1] == "Upvote":
-				rating = 1
-			else:
-				rating = -1
-			with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
-				response = requests.post("https://turbowafflz.azurewebsites.net/iicalc/rate/" + plugin, data={"vote": rating}, cookies={"authToken": f.read().strip()})
-				d.msgbox(response.text)
-		else:
+		if rating[0] != d.OK:
 			return
+		rating = 1 if rating[1] == "Upvote" else -1
+		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+			response = requests.post("https://turbowafflz.azurewebsites.net/iicalc/rate/" + plugin, data={"vote": rating}, cookies={"authToken": f.read().strip()})
+			d.msgbox(response.text)
 	else:
 		clear()
 		pm.connect()
@@ -140,7 +132,7 @@ def download(plugin_name, bulk=False):
 		currentversion = f.read().strip()
 	#check to see if the current version of the calculator satisfys plugin required version
 	versiond = Dialog()
-	if not currentversion in Requirement.parse("iicalc" + calcversion):
+	if currentversion not in Requirement.parse("iicalc" + calcversion):
 		if bulk == False:
 			if versiond.yesno("The plugin " + plugin_name + " is meant for version " + calcversion + " but you\'re using version " + currentversion + " of the calculator so it may misbehave. Download anyway?", width=0, height=0) == versiond.CANCEL:
 				return
@@ -166,12 +158,11 @@ def download(plugin_name, bulk=False):
 				dl += len(data)
 				f.write(data)
 				done = int(100 * dl / total_length)
-				if done > 100:
-					done = 100
+				done = min(done, 100)
 				if olddone != done:
 					olddone = done
 
-					d.gauge_update(done)
+					d.gauge_update(olddone)
 	#verify plugin
 	failed = False
 	if pm.verify(plugin_name) == False:
@@ -184,11 +175,7 @@ def download(plugin_name, bulk=False):
 	except:
 		pass
 	installed[plugin_name] = index[plugin_name]
-	if failed == True:
-		installed[plugin_name]["verified"] = "false"
-	else:
-		installed[plugin_name]["verified"] = "true"
-
+	installed[plugin_name]["verified"] = "false" if failed else "true"
 	#write to installed file
 	with open(config["paths"]["userPath"] + "/.pluginstore/installed.ini", "r+") as f:
 		installed.write(f)
@@ -198,7 +185,7 @@ def download(plugin_name, bulk=False):
 		depends = index[plugin_name]["depends"]
 	except:
 		dependencies = False
-	if dependencies == True:
+	if dependencies:
 		depends = depends.split(",")
 		for i in range(len(depends)):
 			if depends[i].startswith("pypi:"):
@@ -215,7 +202,7 @@ def download(plugin_name, bulk=False):
 			else:
 				download(depends[i], True)
 	d.gauge_stop()
-	if bulk == False and failed == False:
+	if bulk == False and not failed:
 		d.msgbox("Successfully downloaded " + plugin_name, height=None, width=None)
 
 #Plugin page
@@ -237,12 +224,14 @@ def pluginpage(plugin, cache=None, uri=False):
 		print("Invalid type: " + index[plugin]["type"])
 	if os.path.isfile(filepath):
 		try:
-			if float(installed[plugin]["lastupdate"]) == float(index[plugin]["lastUpdate"]) and not installed[plugin]["verified"] == "false":
+			if (float(installed[plugin]["lastupdate"]) == float(
+			    index[plugin]["lastUpdate"])
+			    and installed[plugin]["verified"] != "false"):
 				x.append(d.yesno(index[plugin]["description"] + "\n\nVotes: " + index[plugin]["rating"] + "\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", extra_button=True, extra_label="Rate Plugin", yes_label="Uninstall", ok_label="Uninstall"))
 				x.append("uninstall")
 			else:
-				 x.append(d.yesno(index[plugin]["description"] + "\n\nVotes: " + index[plugin]["rating"] + "\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
-				 x.append("update")
+				x.append(d.yesno(index[plugin]["description"] + "\n\nVotes: " + index[plugin]["rating"] + "\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back", yes_label="Update", ok_label="Update", help_button=True, help_label="Uninstall"))
+				x.append("update")
 		except KeyError:
 			x.append(d.yesno(index[plugin]["description"] + "\n\nVotes: " + index[plugin]["rating"] + "\nType: " + index[plugin]["type"][:-1].capitalize() + "\nVersion: " + index[plugin]["version"], height=0, width=0, no_label="Back", cancel_label="Back"))
 			x.append("download")
@@ -252,7 +241,7 @@ def pluginpage(plugin, cache=None, uri=False):
 
 	#processing to tell what to do when buttons are pressed
 	if x[0] == d.OK:
-		if x[1] == "download" or x[1] == "update":
+		if x[1] in ["download", "update"]:
 			download(plugin)
 		elif x[1] == "uninstall":
 			uninstall(installed[plugin]["filename"], plugin)
@@ -262,7 +251,7 @@ def pluginpage(plugin, cache=None, uri=False):
 		uninstall(index[plugin]["filename"], plugin)
 	elif x[0] == d.CANCEL and cache != None:
 		search(True, cache[0])
-	elif x[0] == d.CANCEL and cache == None:
+	elif x[0] == d.CANCEL:
 		clear()
 
 #Menu to list all plugins
@@ -295,7 +284,7 @@ def updateMenu():
 			updates.append((key, installed[key]["version"] + " > " + index[key]["version"]))
 			updatenum += 1
 	#create list with empty tuple if no plugins require updates
-	if len(updates) == 0:
+	if not updates:
 		updates.append(("", ""))
 
 	#actually display the update box
@@ -308,9 +297,9 @@ def updateMenu():
 		download(x[1])
 	elif x[0] == d.EXTRA:
 		failed = 0
-		for i in range(len(updates)):
+		for update in updates:
 			try:
-				download(updates[i][0], True)
+				download(update[0], True)
 			except:
 				failed += 1
 		d.msgbox("Updated " + str(len(updates) - failed) + " plugins successfully. " + str(failed) + " updates failed")
@@ -324,47 +313,46 @@ def search(bypass=False, choices=[]):
 		#display search box
 		x = d.inputbox("Search", height=None, width=None, init="")
 		#fuzzy string searching
-		if x[0] == d.OK:
-			if "type:" in x[1].lower():
+		if x[0] != d.OK:
+			return
+		if "type:" in x[1].lower():
 				#using type:
-				if not " " in x[1].strip():
-					#only searching for type
-					for key in index.sections():
-						if index[key]["type"] == re.sub("theme(?!s)", "themes", re.sub("plugin(?!s)", "plugins", x[1].strip()[5:])):
-							choices.append((key, index[key]["summary"]))
-				else:
-					#Get index of type in search
-					splitSearch = x[1].split(" ")
-					parsedSearch = list(filter(lambda i: "type:" in splitSearch[i], range(len(splitSearch))))
-					type = re.sub("theme(?!s)", "themes", re.sub("plugin(?!s)", "plugins", splitSearch[parsedSearch[0]].replace("type:", "")))
-					splitSearch.pop(parsedSearch[0])
-					query = " ".join(splitSearch)
-					# query = x[1].replace("type:", "").split(" ", 1)[1]
-					# type = x[1].replace("type:", "").split(" ", 1)[0]
-					#searching for type with query
-					choices = []
-					for key in index.sections():
-						if index[key]["type"] == type:
-							if fuzz.partial_ratio(query.lower(), key.lower()) >= 70:
-								choices.append((key, index[key]["summary"]))
-								if fuzz.partial_ratio(query.lower(), index[key]["description"].lower()) >= 70:
-									if not (key, index[key]["summary"]) in choices:
-										choices.append((key, index[key]["summary"]))
+			if " " not in x[1].strip():
+				#only searching for type
+				for key in index.sections():
+					if index[key]["type"] == re.sub("theme(?!s)", "themes", re.sub("plugin(?!s)", "plugins", x[1].strip()[5:])):
+						choices.append((key, index[key]["summary"]))
 			else:
-				#not using type:
+				#Get index of type in search
+				splitSearch = x[1].split(" ")
+				parsedSearch = list(filter(lambda i: "type:" in splitSearch[i], range(len(splitSearch))))
+				type = re.sub("theme(?!s)", "themes", re.sub("plugin(?!s)", "plugins", splitSearch[parsedSearch[0]].replace("type:", "")))
+				splitSearch.pop(parsedSearch[0])
+				query = " ".join(splitSearch)
+				# query = x[1].replace("type:", "").split(" ", 1)[1]
+				# type = x[1].replace("type:", "").split(" ", 1)[0]
+				#searching for type with query
 				choices = []
 				for key in index.sections():
-					if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
+					if (index[key]["type"] == type
+					    and fuzz.partial_ratio(query.lower(), key.lower()) >= 70):
 						choices.append((key, index[key]["summary"]))
-					if fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >= 70:
-						if not (key, index[key]["summary"]) in choices:
+						if (fuzz.partial_ratio(query.lower(), index[key]["description"].lower())
+						    >= 70 and (key, index[key]["summary"]) not in choices):
 							choices.append((key, index[key]["summary"]))
-			#detect if no results
-			if len(choices) == 0:
-				choices.append(("", ""))
-				text="No Results"
 		else:
-			return
+			#not using type:
+			choices = []
+			for key in index.sections():
+				if fuzz.partial_ratio(x[1].lower(), key.lower()) >= 70:
+					choices.append((key, index[key]["summary"]))
+				if (fuzz.partial_ratio(x[1].lower(), index[key]["description"].lower()) >=
+				    70 and (key, index[key]["summary"]) not in choices):
+					choices.append((key, index[key]["summary"]))
+		#detect if no results
+		if len(choices) == 0:
+			choices.append(("", ""))
+			text="No Results"
 	x = d.menu(text, height=None, width=None, menu_height=None, choices=choices, cancel_label="Back")
 	if x[0] == d.OK and x[1] != "":
 		pluginpage(x[1], (choices,))
@@ -378,11 +366,10 @@ def search(bypass=False, choices=[]):
 def store(reload=True):
 	try:
 		#reload index
-		if reload == True:
-			if reloadPluginList() == False:
-				clear()
-				print("Please update the package list to continue.")
-				return
+		if reload == True and reloadPluginList() == False:
+			clear()
+			print("Please update the package list to continue.")
+			return
 		try:
 			index.read(config["paths"]["userPath"] + "/.pluginstore/index.ini")
 		except configparser.MissingSectionHeaderError:

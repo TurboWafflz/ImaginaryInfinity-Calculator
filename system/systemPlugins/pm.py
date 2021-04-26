@@ -31,28 +31,27 @@ def connect():
 	print(theme["styles"]["output"] + "If your browser does not automatically open, go to this URL: " + theme["styles"]["link"] + "https://turbowafflz.azurewebsites.net/iicalc/auth?connectCalc=true" + theme["styles"]["normal"])
 	token = input(theme["styles"]["input"] + "Please authenticate in your browser and paste the token here: " + theme["styles"]["normal"])
 	user = json.loads(requests.get("https://api.github.com/user", headers={"Authorization": "Bearer "+ token}).text)
-	if not "message" in user:
-		if input("Is this you? " + str(user["login"]) + " [Y/n] ").lower() != "n":
-			if not os.path.isdir(config["paths"]["userpath"] + "/.pluginstore"):
-				os.mkdir(config["paths"]["userPath"] + "/.pluginstore")
-			with open(config["paths"]["userpath"] + "/.pluginstore/.token", "w+") as f:
-				f.write(token)
-		else:
+	if "message" not in user:
+		if input("Is this you? " + str(user["login"]) + " [Y/n] ").lower() == "n":
 			return
+		if not os.path.isdir(config["paths"]["userpath"] + "/.pluginstore"):
+			os.mkdir(config["paths"]["userPath"] + "/.pluginstore")
+		with open(config["paths"]["userpath"] + "/.pluginstore/.token", "w+") as f:
+			f.write(token)
 	else:
 		print(theme["styles"]["error"] + "Invalid OAuth token" + theme["styles"]["normal"])
 		return
 
 def getUserInfo():
-	if os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
-		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
-			user = json.loads(requests.get("https://api.github.com/user", headers={"Authorization": "Bearer "+ f.read().strip()}).text)
-		if "message" in user:
-			raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
-		else:
-			return user
-	else:
+	if not os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
 		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+
+	with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+		user = json.loads(requests.get("https://api.github.com/user", headers={"Authorization": "Bearer "+ f.read().strip()}).text)
+	if "message" in user:
+		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+	else:
+		return user
 
 #Plugin rating function
 def rate(plugin):
@@ -64,12 +63,9 @@ def rate(plugin):
 	if plugin in installed.sections():
 		if os.path.isfile(config["paths"]["userpath"] + "/.pluginstore/.token"):
 			rating = 0
-			while rating != "1" and rating != "2":
+			while rating not in ["1", "2"]:
 				rating = input("Upvote (1) or Downvote (2)? ")
-			if rating == "2":
-				rating = -1
-			else:
-				rating = 1
+			rating = -1 if rating == "2" else 1
 			with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
 				response = requests.post("https://turbowafflz.azurewebsites.net/iicalc/rate/" + plugin, data={"vote": rating}, cookies={"authToken": f.read().strip()})
 				print(response.text)
@@ -86,15 +82,15 @@ def rate(plugin):
 		print("Plugin " + plugin + " does not exist")
 
 def getUserPlugins():
-	if os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
-		with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
-			r = requests.post("https://turbowafflz.azurewebsites.net/iicalc/getplugins", cookies={"authToken": f.read().strip()})
-		if "OAuth Error" in r.text or "Invalid OAuth Session" in r.text:
-			raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
-		else:
-			return r.text.split(",")
-	else:
+	if not os.path.exists(config["paths"]["userpath"] + "/.pluginstore/.token"):
 		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+
+	with open(config["paths"]["userpath"] + "/.pluginstore/.token") as f:
+		r = requests.post("https://turbowafflz.azurewebsites.net/iicalc/getplugins", cookies={"authToken": f.read().strip()})
+	if "OAuth Error" in r.text or "Invalid OAuth Session" in r.text:
+		raise OAuthError("Invalid OAuth Token. Please run pm.connect() to refresh your token.")
+	else:
+		return r.text.split(",")
 
 #Download file
 def download(url, localFilename, pbarEnable=False):
@@ -147,12 +143,12 @@ def verify(plugin):
 			installedFile.close()
 			installed = configparser.ConfigParser()
 			installed.read(config["paths"]["userPath"] + "/.pluginstore/installed.ini")
-	if not hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") == index[plugin]["hash"]:
+	if (hs.fileChecksum(location + "/" + index[plugin]["filename"], "sha256") !=
+	    index[plugin]["hash"]):
 		return False
-	if not os.path.exists(config["paths"]["userPath"] + "/" + index[plugin]["type"] + "/" + index[plugin]["filename"]):
-		return False
-	else:
-		return True
+	return bool(
+	    os.path.exists(config["paths"]["userPath"] + "/" + index[plugin]["type"] +
+	                   "/" + index[plugin]["filename"]))
 #Update package lists from server
 def update(silent=False, theme=theme):
 	global done
@@ -624,9 +620,11 @@ def search(term, type="all"):
 	#Iterate through plugins in index
 	for plugin in index.sections():
 		#Show plugin if search term is included in the name or description
-		if term in plugin or term in index[plugin]["description"]:
-			if type=="all" or type == config["paths"]["userPath"] + index[plugin]["type"]:
-				print(plugin + " - " + index[plugin]["description"] + " (" + index[plugin]["type"] + ")")
+		if (term in plugin or term in index[plugin]["description"]) and type in [
+		    "all",
+		    config["paths"]["userPath"] + index[plugin]["type"],
+		]:
+			print(plugin + " - " + index[plugin]["description"] + " (" + index[plugin]["type"] + ")")
 #List packages
 def list(scope="available", type="all"):
 	#Read index, if available

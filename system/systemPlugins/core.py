@@ -235,45 +235,37 @@ def eqn2table(eqn, lowerBound, upperBound):
 def factor(num):
 
 	#Positive number
-	if(num>0):
-		i=1
-		while(i<=num):
+	if (num>0):
+		for i in range(1, num + 1):
 			isFactor=num%i
 			#Print factor pair if remainder is 0
 			if(isFactor==0):
 				print(i, "*", int(num/i))
-			i=i+1
 	#Negative number
-	if(num<0):
-		i=-1
-		while(i>=num):
+	if (num<0):
+		for i in range(-1, num - 1, -1):
 			isFactor=num%i
 			#Print factor pair if remainder is 0
 			if(isFactor==0):
 				print(i, "*", int(num/i))
-			i=i-1
 
 #Factor List
 def factorList(num,printResult=True):
 	factors=[]
 	#Positive number
-	if(num>0):
-		i=1
-		while(i<=num):
+	if (num>0):
+		for i in range(1, num + 1):
 			isFactor=num%i
 			#Append factor pair if remainder is 0
 			if(isFactor==0):
 				factors.append(i)
-			i=i+1
 	#Negative number
-	if(num<0):
-		i=-1
-		while(i>=num):
+	if (num<0):
+		for i in range(-1, num - 1, -1):
 			isFactor=num%i
 			#Append factor pair if remainder is 0
 			if(isFactor==0):
 				factors.append(i)
-			i=i-1
 	if(printResult):
 		print(factors)
 	return(factors)
@@ -281,9 +273,8 @@ def factorList(num,printResult=True):
 #FancyFactor
 def fancyFactor(num):
 	#Positive number
-	if(num>0):
-		i=1
-		while(i<=num):
+	if (num>0):
+		for i in range(1, num + 1):
 			isFactor=num%i
 			#Print factor pair, sums, and differences if remainder is 0
 			if(isFactor==0):
@@ -291,11 +282,9 @@ def fancyFactor(num):
 				print(i, "+", int(num/i),"=",i+num/i)
 				print(i, "-", int(num/i),"=",i-num/i)
 				print("")
-			i=i+1
 	#Negative number
-	if(num<0):
-		i=-1
-		while(i>=num):
+	if (num<0):
+		for i in range(-1, num - 1, -1):
 			isFactor=num%i
 			#Print factor pair, sums, and differences if remainder is 0
 			if(isFactor==0):
@@ -303,7 +292,6 @@ def fancyFactor(num):
 				print(i, "+", int(num/i),"=",i+num/i)
 				print(i, "-", int(num/i),"=",i-num/i)
 				print("")
-			i=i-1
 
 #isPerfect
 def isPerfect(num,printResult=True):
@@ -340,10 +328,8 @@ def toStd(value, roundVal=None, printResult=True):
 		print("Not in e notation.")
 		return
 	enotlist = re.findall("[^e]*$", value)[0]
-	enot = ""
-	negative = True if "-" in enotlist else False
-	for i in range(len(enotlist)):
-		enot += enotlist[i]
+	negative = "-" in enotlist
+	enot = "".join(enotlist[i] for i in range(len(enotlist)))
 	enot = int(enot)
 	if roundVal is None:
 		roundVal = len(nums)
@@ -374,11 +360,9 @@ def plugins(printval=True, hidedisabled=False):
 		plugins.remove(".reqs")
 	except ValueError:
 		pass
-	i = 0
 	if printval == True:
-		while i < len(plugins):
+		for i in range(len(plugins)):
 			print(Fore.GREEN + plugins[i])
-			i += 1
 	else:
 		return plugins
 
@@ -427,7 +411,7 @@ def signal(sig,args=""):
 	try:
 		nonplugins = ["__init__.py", "__pycache__", ".reqs"]
 		for plugin in os.listdir(pluginPath):
-			if not plugin in nonplugins:
+			if plugin not in nonplugins:
 				plugin = plugin[:-3]
 				try:
 					if sig in eval("dir(" + plugin + ")"):
@@ -505,8 +489,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 							dl += len(data)
 							f.write(data)
 							done = int(25 * dl / total_length)
-							if done > 25:
-								done = 25
+							done = min(done, 25)
 							if olddone != done:
 								olddone = done
 								d.gauge_update(37 + done)
@@ -552,27 +535,26 @@ def doUpdate(branch="master", theme=theme, gui=False):
 		if gui == True:
 			d.gauge_update(75, "Updating...\nRestoring Plugins...", update_text=True)
 
-		if config["installation"]["installtype"] == "portable":
-			#move plugins back into /plugins and themes back into /themes
-			if not os.path.exists(os.path.join(root, "themes")):
-				os.mkdir(os.path.join(root, "themes"))
+		#move plugins back into /plugins and themes back into /themes
+		if not os.path.exists(os.path.join(root, "themes")):
+			os.mkdir(os.path.join(root, "themes"))
 
-			os.chdir(os.path.join(parent, ".iibackup", "plugins"))
-			files = os.listdir(".")
-			for file in files:
-				try:
-					shutil.move(os.path.join(parent, ".iibackup", "plugins", file), plugins)
-				except shutil.Error:
-					pass
+		os.chdir(os.path.join(parent, ".iibackup", "plugins"))
+		files = os.listdir(".")
+		for file in files:
+			try:
+				shutil.move(os.path.join(parent, ".iibackup", "plugins", file), plugins)
+			except shutil.Error:
+				pass
 
-			os.chdir(os.path.join(parent, ".iibackup", "themes"))
-			files = os.listdir(".")
-			for file in files:
-				try:
-					shutil.move(os.path.join(parent, ".iibackup", "themes", file), themes)
-				except shutil.Error:
-					pass
-			os.chdir(root)
+		os.chdir(os.path.join(parent, ".iibackup", "themes"))
+		files = os.listdir(".")
+		for file in files:
+			try:
+				shutil.move(os.path.join(parent, ".iibackup", "themes", file), themes)
+			except shutil.Error:
+				pass
+		os.chdir(root)
 
 		if gui == True:
 			d.gauge_update(87, "Updating...\nVerifying Update...", update_text=True)
@@ -640,8 +622,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 								dl += len(data)
 								f.write(data)
 								done = int(50 * dl / total_length)
-								if done > 50:
-									done = 50
+								done = min(done, 50)
 								if olddone != done:
 									olddone = done
 									d.gauge_update(0 + done)
@@ -669,11 +650,7 @@ def doUpdate(branch="master", theme=theme, gui=False):
 				d.gauge_update(75, "Updating...\nUpdating Files...", update_text=True)
 			os.chdir("ImaginaryInfinity-Calculator-" + branch)
 			#detect sudo
-			if shutil.which("sudo") is None:
-				sudo = ""
-			else:
-				sudo = "sudo "
-
+			sudo = "" if shutil.which("sudo") is None else "sudo "
 			#Update main python script
 			os.system(sudo + "rm " + config["paths"]["systemPath"] + "/iicalc.py")
 			os.system(sudo + "cp main.py " + config["paths"]["systempath"] + "/iicalc.py")
@@ -682,10 +659,9 @@ def doUpdate(branch="master", theme=theme, gui=False):
 				d.gauge_update(87)
 			sysFiles = os.listdir(config["paths"]["systempath"])
 			for file in os.listdir("."):
-				if file in sysFiles:
-					if file != "themes":
-						os.system(sudo + "rm -rf " + config["paths"]["systempath"] + file.replace(" ", "\\ "))
-						os.system(sudo + "cp -r " + file.replace(" ", "\\ ") + " " + config["paths"]["systemPath"] + "/")
+				if file in sysFiles and file != "themes":
+					os.system(sudo + "rm -rf " + config["paths"]["systempath"] + file.replace(" ", "\\ "))
+					os.system(sudo + "cp -r " + file.replace(" ", "\\ ") + " " + config["paths"]["systemPath"] + "/")
 			#Update system files
 			if gui == True:
 				d.gauge_update(100)
