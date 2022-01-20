@@ -1,4 +1,4 @@
-# NOTICE: This repository will be moving to GitLab soon. [https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator)
+# NOTICE: This project has moved to GitLab [https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator](https://gitlab.com/TurboWafflz/ImaginaryInfinity-Calculator)
 
 # ImaginaryInfinity Calculator
 ImaginaryInfinity Calculator is a lightweight, but expandable calculator. It's
